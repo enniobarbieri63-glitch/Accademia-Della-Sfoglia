@@ -1,0 +1,600 @@
+<title>Palloncini Sfogline</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Archivo:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#FAF5EC;
+    --ground-2:#F1E6D2;
+    --ink:#2A1F17;
+    --ink-soft:#6B5A4C;
+    --rule:#D8C7AE;
+    --accent:#A93B27;
+    --gold:#D9A227;
+    --panel:rgba(250,245,236,.86);
+    --panel-line:rgba(42,31,23,.14);
+    --speck:rgba(42,31,23,.07);
+    --halo:rgba(217,162,39,.13);
+    --shadow:drop-shadow(0 8px 12px rgba(42,31,23,.14));
+    --field:rgba(42,31,23,.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#191310;
+      --ground-2:#241A14;
+      --ink:#F4E8D7;
+      --ink-soft:#B49E88;
+      --rule:#3D2E23;
+      --accent:#E07A5F;
+      --gold:#E8BC53;
+      --panel:rgba(28,21,16,.82);
+      --panel-line:rgba(244,232,215,.16);
+      --speck:rgba(255,250,240,.05);
+      --halo:rgba(224,122,95,.14);
+      --shadow:drop-shadow(0 10px 18px rgba(0,0,0,.45));
+      --field:rgba(244,232,215,.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#191310;
+    --ground-2:#241A14;
+    --ink:#F4E8D7;
+    --ink-soft:#B49E88;
+    --rule:#3D2E23;
+    --accent:#E07A5F;
+    --gold:#E8BC53;
+    --panel:rgba(28,21,16,.82);
+    --panel-line:rgba(244,232,215,.16);
+    --speck:rgba(255,250,240,.05);
+    --halo:rgba(224,122,95,.14);
+    --shadow:drop-shadow(0 10px 18px rgba(0,0,0,.45));
+    --field:rgba(244,232,215,.14);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:Archivo,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+
+  .scena{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    isolation:isolate;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 18% 12%, var(--halo) 0, transparent 42%),
+      radial-gradient(circle at 82% 78%, var(--halo) 0, transparent 46%),
+      radial-gradient(var(--speck) 1px, transparent 1.4px) 0 0/26px 26px,
+      radial-gradient(var(--speck) 1px, transparent 1.4px) 13px 13px/26px 26px,
+      var(--ground);
+  }
+
+  .palloncino{
+    position:absolute;
+    top:0;left:0;
+    transform-origin:50% 33.333%;
+    will-change:transform;
+    filter:var(--shadow);
+  }
+  .palloncino svg{display:block;width:100%;height:auto}
+
+  /* ---- cornice ---- */
+  .testata{
+    position:fixed;
+    z-index:2;
+    top:0;left:0;right:0;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+    padding:22px 26px;
+    pointer-events:none;
+  }
+  .testata::before{
+    content:"";
+    position:absolute;
+    inset:0 0 -54px 0;
+    background:linear-gradient(to bottom, var(--ground) 12%, transparent);
+    opacity:.88;
+    z-index:-1;
+  }
+  .marchio{display:flex;align-items:center;gap:11px}
+  .marchio svg{flex:none}
+  .marchio-testo{display:flex;flex-direction:column;gap:2px}
+  .marchio-nome{
+    font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    font-size:19px;line-height:1.1;letter-spacing:.005em;
+  }
+  .etichetta{
+    font-size:10.5px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .titolo-studio{text-align:right;display:flex;flex-direction:column;gap:3px;max-width:290px}
+  .titolo-studio h1{
+    margin:0;
+    font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    font-weight:400;font-size:26px;line-height:1.05;
+    text-wrap:balance;
+  }
+  .titolo-studio h1 em{font-style:italic;color:var(--accent)}
+
+  /* ---- pannello comandi ---- */
+  .comandi{
+    position:fixed;
+    z-index:3;
+    left:50%;bottom:20px;
+    transform:translateX(-50%);
+    width:min(880px, calc(100vw - 32px));
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    gap:14px 22px;
+    padding:14px 18px;
+    background:var(--panel);
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
+    border:1px solid var(--panel-line);
+    border-radius:2px;
+    box-shadow:0 12px 30px rgba(42,31,23,.10);
+  }
+  .cursore{display:flex;flex-direction:column;gap:6px;flex:1 1 150px;min-width:130px}
+  .cursore .riga{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .cursore .valore{
+    font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    font-size:15px;letter-spacing:0;color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:16px;background:transparent;margin:0;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--field)}
+  input[type=range]::-moz-range-track{height:2px;background:var(--field)}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:13px;height:13px;margin-top:-5.5px;border-radius:50%;
+    background:var(--accent);border:2px solid var(--ground);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:13px;height:13px;border-radius:50%;
+    background:var(--accent);border:2px solid var(--ground);
+  }
+  input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+
+  .bottoni{display:flex;gap:8px;flex-wrap:wrap;flex:0 0 auto}
+  button{
+    font-family:inherit;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);background:transparent;
+    border:1px solid var(--panel-line);border-radius:1px;
+    padding:9px 13px;cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  button:hover{background:var(--accent);border-color:var(--accent);color:#FAF5EC}
+  button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .nota{
+    position:fixed;z-index:2;
+    left:26px;bottom:24px;
+    max-width:260px;
+    font-size:12px;line-height:1.5;color:var(--ink-soft);
+    pointer-events:none;
+  }
+  @media (max-width:900px){
+    .nota{display:none}
+    .titolo-studio h1{font-size:20px}
+    .comandi{gap:12px 16px;padding:12px 14px}
+  }
+  @media (max-width:560px){
+    .titolo-studio{display:none}
+  }
+</style>
+
+<div class="scena" id="scena" aria-hidden="true"></div>
+
+<header class="testata">
+  <div class="marchio">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M4.6 9.2h14.8M4.6 14.8h14.8M9.2 3.4v17.2M14.8 3.4v17.2"></path>
+    </svg>
+    <div class="marchio-testo">
+      <span class="marchio-nome">Accademia della Sfoglia</span>
+      <span class="etichetta">Studio di movimento</span>
+    </div>
+  </div>
+  <div class="titolo-studio">
+    <span class="etichetta">Proposta grafica</span>
+    <h1>Palloncini <em>sfogline</em></h1>
+  </div>
+</header>
+
+<p class="nota">Ogni volto nasce diverso: fazzoletto, occhiali, orecchini d'oro, una spolverata di farina sulla guancia. Disegno vettoriale, nessuna fotografia — scala da una favicon a un manifesto.</p>
+
+<div class="comandi" role="group" aria-label="Regolazioni della scena">
+  <div class="cursore">
+    <label class="riga" for="n-palloncini">Palloncini <span class="valore" id="v-palloncini">26</span></label>
+    <input type="range" id="n-palloncini" min="4" max="60" step="1" value="26">
+  </div>
+  <div class="cursore">
+    <label class="riga" for="n-velocita">Velocità <span class="valore" id="v-velocita">1,0×</span></label>
+    <input type="range" id="n-velocita" min="0" max="30" step="1" value="10">
+  </div>
+  <div class="cursore">
+    <label class="riga" for="n-dimensione">Dimensione <span class="valore" id="v-dimensione">1,0×</span></label>
+    <input type="range" id="n-dimensione" min="5" max="22" step="1" value="10">
+  </div>
+  <div class="bottoni">
+    <button type="button" id="b-rimescola">Rimescola volti</button>
+    <button type="button" id="b-filo" aria-pressed="true">Filo</button>
+    <button type="button" id="b-pausa" aria-pressed="false">Pausa</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var scena = document.getElementById("scena");
+
+  /* ---------- casualità ripetibile ---------- */
+  function seme(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function tra(r, a, b) { return a + r() * (b - a); }
+  function scegli(r, arr) { return arr[Math.floor(r() * arr.length) % arr.length]; }
+
+  /* ---------- palette dei palloncini ---------- */
+  var TINTE = [
+    { corpo: "#F5E7D0", luce: "#FFFAF0", bordo: "#C7A87F" }, /* farina      */
+    { corpo: "#F1BE9C", luce: "#FDDFC9", bordo: "#B26B49" }, /* albicocca   */
+    { corpo: "#EFCF8A", luce: "#FBEDC8", bordo: "#B58F31" }, /* oro         */
+    { corpo: "#E49582", luce: "#F6C6B8", bordo: "#A44F38" }, /* terracotta  */
+    { corpo: "#CBD4B8", luce: "#E8EEDA", bordo: "#82906A" }, /* salvia      */
+    { corpo: "#D08161", luce: "#EDB295", bordo: "#8E4526" }  /* mattone     */
+  ];
+  var FAZZOLETTI = ["#A93B27", "#D9A227", "#6E7F5B", "#8A2F1F", "#C2603C", "#B8843A"];
+  var CAPELLI = ["#6B4A2E", "#3A2A1E", "#8A6B49", "#B9A48D", "#A9602E"];
+  var INCHIOSTRO = "#38281C";
+
+  function scurisci(hex, q) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.round((n >> 16 & 255) * (1 - q));
+    var g = Math.round((n >> 8 & 255) * (1 - q));
+    var b = Math.round((n & 255) * (1 - q));
+    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+  }
+
+  /* ---------- il volto della sfoglina ---------- */
+  function disegnaVolto(r, id, conFilo) {
+    var t = scegli(r, TINTE);
+    var fazz = scegli(r, FAZZOLETTI);
+    var cap = scegli(r, CAPELLI);
+    var conFazzoletto = r() < 0.72;
+    var occhiali = r() < 0.3;
+    var orecchini = r() < 0.45;
+    var farina = r() < 0.55;
+    var rughe = r() < 0.35;
+    var occhi = scegli(r, ["aperti", "aperti", "aperti", "chiusi", "occhiolino"]);
+    var bocca = scegli(r, ["sorriso", "sorriso", "risata", "denti", "o"]);
+    var pois = fazz !== "#FAF5EC" && r() < 0.5;
+    var s = [];
+
+    s.push('<svg viewBox="0 0 100 152" xmlns="http://www.w3.org/2000/svg">');
+    s.push('<defs>');
+    s.push('<radialGradient id="g' + id + '" cx="34%" cy="26%" r="82%">');
+    s.push('<stop offset="0" stop-color="' + t.luce + '"/><stop offset="1" stop-color="' + t.corpo + '"/>');
+    s.push('</radialGradient>');
+    s.push('<clipPath id="c' + id + '"><circle cx="50" cy="50" r="44"/></clipPath>');
+    s.push('</defs>');
+
+    /* filo e nodo */
+    if (conFilo) {
+      s.push('<path d="M50 99c7 8-7 13 0 21s-6 13 1 21" fill="none" stroke="' + t.bordo + '" stroke-width="1.2" stroke-linecap="round" opacity=".75"/>');
+    }
+    s.push('<path d="M45.4 91h9.2l-4.6 9z" fill="' + t.bordo + '"/>');
+
+    /* corpo */
+    s.push('<circle cx="50" cy="50" r="44" fill="url(#g' + id + ')"/>');
+
+    /* capelli e fazzoletto, ritagliati nel corpo */
+    s.push('<g clip-path="url(#c' + id + ')">');
+    if (conFazzoletto) {
+      /* ciocche che scappano da sotto il fazzoletto */
+      s.push('<g fill="none" stroke="' + cap + '" stroke-width="3" stroke-linecap="round">');
+      s.push('<path d="M12 30q-3 10 3 16"/><path d="M88 30q3 10-3 16"/><path d="M28 35q-3 5 0 9"/><path d="M72 35q3 5 0 9"/>');
+      s.push('</g>');
+      /* fazzoletto */
+      s.push('<path d="M0 24q50 22 100 0V0H0z" fill="' + fazz + '"/>');
+      if (pois) {
+        s.push('<g fill="#FAF5EC" opacity=".8"><circle cx="26" cy="12" r="1.7"/><circle cx="44" cy="17" r="1.7"/><circle cx="62" cy="15" r="1.7"/><circle cx="78" cy="8" r="1.7"/><circle cx="35" cy="3" r="1.7"/></g>');
+      }
+      s.push('<path d="M0 24q50 22 100 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.3" opacity=".4"/>');
+      /* nodo annodato di lato, con le due punte */
+      var ombra = scurisci(fazz, 0.26);
+      s.push('<g fill="' + fazz + '" stroke="' + ombra + '" stroke-width="1.1" stroke-linejoin="round">');
+      s.push('<path d="M50 13 38 9l3 10z"/><path d="M50 13 62 9l-3 10z"/>');
+      s.push('<ellipse cx="50" cy="12.5" rx="5.4" ry="4.4"/>');
+      s.push('</g>');
+    } else {
+      /* pettinatura con riga in mezzo e crocchia */
+      s.push('<g fill="none" stroke="' + cap + '" stroke-width="3.2" stroke-linecap="round">');
+      s.push('<path d="M9 34q-3 14 3 24"/><path d="M91 34q3 14-3 24"/>');
+      s.push('</g>');
+      s.push('<path d="M0 26C12 41 22 41 33 31 44 21 56 41 67 35 78 29 90 37 100 26V0H0z" fill="' + cap + '"/>');
+      s.push('<ellipse cx="50" cy="2" rx="14" ry="10" fill="' + cap + '"/>');
+      s.push('<path d="M63 12l13 4" fill="none" stroke="#D9A227" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>');
+    }
+    s.push('</g>');
+
+    /* guance */
+    s.push('<g fill="#C9603F" opacity=".32"><ellipse cx="31" cy="61" rx="7" ry="4.2"/><ellipse cx="69" cy="61" rx="7" ry="4.2"/></g>');
+
+    /* sopracciglia */
+    s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.7" stroke-linecap="round" opacity=".8">');
+    s.push('<path d="M32 41q7-4 13-1"/><path d="M68 41q-7-4-13-1"/>');
+    s.push('</g>');
+
+    /* occhi */
+    if (occhi === "chiusi") {
+      s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="2.1" stroke-linecap="round"><path d="M33 52q6-6 12 0"/><path d="M55 52q6-6 12 0"/></g>');
+    } else if (occhi === "occhiolino") {
+      s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="2.1" stroke-linecap="round"><path d="M33 52q6-6 12 0"/></g>');
+      s.push('<ellipse cx="61" cy="51" rx="3.2" ry="3.7" fill="' + INCHIOSTRO + '"/><circle cx="62.3" cy="49.7" r="1" fill="#FFFDF7"/>');
+    } else {
+      s.push('<g fill="' + INCHIOSTRO + '"><ellipse cx="39" cy="51" rx="3.2" ry="3.7"/><ellipse cx="61" cy="51" rx="3.2" ry="3.7"/></g>');
+      s.push('<g fill="#FFFDF7"><circle cx="40.3" cy="49.7" r="1"/><circle cx="62.3" cy="49.7" r="1"/></g>');
+    }
+
+    if (rughe) {
+      s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.1" stroke-linecap="round" opacity=".45">');
+      s.push('<path d="M29 48l-4-2M29 53l-4 1M71 48l4-2M71 53l4 1"/>');
+      s.push('</g>');
+    }
+
+    /* naso */
+    s.push('<path d="M49 55q3.4 2.6 1 4.6" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>');
+
+    /* bocca */
+    if (bocca === "risata") {
+      s.push('<path d="M40 64q10 11 20 0z" fill="#8A2F1F"/><path d="M40 64q10 11 20 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.5" stroke-linejoin="round"/>');
+    } else if (bocca === "denti") {
+      s.push('<path d="M40 64q10 10 20 0z" fill="#8A2F1F"/><path d="M42.5 64.6h15q-1.6 3.4-7.5 3.4t-7.5-3.4z" fill="#FFFBF2"/><path d="M40 64q10 10 20 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.5" stroke-linejoin="round"/>');
+    } else if (bocca === "o") {
+      s.push('<ellipse cx="50" cy="66" rx="3.4" ry="4.2" fill="#8A2F1F"/>');
+    } else {
+      s.push('<path d="M41 64q9 7.5 18 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="2" stroke-linecap="round"/>');
+    }
+
+    if (occhiali) {
+      s.push('<g fill="#FFFFFF" fill-opacity=".16" stroke="' + INCHIOSTRO + '" stroke-width="1.5">');
+      s.push('<circle cx="39" cy="51" r="8.4"/><circle cx="61" cy="51" r="8.4"/>');
+      s.push('<path d="M47.6 51h4.8M30.8 48.6l-6-3.2M69.2 48.6l6-3.2" fill="none" stroke-linecap="round"/>');
+      s.push('</g>');
+    }
+
+    if (farina) {
+      s.push('<g fill="#FFFDF6" opacity=".9"><circle cx="27" cy="72" r="1.3"/><circle cx="34" cy="77" r="0.9"/><circle cx="70" cy="74" r="1.1"/><circle cx="63" cy="79" r="0.8"/><circle cx="50" cy="80" r="1"/></g>');
+    }
+
+    /* contorno del palloncino e riflesso */
+    s.push('<circle cx="50" cy="50" r="44" fill="none" stroke="' + t.bordo + '" stroke-width="1.4" opacity=".85"/>');
+    s.push('<ellipse cx="32" cy="25" rx="13" ry="8" fill="#FFFFFF" opacity=".3" transform="rotate(-28 32 25)"/>');
+
+    if (orecchini) {
+      s.push('<g fill="#D9A227" stroke="#8A6516" stroke-width=".7"><circle cx="7.6" cy="60" r="2.7"/><circle cx="92.4" cy="60" r="2.7"/></g>');
+    }
+
+    s.push('</svg>');
+    return s.join("");
+  }
+
+  /* ---------- la scena ---------- */
+  var palloncini = [];
+  var contatore = 0;
+  var semeCorrente = Math.floor(Math.random() * 1e9);
+  var conFilo = true;
+  var inPausa = false;
+  var velocita = 1;
+  var dimensione = 1;
+  var L = window.innerWidth;
+  var H = window.innerHeight;
+  var puntatore = { x: -999, y: -999, attivo: false };
+  var motoRidotto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function semeVolto(i) {
+    var r = seme((semeCorrente ^ Math.imul(i + 1, 2654435761)) >>> 0);
+    r(); r(); r();
+    return r;
+  }
+
+  function nuovoPalloncino(i) {
+    var profondita = 0.55 + Math.random() * 0.6;
+    var el = document.createElement("div");
+    el.className = "palloncino";
+    el.innerHTML = disegnaVolto(semeVolto(i), ++contatore, conFilo);
+    scena.appendChild(el);
+
+    var angolo = Math.random() * Math.PI * 2;
+    var base = 0.35 + Math.random() * 0.7;
+    var p = {
+      el: el,
+      indice: i,
+      profondita: profondita,
+      larghezza: 0,
+      raggio: 0,
+      x: (0.08 + Math.random() * 0.84) * L,
+      y: (0.08 + Math.random() * 0.84) * H,
+      vx: Math.cos(angolo) * base * profondita,
+      vy: Math.sin(angolo) * base * profondita,
+      fase: Math.random() * Math.PI * 2,
+      ondeggio: 3 + Math.random() * 6,
+      ritmo: 0.006 + Math.random() * 0.008
+    };
+    misura(p);
+    el.style.zIndex = String(Math.round(profondita * 100));
+    return p;
+  }
+
+  function misura(p) {
+    var minLato = Math.min(L, H);
+    p.larghezza = Math.max(52, minLato * 0.15 * p.profondita * dimensione);
+    p.raggio = p.larghezza * 0.44;
+    p.el.style.width = p.larghezza + "px";
+  }
+
+  function imposta(n) {
+    while (palloncini.length > n) {
+      var via = palloncini.pop();
+      via.el.remove();
+    }
+    while (palloncini.length < n) {
+      palloncini.push(nuovoPalloncino(palloncini.length));
+    }
+  }
+
+  function rimescola() {
+    semeCorrente = Math.floor(Math.random() * 1e9);
+    var n = palloncini.length;
+    palloncini.forEach(function (p) { p.el.remove(); });
+    palloncini.length = 0;
+    imposta(n);
+  }
+
+  function ridisegna() {
+    palloncini.forEach(function (p) {
+      p.el.innerHTML = disegnaVolto(semeVolto(p.indice), ++contatore, conFilo);
+    });
+  }
+
+  /* ---------- animazione ---------- */
+  var ultimo = performance.now();
+
+  function passo(ora) {
+    var dt = Math.min(48, ora - ultimo) / 16.6667;
+    ultimo = ora;
+
+    for (var i = 0; i < palloncini.length; i++) {
+      var p = palloncini[i];
+
+      if (!inPausa) {
+        var v = velocita * (motoRidotto ? 0.35 : 1);
+        p.x += p.vx * dt * v;
+        p.y += p.vy * dt * v;
+
+        if (puntatore.attivo) {
+          var dx = p.x - puntatore.x;
+          var dy = p.y - puntatore.y;
+          var d2 = dx * dx + dy * dy;
+          var R = 170;
+          if (d2 < R * R) {
+            var d = Math.sqrt(d2) || 1;
+            var f = (1 - d / R) * 0.7;
+            p.vx += (dx / d) * f;
+            p.vy += (dy / d) * f;
+          }
+        }
+
+        /* rimbalzo sui quattro bordi */
+        if (p.x < p.raggio) { p.x = p.raggio; p.vx = Math.abs(p.vx); p.vy += (Math.random() - 0.5) * 0.12; }
+        if (p.x > L - p.raggio) { p.x = L - p.raggio; p.vx = -Math.abs(p.vx); p.vy += (Math.random() - 0.5) * 0.12; }
+        if (p.y < p.raggio) { p.y = p.raggio; p.vy = Math.abs(p.vy); p.vx += (Math.random() - 0.5) * 0.12; }
+        if (p.y > H - p.raggio) { p.y = H - p.raggio; p.vy = -Math.abs(p.vy); p.vx += (Math.random() - 0.5) * 0.12; }
+
+        /* velocità entro limiti, così nessuno schizza via */
+        var s = Math.hypot(p.vx, p.vy);
+        var max = 2.4 * p.profondita;
+        var min = 0.22 * p.profondita;
+        if (s > max) { p.vx *= max / s; p.vy *= max / s; }
+        if (s < min && s > 0) { p.vx *= min / s; p.vy *= min / s; }
+
+        p.fase += p.ritmo * dt * (motoRidotto ? 0.4 : 1);
+      }
+
+      var rot = motoRidotto ? 0 : Math.sin(p.fase) * p.ondeggio;
+      p.el.style.transform =
+        "translate3d(" + (p.x - p.larghezza / 2) + "px," + (p.y - p.larghezza / 2) + "px,0) rotate(" + rot.toFixed(2) + "deg)";
+    }
+
+    requestAnimationFrame(passo);
+  }
+
+  /* ---------- comandi ---------- */
+  var nPalloncini = document.getElementById("n-palloncini");
+  var nVelocita = document.getElementById("n-velocita");
+  var nDimensione = document.getElementById("n-dimensione");
+  var vPalloncini = document.getElementById("v-palloncini");
+  var vVelocita = document.getElementById("v-velocita");
+  var vDimensione = document.getElementById("v-dimensione");
+  var bRimescola = document.getElementById("b-rimescola");
+  var bFilo = document.getElementById("b-filo");
+  var bPausa = document.getElementById("b-pausa");
+
+  function moltiplicatore(x) { return (x / 10).toFixed(1).replace(".", ",") + "×"; }
+
+  nPalloncini.addEventListener("input", function () {
+    vPalloncini.textContent = nPalloncini.value;
+    imposta(parseInt(nPalloncini.value, 10));
+  });
+  nVelocita.addEventListener("input", function () {
+    velocita = parseInt(nVelocita.value, 10) / 10;
+    vVelocita.textContent = moltiplicatore(nVelocita.value);
+  });
+  nDimensione.addEventListener("input", function () {
+    dimensione = parseInt(nDimensione.value, 10) / 10;
+    vDimensione.textContent = moltiplicatore(nDimensione.value);
+    palloncini.forEach(misura);
+  });
+  bRimescola.addEventListener("click", rimescola);
+  bFilo.addEventListener("click", function () {
+    conFilo = !conFilo;
+    bFilo.setAttribute("aria-pressed", String(conFilo));
+    ridisegna();
+  });
+  bPausa.addEventListener("click", function () {
+    inPausa = !inPausa;
+    bPausa.setAttribute("aria-pressed", String(inPausa));
+    bPausa.textContent = inPausa ? "Riprendi" : "Pausa";
+  });
+
+  window.addEventListener("resize", function () {
+    L = window.innerWidth;
+    H = window.innerHeight;
+    palloncini.forEach(function (p) {
+      misura(p);
+      p.x = Math.min(Math.max(p.x, p.raggio), L - p.raggio);
+      p.y = Math.min(Math.max(p.y, p.raggio), H - p.raggio);
+    });
+  });
+
+  window.addEventListener("pointermove", function (e) {
+    puntatore.x = e.clientX;
+    puntatore.y = e.clientY;
+    puntatore.attivo = true;
+  });
+  window.addEventListener("pointerleave", function () { puntatore.attivo = false; });
+
+  if (motoRidotto) {
+    inPausa = true;
+    bPausa.textContent = "Riprendi";
+    bPausa.setAttribute("aria-pressed", "true");
+  }
+
+  imposta(parseInt(nPalloncini.value, 10));
+  requestAnimationFrame(passo);
+})();
+</script>
