@@ -11,7 +11,6 @@
     --gold:#D9A227;
     --panel:rgba(250,245,236,.86);
     --panel-line:rgba(42,31,23,.14);
-    --speck:rgba(42,31,23,.07);
     --halo:rgba(217,162,39,.13);
     --shadow:drop-shadow(0 8px 12px rgba(42,31,23,.14));
     --field:rgba(42,31,23,.10);
@@ -27,7 +26,6 @@
       --gold:#E8BC53;
       --panel:rgba(28,21,16,.82);
       --panel-line:rgba(244,232,215,.16);
-      --speck:rgba(255,250,240,.05);
       --halo:rgba(224,122,95,.14);
       --shadow:drop-shadow(0 10px 18px rgba(0,0,0,.45));
       --field:rgba(244,232,215,.14);
@@ -43,7 +41,6 @@
     --gold:#E8BC53;
     --panel:rgba(28,21,16,.82);
     --panel-line:rgba(244,232,215,.16);
-    --speck:rgba(255,250,240,.05);
     --halo:rgba(224,122,95,.14);
     --shadow:drop-shadow(0 10px 18px rgba(0,0,0,.45));
     --field:rgba(244,232,215,.14);
@@ -66,10 +63,8 @@
     isolation:isolate;
     overflow:hidden;
     background:
-      radial-gradient(circle at 18% 12%, var(--halo) 0, transparent 42%),
-      radial-gradient(circle at 82% 78%, var(--halo) 0, transparent 46%),
-      radial-gradient(var(--speck) 1px, transparent 1.4px) 0 0/26px 26px,
-      radial-gradient(var(--speck) 1px, transparent 1.4px) 13px 13px/26px 26px,
+      radial-gradient(circle at 18% 12%, var(--halo) 0, transparent 45%),
+      radial-gradient(circle at 82% 78%, var(--halo) 0, transparent 48%),
       var(--ground);
   }
 
@@ -236,6 +231,8 @@
   <div class="bottoni">
     <button type="button" id="b-rimescola">Rimescola volti</button>
     <button type="button" id="b-filo" aria-pressed="true">Filo</button>
+    <button type="button" id="b-suono" aria-pressed="false">Suono</button>
+    <button type="button" id="b-voci" aria-pressed="false">Voci</button>
     <button type="button" id="b-pausa" aria-pressed="false">Pausa</button>
   </div>
 </div>
@@ -481,6 +478,198 @@
     });
   }
 
+  var FRASI = ["ih ih ih", "ah ah ah", "eh eh eh", "che bella sfoglia", "guarda come volo", "ancora un giro"];
+
+  /* ---------- suono: risatine e tuc dei palloncini, sintetizzati ---------- */
+  var suono = (function () {
+    var ctx = null, master = null, fiato = null, acceso = false, vociAccese = false;
+    var prossimaVoce = 0;
+    var ultimoTuc = 0, ultimaRisata = 0, prossimaRisata = 0;
+
+    function apri() {
+      if (ctx) return;
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      ctx = new AC();
+      master = ctx.createGain();
+      master.gain.value = 0.9;
+      var caldo = ctx.createBiquadFilter();
+      caldo.type = "lowpass";
+      caldo.frequency.value = 6200;
+
+      /* un filo di stanza intorno alle voci */
+      var coda = ctx.createConvolver();
+      var lung = Math.floor(ctx.sampleRate * 0.5);
+      var imp = ctx.createBuffer(2, lung, ctx.sampleRate);
+      for (var c = 0; c < 2; c++) {
+        var dati = imp.getChannelData(c);
+        for (var i = 0; i < lung; i++) {
+          dati[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / lung, 2.6);
+        }
+      }
+      coda.buffer = imp;
+      var quantaCoda = ctx.createGain();
+      quantaCoda.gain.value = 0.22;
+
+      master.connect(caldo);
+      caldo.connect(ctx.destination);
+      caldo.connect(coda);
+      coda.connect(quantaCoda);
+      quantaCoda.connect(ctx.destination);
+
+      /* fiato: un secondo di rumore, riusato per tutte le risate */
+      fiato = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      var f = fiato.getChannelData(0);
+      for (var j = 0; j < f.length; j++) f[j] = Math.random() * 2 - 1;
+    }
+
+    /* il "tuc" morbido del palloncino che tocca il bordo */
+    function tuc(tono, forza) {
+      var t = ctx.currentTime;
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(tono, t);
+      o.frequency.exponentialRampToValueAtTime(tono * 0.5, t + 0.09);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.1 * forza, t + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+      o.connect(g); g.connect(master);
+      o.start(t); o.stop(t + 0.16);
+    }
+
+    /* Una risatina di bambina, costruita come si costruisce una voce:
+       le corde vocali (l onda a dente di sega), la bocca (tre formanti)
+       e il fiato fra una sillaba e l altra. Niente strilli: sillabe
+       larghe, tono che scende, volume basso. */
+    function sillaba(t0, f0, vocale, forza) {
+      var o = ctx.createOscillator();
+      o.type = "sawtooth";
+      o.frequency.setValueAtTime(f0 * 1.04, t0);
+      o.frequency.exponentialRampToValueAtTime(f0 * 0.88, t0 + 0.17);
+
+      var vib = ctx.createOscillator(), vibG = ctx.createGain();
+      vib.frequency.value = 5.2 + Math.random() * 1.4;
+      vibG.gain.value = f0 * 0.014;
+      vib.connect(vibG); vibG.connect(o.frequency);
+
+      var glottide = ctx.createBiquadFilter();
+      glottide.type = "lowpass";
+      glottide.frequency.value = 3400;
+      glottide.Q.value = 0.6;
+
+      var busta = ctx.createGain();
+      busta.gain.setValueAtTime(0.0001, t0);
+      busta.gain.exponentialRampToValueAtTime(0.5 * forza, t0 + 0.028);
+      busta.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.19);
+
+      o.connect(glottide);
+      /* i tre formanti: cambiano la vocale da "hi" a "he" */
+      var F = vocale === "i" ? [370, 2750, 3400] : [560, 2150, 3050];
+      var pesi = [1, 0.42, 0.2];
+      for (var k = 0; k < 3; k++) {
+        var b = ctx.createBiquadFilter();
+        b.type = "bandpass";
+        b.frequency.value = F[k] * (0.97 + Math.random() * 0.06);
+        b.Q.value = 7 + k * 3;
+        var gg = ctx.createGain();
+        gg.gain.value = pesi[k];
+        glottide.connect(b); b.connect(gg); gg.connect(busta);
+      }
+      busta.connect(master);
+      o.start(t0); o.stop(t0 + 0.22);
+      vib.start(t0); vib.stop(t0 + 0.22);
+
+      /* la "h": un soffio corto davanti alla sillaba */
+      if (fiato) {
+        var n = ctx.createBufferSource();
+        n.buffer = fiato;
+        n.loop = true;
+        var nf = ctx.createBiquadFilter();
+        nf.type = "bandpass";
+        nf.frequency.value = 1900;
+        nf.Q.value = 0.9;
+        var ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.0001, t0 - 0.03);
+        ng.gain.exponentialRampToValueAtTime(0.055 * forza, t0 + 0.01);
+        ng.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
+        n.connect(nf); nf.connect(ng); ng.connect(master);
+        n.start(Math.max(0, t0 - 0.03)); n.stop(t0 + 0.12);
+      }
+    }
+
+    function risatina(tono) {
+      var t = ctx.currentTime + 0.03;
+      var colpi = 3 + Math.floor(Math.random() * 3);
+      var vocale = Math.random() < 0.6 ? "i" : "e";
+      for (var i = 0; i < colpi; i++) {
+        var f0 = tono * Math.pow(0.955, i) * (0.99 + Math.random() * 0.02);
+        var forza = i === 0 ? 1 : 0.92 - i * 0.06;
+        sillaba(t, f0, vocale, forza);
+        t += 0.175 + Math.random() * 0.045;
+      }
+    }
+
+    /* Voci di sintesi: quelle installate nel dispositivo di chi guarda.
+       Nessun file da scaricare, ma la voce cambia da telefono a computer
+       e su qualche apparecchio l italiano non c e: e' un di piu', non una
+       certezza. */
+    function voce(frase) {
+      if (!window.speechSynthesis) return;
+      var u = new SpeechSynthesisUtterance(frase);
+      var elenco = window.speechSynthesis.getVoices().filter(function (v) {
+        return /^it/i.test(v.lang);
+      });
+      if (elenco.length) u.voice = elenco[Math.floor(Math.random() * elenco.length)];
+      u.lang = "it-IT";
+      u.pitch = 1.55 + Math.random() * 0.4;   /* acuta come una bambina */
+      u.rate = 0.92 + Math.random() * 0.18;
+      u.volume = 0.5;
+      window.speechSynthesis.speak(u);
+    }
+
+    return {
+      attivo: function () { return acceso; },
+      vociAttive: function () { return vociAccese; },
+      accendiVoci: function (si) {
+        vociAccese = si;
+        if (si) prossimaVoce = performance.now() + 1500;
+        else if (window.speechSynthesis) window.speechSynthesis.cancel();
+      },
+      accendi: function (si) {
+        acceso = si;
+        if (si) {
+          apri();
+          if (ctx && ctx.state === "suspended") ctx.resume();
+          prossimaRisata = performance.now() + 1200;
+        }
+      },
+      rimbalzo: function (p) {
+        if (!acceso || !ctx || document.hidden) return;
+        var ora = performance.now();
+        if (ora - ultimoTuc < 240) return;
+        ultimoTuc = ora;
+        tuc(300 / p.profondita, Math.min(1, p.profondita));
+        if (Math.random() < 0.14 && ora - ultimaRisata > 1600) {
+          ultimaRisata = ora;
+          risatina(360 + Math.random() * 90);
+        }
+      },
+      battito: function () {
+        var adesso = performance.now();
+        if (vociAccese && !document.hidden && adesso > prossimaVoce) {
+          prossimaVoce = adesso + 7000 + Math.random() * 8000;
+          voce(FRASI[Math.floor(Math.random() * FRASI.length)]);
+        }
+        if (!acceso || !ctx || document.hidden) return;
+        var ora = performance.now();
+        if (ora < prossimaRisata) return;
+        prossimaRisata = ora + 3500 + Math.random() * 5000;
+        ultimaRisata = ora;
+        risatina(360 + Math.random() * 90);
+      }
+    };
+  })();
+
   /* ---------- animazione ---------- */
   var ultimo = performance.now();
 
@@ -510,10 +699,12 @@
         }
 
         /* rimbalzo sui quattro bordi */
-        if (p.x < p.raggio) { p.x = p.raggio; p.vx = Math.abs(p.vx); p.vy += (Math.random() - 0.5) * 0.12; }
-        if (p.x > L - p.raggio) { p.x = L - p.raggio; p.vx = -Math.abs(p.vx); p.vy += (Math.random() - 0.5) * 0.12; }
-        if (p.y < p.raggio) { p.y = p.raggio; p.vy = Math.abs(p.vy); p.vx += (Math.random() - 0.5) * 0.12; }
-        if (p.y > H - p.raggio) { p.y = H - p.raggio; p.vy = -Math.abs(p.vy); p.vx += (Math.random() - 0.5) * 0.12; }
+        var urto = false;
+        if (p.x < p.raggio) { p.x = p.raggio; p.vx = Math.abs(p.vx); p.vy += (Math.random() - 0.5) * 0.12; urto = true; }
+        if (p.x > L - p.raggio) { p.x = L - p.raggio; p.vx = -Math.abs(p.vx); p.vy += (Math.random() - 0.5) * 0.12; urto = true; }
+        if (p.y < p.raggio) { p.y = p.raggio; p.vy = Math.abs(p.vy); p.vx += (Math.random() - 0.5) * 0.12; urto = true; }
+        if (p.y > H - p.raggio) { p.y = H - p.raggio; p.vy = -Math.abs(p.vy); p.vx += (Math.random() - 0.5) * 0.12; urto = true; }
+        if (urto) suono.rimbalzo(p);
 
         /* velocità entro limiti, così nessuno schizza via */
         var s = Math.hypot(p.vx, p.vy);
@@ -530,6 +721,7 @@
         "translate3d(" + (p.x - p.larghezza / 2) + "px," + (p.y - p.larghezza / 2) + "px,0) rotate(" + rot.toFixed(2) + "deg)";
     }
 
+    if (!inPausa) suono.battito();
     requestAnimationFrame(passo);
   }
 
@@ -542,6 +734,8 @@
   var vDimensione = document.getElementById("v-dimensione");
   var bRimescola = document.getElementById("b-rimescola");
   var bFilo = document.getElementById("b-filo");
+  var bSuono = document.getElementById("b-suono");
+  var bVoci = document.getElementById("b-voci");
   var bPausa = document.getElementById("b-pausa");
 
   function moltiplicatore(x) { return (x / 10).toFixed(1).replace(".", ",") + "×"; }
@@ -564,6 +758,18 @@
     conFilo = !conFilo;
     bFilo.setAttribute("aria-pressed", String(conFilo));
     ridisegna();
+  });
+  bSuono.addEventListener("click", function () {
+    var acceso = !suono.attivo();
+    suono.accendi(acceso);
+    bSuono.setAttribute("aria-pressed", String(acceso));
+    bSuono.textContent = acceso ? "Muto" : "Suono";
+  });
+  bVoci.addEventListener("click", function () {
+    var accese = !suono.vociAttive();
+    suono.accendiVoci(accese);
+    bVoci.setAttribute("aria-pressed", String(accese));
+    bVoci.textContent = accese ? "Zitte" : "Voci";
   });
   bPausa.addEventListener("click", function () {
     inPausa = !inPausa;
