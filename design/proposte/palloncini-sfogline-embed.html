@@ -263,7 +263,7 @@
   /* ---------- suono: risatine e tuc sintetizzati, oppure un file vero ---------- */
   function creaSuono(opz) {
     var ctx = null, master = null, fiato = null, risate = [], traccia = null, acceso = false, vociAccese = false;
-    var prossimaVoce = 0, prossimoFile = Infinity;
+    var prossimaVoce = 0, parlaFinoA = 0, prossimoFile = Infinity;
     var ultimoTuc = 0, ultimaRisata = 0, prossimaRisata = 0;
 
    function apri() {
@@ -727,10 +727,12 @@
       var src = ctx.createBufferSource();
       src.buffer = b;
       var g = ctx.createGain();
-      g.gain.value = 0.75;
+      g.gain.value = 1;
       src.connect(g);
       g.connect(master);
       src.start();
+      parlaFinoA = performance.now() + b.duration * 1000 + 350;
+      if (prossimaRisata < parlaFinoA) prossimaRisata = parlaFinoA;
     }
 
     return {
@@ -772,6 +774,7 @@
       rimbalzo: function (p) {
         if (!acceso || !ctx || document.hidden) return;
         var ora = performance.now();
+        if (ora < parlaFinoA) return;        /* silenzio: c'e' una vocina che parla */
         if (ora - ultimoTuc < 240) return;
         ultimoTuc = ora;
         tuc(300 / p.profondita, Math.min(1, p.profondita));
