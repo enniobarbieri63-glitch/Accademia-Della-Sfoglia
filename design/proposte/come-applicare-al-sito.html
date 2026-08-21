@@ -145,7 +145,7 @@
 
   <section>
     <h2>Il suono</h2>
-    <p>Le risatine e i "tuc" dei palloncini sono sintetizzati dal browser: nessun file da scaricare, nessuna licenza da pagare. Si accendono con <code>data-suono="si"</code> e partono solo dopo il primo tocco del visitatore, perche' i browser bloccano l'audio automatico — ed e' giusto cosi'.</p>
+    <p>Le risatine e i "tuc" dei palloncini sono sintetizzati dal browser: nessun file da scaricare, nessuna licenza da pagare. Nel blocco il suono e' gia' acceso (<code>data-suono="si"</code>) e parte al primo tocco del visitatore, perche' i browser bloccano l'audio automatico — ed e' giusto cosi'. Metti <code>"no"</code> se lo vuoi muto.</p>
     <p>La sintesi pero' ha un tetto: una risata vera, con le sue irregolarita' di fiato, non si imita con degli oscillatori. Per quella serve una registrazione. Mettila in <code>data-suono-file</code> e parte da sola ogni otto-venti secondi, come una risata che scappa; con <code>data-suono-modo="anello"</code> diventa invece un sottofondo continuo.</p>
     <div class="blocco"><pre>&lt;div data-palloncini-sfogline
      data-suono-file="/audio/risate-bimbi.mp3"
@@ -200,10 +200,11 @@
      Le foto rendono meglio se sono quadrate, con il viso al centro,
      circa 500-800 px di lato. Vengono ritagliate a cerchio.
 
-     SUONO (spento di partenza: i browser bloccano l'audio finche' il
-     visitatore non tocca la pagina, e nessuno ama i siti che suonano da soli)
-       data-suono        "no" (default) | "si" = risatine e "tuc" sintetizzati
-                         al volo, senza scaricare nessun file
+     SUONO (nel div qui sotto e' acceso. Parte al primo tocco del
+     visitatore: i browser non lasciano suonare una pagina prima. Metti
+     "no" se preferisci il silenzio, e lascia sempre un modo per spegnerlo)
+       data-suono        "si" = risatine e "tuc" sintetizzati al volo,
+                         senza scaricare nessun file; "no" = muto
        data-suono-file   "/audio/risate.mp3" = una registrazione vera in
                          sottofondo, ripetuta all'infinito
        data-suono-volume da 0 a 1 (default 0.35)
@@ -234,7 +235,7 @@
      data-strato="pagina"
      data-foto=""
      data-foto-quota="1"
-     data-suono="no"
+     data-suono="si"
      data-suono-file=""
      data-suono-volume="0.35"
      data-suono-modo="ogni-tanto"

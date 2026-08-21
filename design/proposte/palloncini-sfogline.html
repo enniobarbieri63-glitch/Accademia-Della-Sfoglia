@@ -182,6 +182,21 @@
     background:var(--accent);border-color:var(--accent);color:#FAF5EC;
   }
 
+  .avviso-suono{
+    position:fixed;z-index:4;
+    left:50%;bottom:178px;
+    transform:translateX(-50%);
+    padding:9px 16px;
+    background:var(--accent);color:#FAF5EC;
+    font-size:13.5px;letter-spacing:.06em;
+    border-radius:2px;
+    box-shadow:0 8px 20px rgba(42,31,23,.18);
+    pointer-events:none;
+    transition:opacity .5s ease;
+  }
+  .avviso-suono[hidden]{display:none}
+  .avviso-suono.spento{opacity:0}
+
   .nota{
     position:fixed;z-index:2;
     left:26px;bottom:24px;
@@ -191,6 +206,7 @@
   }
   @media (max-width:900px){
     .nota{display:none}
+    .avviso-suono{bottom:200px;font-size:13px}
     .titolo-studio h1{font-size:26px}
     .comandi{gap:12px 16px;padding:12px 14px}
   }
@@ -219,6 +235,8 @@
 </header>
 
 <p class="nota">Ogni volto nasce diverso: fazzoletto, occhiali, orecchini d'oro, una spolverata di farina sulla guancia. Disegno vettoriale, nessuna fotografia — scala da una favicon a un manifesto.</p>
+
+<div class="avviso-suono" id="avviso-suono">Tocca lo schermo per sentire le risate</div>
 
 <div class="comandi" role="group" aria-label="Regolazioni della scena">
   <div class="cursore">
@@ -864,6 +882,8 @@
     suono.accendi(acceso);
     bSuono.setAttribute("aria-pressed", String(acceso));
     bSuono.textContent = acceso ? "♪ Muto" : "♪ Suono";
+    avvisoSuono.classList.add("spento");
+    setTimeout(function () { avvisoSuono.hidden = true; }, 600);
   });
   bVoci.addEventListener("click", function () {
     var accese = !suono.vociAttive();
@@ -893,6 +913,29 @@
     puntatore.attivo = true;
   });
   window.addEventListener("pointerleave", function () { puntatore.attivo = false; });
+
+  /* Il suono fa parte dell'animazione: nasce acceso e parte al primo tocco,
+     perche' i browser non lasciano suonare una pagina prima che il
+     visitatore la tocchi. */
+  var avvisoSuono = document.getElementById("avviso-suono");
+
+  function inizioSuono() {
+    if (!suono.attivo()) return;      /* se nel frattempo l'hanno spento, niente */
+    suono.accendi(true);
+    avvisoSuono.classList.add("spento");
+    setTimeout(function () { avvisoSuono.hidden = true; }, 600);
+  }
+
+  if (!motoRidotto) {
+    suono.accendi(true);
+    bSuono.setAttribute("aria-pressed", "true");
+    bSuono.textContent = "♪ Muto";
+    ["pointerdown", "keydown", "touchstart", "wheel"].forEach(function (e) {
+      window.addEventListener(e, inizioSuono, { once: true });
+    });
+  } else {
+    avvisoSuono.hidden = true;
+  }
 
   if (motoRidotto) {
     inPausa = true;
