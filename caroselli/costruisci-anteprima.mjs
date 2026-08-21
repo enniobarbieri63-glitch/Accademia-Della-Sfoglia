@@ -151,7 +151,7 @@ const uscita = process.argv[2] && !process.argv[2].startsWith('--')
 const FONT = 'https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap';
 
 const pagina = soloCorpo
-  ? `<title>Sei caroselli</title>\n<style>@import url("${FONT}");\n${CSS_ANTEPRIMA}</style>\n${corpo}\n`
+  ? `<title>Caroselli della Sfoglia</title>\n<style>@import url("${FONT}");\n${CSS_ANTEPRIMA}</style>\n${corpo}\n`
   : `<!doctype html>
 <html lang="it">
 <head>
