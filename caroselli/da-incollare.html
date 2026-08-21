@@ -1,0 +1,1623 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Il codice da incollare — Accademia della Sfoglia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap">
+<style>
+  :root{color-scheme:light}
+  body{margin:0;background:#FAF5EC;color:#2A1F17;
+       font-family:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif}
+  .cd-testata{padding:clamp(44px,7vw,80px) clamp(20px,6vw,80px) clamp(28px,4vw,44px)}
+  .cd-marchio{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+  .cd-marchio span{font-family:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;font-size:18px;font-weight:700}
+  .cd-titolo{margin:0;font-family:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;font-weight:400;
+             font-size:clamp(36px,5.6vw,68px);line-height:1;letter-spacing:-.02em;text-wrap:balance}
+  .cd-titolo em{font-style:italic;color:#A93B27}
+  .cd-occhio{margin:0 0 14px;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:#A93B27}
+  .cd-intro{margin:20px 0 0;max-width:66ch;font-size:clamp(16px,1.5vw,18px);line-height:1.6;color:#4A3B30;text-wrap:pretty}
+  .cd-blocco{border-top:2px solid #2A1F17;padding:26px clamp(20px,6vw,80px) clamp(34px,4vw,52px)}
+  .cd-riga{display:flex;align-items:flex-start;gap:clamp(16px,3vw,34px);flex-wrap:wrap;margin-bottom:18px}
+  .cd-numero{font-family:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;font-size:40px;line-height:1;
+             color:#A93B27;font-variant-numeric:tabular-nums}
+  .cd-dati{flex:1 1 300px;min-width:0}
+  .cd-nome{margin:0 0 6px;font-family:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;font-weight:400;
+           font-size:26px;line-height:1.12}
+  .cd-testo{margin:0;max-width:64ch;font-size:15px;line-height:1.6;color:#4A3B30;text-wrap:pretty}
+  .cd-lato{display:flex;flex-direction:column;align-items:flex-start;gap:10px;flex:0 1 auto;min-width:0}
+  .cd-dove{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#6B5A4C}
+  .cd-file{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#A93B27;overflow-wrap:anywhere}
+  .cd-copia{display:inline-flex;align-items:center;gap:9px;padding:11px 20px;cursor:pointer;
+            border:1px solid #2A1F17;background:transparent;color:#2A1F17;font-family:inherit;
+            font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+            transition:background .2s ease,color .2s ease}
+  .cd-copia:hover{background:#2A1F17;color:#FAF5EC}
+  .cd-copia.is-fatto{background:#A93B27;border-color:#A93B27;color:#FAF5EC}
+  .cd-copia--pieno{background:#A93B27;border-color:#A93B27;color:#FAF5EC}
+  .cd-copia--pieno:hover{background:#8A2F1F;border-color:#8A2F1F;color:#FAF5EC}
+  .cd-codice{position:relative;background:#241A13;border:1px solid #3D2E22}
+  .cd-codice pre{margin:0;max-height:min(52vh,460px);overflow:auto;padding:20px 22px}
+  .cd-codice code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;
+                  line-height:1.65;color:#EFE3D2;white-space:pre;tab-size:2}
+  .cd-misura{padding:9px 22px;border-top:1px solid #3D2E22;font-size:12px;color:#B49B80;
+             display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .cd-brief{background:#F2E9DA;border:1px solid #C9B79C}
+  .cd-brief pre{margin:0;max-height:min(46vh,380px);overflow:auto;padding:20px 22px;
+                white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+                font-size:13px;line-height:1.6;color:#3A2C22}
+  .cd-piede{border-top:2px solid #2A1F17;padding:clamp(34px,5vw,60px) clamp(20px,6vw,80px);
+            font-size:14px;line-height:1.7;color:#4A3B30}
+  .cd-piede code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#A93B27}
+  :focus-visible{outline:2px solid #A93B27;outline-offset:3px}
+</style>
+</head>
+<body>
+
+<header class="cd-testata">
+  <div class="cd-marchio">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A93B27" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M4.6 9.2h14.8M4.6 14.8h14.8M9.2 3.4v17.2M14.8 3.4v17.2"></path>
+    </svg>
+    <span>Accademia della Sfoglia</span>
+  </div>
+  <p class="cd-occhio">Sei caroselli · da consegnare a chi mette mano al sito</p>
+  <h1 class="cd-titolo">Il codice<br><em>da incollare</em></h1>
+  <p class="cd-intro">Ogni blocco qui sotto è un carosello completo — stile, markup e script insieme — e va incollato nella pagina così com'è. Il primo riquadro è il messaggio da passare a chi lo inserirà: dice dove va ogni pezzo e cosa si può cambiare.</p>
+</header>
+
+<section class="cd-blocco" id="istruzioni">
+  <div class="cd-riga">
+    <div class="cd-numero">00</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Il messaggio per chi inserisce</h2>
+      <p class="cd-testo">Da incollare per primo, prima dei sei blocchi di codice: spiega come vanno usati, cosa va sostituito e cosa non va toccato.</p>
+    </div>
+    <div class="cd-lato">
+      <button type="button" class="cd-copia cd-copia--pieno" data-copia="#istruzioni-testo">Copia il messaggio</button>
+      <button type="button" class="cd-copia" data-tutto="1">Copia messaggio + sei blocchi</button>
+    </div>
+  </div>
+  <div class="cd-brief">
+    <pre id="istruzioni-testo" tabindex="0">Ti passo sei componenti carosello, già scritti e verificati, per il sito accademiadellasfoglia.it.
+
+Come inserirli:
+- Ogni blocco è autosufficiente: contiene stile, markup e script del carosello. Va incollato nella pagina così com'è, senza riscriverlo e senza estrarne i pezzi.
+- Le classi cominciano tutte per "ads-": non toccarle, servono a non far collidere questi stili con il resto del sito.
+- I sei blocchi possono convivere nella stessa pagina.
+- Nel &lt;head&gt; del sito devono essere caricati una volta sola i caratteri Bodoni Moda e Archivo:
+  &lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
+  &lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;
+  &lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&amp;family=Archivo:wght@400;500;600&amp;display=swap"&gt;
+
+Cosa va cambiato, e solo questo:
+- Il testo fra parentesi quadre ([PREZZO], [GG], [mese], [ANNO], [N], [Nome Cognome]) va sostituito con i dati veri.
+- Le immagini sono segnaposto in CSS: per metterci le foto si cambia la variabile --img in url('/percorso/foto.jpg') e si toglie la classe "is-segnaposto".
+- Gli href dei link (#corsi, #prenota, #contatti…) vanno puntati alle pagine vere.
+- Le testimonianze del carosello 3 sono testi fac-simile: vanno sostituite con recensioni reali.
+
+Da non toccare: la struttura ARIA, gli attributi inert, i blocchi @media (prefers-reduced-motion) e la logica JavaScript. Servono a far funzionare i caroselli con la tastiera, con i lettori di schermo e per chi ha chiesto meno animazioni.</pre>
+  </div>
+</section>
+
+<section class="cd-blocco" id="blocco-01">
+  <div class="cd-riga">
+    <div class="cd-numero">01</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Slideshow d'apertura</h2>
+      <p class="cd-testo">Tre messaggi che si alternano da soli in dissolvenza, con barra di avanzamento sui punti, tasto di pausa, frecce e scorrimento col dito.</p>
+    </div>
+    <div class="cd-lato">
+      <div class="cd-dove">Testata della home</div>
+      <div class="cd-file">caroselli/01-slideshow-apertura.html</div>
+      <button type="button" class="cd-copia" data-copia="#codice-01">Copia il codice</button>
+    </div>
+  </div>
+  <div class="cd-codice">
+    <pre id="codice-01" tabindex="0"><code>&lt;!-- ============================================================
+     CAROSELLO 1 · Slideshow d'apertura (hero)
+     Immagini: sostituire il valore di --img su ogni .ads-hero__slide
+     con url('/immagini/nome-file.jpg') e togliere la classe
+     "is-segnaposto" dal div .ads-hero__media.
+     ============================================================ --&gt;
+&lt;style&gt;
+.ads-hero{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-hero-durata:6000ms;
+  position:relative; overflow:hidden; background:var(--ads-inchiostro);
+  font-family:var(--ads-sans); color:var(--ads-crema);
+  box-sizing:border-box;
+}
+.ads-hero *,.ads-hero *::before,.ads-hero *::after{box-sizing:border-box}
+.ads-hero__viewport{position:relative; height:clamp(440px,68vh,680px)}
+.ads-hero__slide{
+  position:absolute; inset:0; margin:0; opacity:0; visibility:hidden;
+  transition:opacity .9s ease, visibility 0s linear .9s;
+}
+.ads-hero__slide.is-active{opacity:1; visibility:visible; transition:opacity .9s ease}
+.ads-hero__media{
+  position:absolute; inset:0;
+  background-image:var(--img); background-size:cover; background-position:center;
+  transform:scale(1.02);
+}
+.ads-hero__slide.is-active .ads-hero__media{animation:ads-hero-zoom 12s ease-out both}
+@keyframes ads-hero-zoom{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-hero__media.is-segnaposto::before{
+  content:""; position:absolute; inset:0; opacity:.5;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.13) 0 1px,transparent 1px 14px);
+}
+.ads-hero__velo{
+  position:absolute; inset:0;
+  background:linear-gradient(92deg,rgba(28,19,13,.86) 0%,rgba(28,19,13,.58) 42%,rgba(28,19,13,.12) 100%);
+}
+.ads-hero__contenuto{
+  position:relative; height:100%; display:flex; flex-direction:column;
+  justify-content:center; gap:20px; max-width:660px;
+  padding:0 clamp(24px,6vw,86px);
+}
+.ads-hero__occhiello{
+  margin:0; font-size:13px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ads-oro);
+}
+.ads-hero__titolo{
+  margin:0; font-family:var(--ads-serif); font-weight:400;
+  font-size:clamp(46px,7.4vw,86px); line-height:.96; letter-spacing:-.02em;
+}
+.ads-hero__titolo em{font-style:italic; color:#E8A66E}
+.ads-hero__testo{
+  margin:0; max-width:46ch; font-size:clamp(16px,1.35vw,19px); line-height:1.55;
+  color:rgba(250,245,236,.86); text-wrap:pretty;
+}
+.ads-hero__azioni{display:flex; flex-wrap:wrap; gap:14px; margin-top:6px}
+.ads-hero__cta{
+  display:inline-flex; align-items:center; gap:10px; padding:14px 26px;
+  background:var(--ads-rosso); color:var(--ads-crema); text-decoration:none;
+  font-size:14px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease, transform .2s ease;
+}
+.ads-hero__cta:hover{background:#8A2F1F; transform:translateY(-1px)}
+.ads-hero__cta--fantasma{background:transparent; border:1px solid rgba(250,245,236,.45)}
+.ads-hero__cta--fantasma:hover{background:rgba(250,245,236,.1)}
+.ads-hero__comandi{
+  position:absolute; left:0; right:0; bottom:0;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  padding:0 clamp(24px,6vw,86px) clamp(22px,4vw,34px);
+}
+.ads-hero__punti{display:flex; align-items:center; gap:10px}
+.ads-hero__punto{
+  position:relative; width:52px; height:3px; padding:0; border:0; cursor:pointer;
+  background:rgba(250,245,236,.3); overflow:hidden;
+}
+.ads-hero__punto-riempimento{position:absolute; inset:0; width:0; background:var(--ads-crema)}
+.ads-hero__punto.is-active .ads-hero__punto-riempimento{
+  animation:ads-hero-barra var(--ads-hero-durata) linear forwards;
+}
+.ads-hero.is-in-pausa .ads-hero__punto.is-active .ads-hero__punto-riempimento{animation-play-state:paused}
+@keyframes ads-hero-barra{from{width:0}to{width:100%}}
+.ads-hero__frecce{display:flex; gap:8px; margin-left:auto}
+.ads-hero__bottone{
+  width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid rgba(250,245,236,.4); background:transparent; color:var(--ads-crema);
+  border-radius:50%; transition:background .2s ease, border-color .2s ease;
+}
+.ads-hero__bottone:hover{background:rgba(250,245,236,.14); border-color:var(--ads-crema)}
+.ads-hero :focus-visible{outline:2px solid var(--ads-oro); outline-offset:3px}
+.ads-hero__sr{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+@media (max-width:640px){
+  .ads-hero__comandi{gap:12px}
+  .ads-hero__punto{width:34px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-hero__slide{transition:none}
+  .ads-hero__slide.is-active .ads-hero__media{animation:none}
+  .ads-hero__punto.is-active .ads-hero__punto-riempimento{animation:none; width:100%}
+}
+&lt;/style&gt;
+
+&lt;section class="ads-hero" data-autoplay="6000" aria-roledescription="carosello" aria-label="Accademia della Sfoglia in breve"&gt;
+  &lt;div class="ads-hero__viewport"&gt;
+
+    &lt;article class="ads-hero__slide is-active" aria-roledescription="diapositiva" aria-label="1 di 3"
+             style="--img:radial-gradient(120% 95% at 18% 22%,rgba(217,162,39,.62),transparent 62%),radial-gradient(110% 110% at 88% 78%,rgba(169,59,39,.5),transparent 60%),linear-gradient(155deg,#F2E9DA,#D8BE93)"&gt;
+      &lt;div class="ads-hero__media is-segnaposto"&gt;&lt;/div&gt;
+      &lt;div class="ads-hero__velo"&gt;&lt;/div&gt;
+      &lt;div class="ads-hero__contenuto"&gt;
+        &lt;p class="ads-hero__occhiello"&gt;Bottega Via Emilia · Milano&lt;/p&gt;
+        &lt;h2 class="ads-hero__titolo"&gt;La sfoglia&lt;br&gt;&lt;em&gt;a mano&lt;/em&gt;&lt;/h2&gt;
+        &lt;p class="ads-hero__testo"&gt;Uovo e farina, il gesto del mattarello, il taglio. Una giornata al tagliere con i maestri dell'Accademia. Nessuna macchina.&lt;/p&gt;
+        &lt;div class="ads-hero__azioni"&gt;
+          &lt;a class="ads-hero__cta" href="#corsi"&gt;Scopri i corsi&lt;/a&gt;
+          &lt;a class="ads-hero__cta ads-hero__cta--fantasma" href="#bottega"&gt;La bottega&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-hero__slide" aria-roledescription="diapositiva" aria-label="2 di 3"
+             style="--img:radial-gradient(130% 100% at 78% 18%,rgba(232,166,110,.6),transparent 58%),radial-gradient(120% 120% at 12% 84%,rgba(42,31,23,.45),transparent 62%),linear-gradient(200deg,#E9DCC4,#C4A87A)"&gt;
+      &lt;div class="ads-hero__media is-segnaposto"&gt;&lt;/div&gt;
+      &lt;div class="ads-hero__velo"&gt;&lt;/div&gt;
+      &lt;div class="ads-hero__contenuto"&gt;
+        &lt;p class="ads-hero__occhiello"&gt;Corso intensivo · [MESE]&lt;/p&gt;
+        &lt;h2 class="ads-hero__titolo"&gt;Tortellini,&lt;br&gt;&lt;em&gt;uno per volta&lt;/em&gt;&lt;/h2&gt;
+        &lt;p class="ads-hero__testo"&gt;Sei ore sul tagliere per imparare la chiusura, il ripieno e la giusta consistenza della sfoglia. Massimo [N] partecipanti.&lt;/p&gt;
+        &lt;div class="ads-hero__azioni"&gt;
+          &lt;a class="ads-hero__cta" href="#prenota"&gt;Prenota il posto&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-hero__slide" aria-roledescription="diapositiva" aria-label="3 di 3"
+             style="--img:radial-gradient(120% 90% at 50% 12%,rgba(250,245,236,.55),transparent 55%),radial-gradient(120% 120% at 20% 90%,rgba(169,59,39,.55),transparent 60%),linear-gradient(170deg,#E4D3B6,#A97B4A)"&gt;
+      &lt;div class="ads-hero__media is-segnaposto"&gt;&lt;/div&gt;
+      &lt;div class="ads-hero__velo"&gt;&lt;/div&gt;
+      &lt;div class="ads-hero__contenuto"&gt;
+        &lt;p class="ads-hero__occhiello"&gt;Dal 2018&lt;/p&gt;
+        &lt;h2 class="ads-hero__titolo"&gt;Una scuola,&lt;br&gt;&lt;em&gt;tre maestri&lt;/em&gt;&lt;/h2&gt;
+        &lt;p class="ads-hero__testo"&gt;Rina Poletti, Beppe Govoni e Gian Paolo Chiossi insegnano il mestiere come si è sempre fatto: guardando le mani.&lt;/p&gt;
+        &lt;div class="ads-hero__azioni"&gt;
+          &lt;a class="ads-hero__cta ads-hero__cta--fantasma" href="#maestri"&gt;Conosci i maestri&lt;/a&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class="ads-hero__comandi"&gt;
+    &lt;div class="ads-hero__punti"&gt;&lt;/div&gt;
+    &lt;button type="button" class="ads-hero__bottone ads-hero__pausa" aria-label="Metti in pausa lo scorrimento automatico"&gt;
+      &lt;svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"&gt;&lt;rect x="2" y="1.5" width="3.4" height="11" fill="currentColor"&gt;&lt;/rect&gt;&lt;rect x="8.6" y="1.5" width="3.4" height="11" fill="currentColor"&gt;&lt;/rect&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+    &lt;div class="ads-hero__frecce"&gt;
+      &lt;button type="button" class="ads-hero__bottone ads-hero__prec" aria-label="Diapositiva precedente"&gt;
+        &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M15 5l-7 7 7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+      &lt;button type="button" class="ads-hero__bottone ads-hero__succ" aria-label="Diapositiva successiva"&gt;
+        &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M9 5l7 7-7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+(function () {
+  var ICONA_PAUSA = '&lt;svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"&gt;&lt;rect x="2" y="1.5" width="3.4" height="11" fill="currentColor"&gt;&lt;/rect&gt;&lt;rect x="8.6" y="1.5" width="3.4" height="11" fill="currentColor"&gt;&lt;/rect&gt;&lt;/svg&gt;';
+  var ICONA_PLAY  = '&lt;svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"&gt;&lt;path d="M3 1.5l9 5.5-9 5.5z" fill="currentColor"&gt;&lt;/path&gt;&lt;/svg&gt;';
+
+  document.querySelectorAll('.ads-hero').forEach(function (radice) {
+    var slide = Array.prototype.slice.call(radice.querySelectorAll('.ads-hero__slide'));
+    if (!slide.length) return;
+    var viewport = radice.querySelector('.ads-hero__viewport');
+    var contPunti = radice.querySelector('.ads-hero__punti');
+    var btnPausa = radice.querySelector('.ads-hero__pausa');
+    var durata = parseInt(radice.dataset.autoplay, 10) || 6000;
+    var motoRidotto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var indice = 0, timer = null, sospesoDaUtente = false;
+
+    radice.style.setProperty('--ads-hero-durata', durata + 'ms');
+
+    var punti = slide.map(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-hero__punto';
+      b.innerHTML = '&lt;span class="ads-hero__punto-riempimento"&gt;&lt;/span&gt;&lt;span class="ads-hero__sr"&gt;Vai alla diapositiva ' + (i + 1) + '&lt;/span&gt;';
+      b.addEventListener('click', function () { vaiA(i); riavvia(); });
+      contPunti.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = (n + slide.length) % slide.length;
+      slide.forEach(function (s, i) {
+        var attiva = i === indice;
+        s.classList.toggle('is-active', attiva);
+        if (attiva) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+      });
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+    }
+
+    function avvia() {
+      ferma();
+      if (motoRidotto.matches || sospesoDaUtente) return;
+      radice.classList.remove('is-in-pausa');
+      viewport.setAttribute('aria-live', 'off');
+      timer = window.setInterval(function () { vaiA(indice + 1); }, durata);
+    }
+    function ferma() { if (timer) { window.clearInterval(timer); timer = null; } }
+    function sospendi() { ferma(); radice.classList.add('is-in-pausa'); viewport.setAttribute('aria-live', 'polite'); }
+    function riavvia() { if (!sospesoDaUtente) avvia(); }
+
+    btnPausa.addEventListener('click', function () {
+      sospesoDaUtente = !sospesoDaUtente;
+      if (sospesoDaUtente) { sospendi(); } else { avvia(); }
+      btnPausa.innerHTML = sospesoDaUtente ? ICONA_PLAY : ICONA_PAUSA;
+      btnPausa.setAttribute('aria-label', sospesoDaUtente ? 'Riprendi lo scorrimento automatico' : 'Metti in pausa lo scorrimento automatico');
+    });
+
+    radice.querySelector('.ads-hero__prec').addEventListener('click', function () { vaiA(indice - 1); riavvia(); });
+    radice.querySelector('.ads-hero__succ').addEventListener('click', function () { vaiA(indice + 1); riavvia(); });
+
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); riavvia(); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); riavvia(); }
+    });
+
+    radice.addEventListener('mouseenter', sospendi);
+    radice.addEventListener('mouseleave', riavvia);
+    radice.addEventListener('focusin', sospendi);
+    radice.addEventListener('focusout', function (e) {
+      if (!radice.contains(e.relatedTarget)) riavvia();
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) sospendi(); else riavvia();
+    });
+    motoRidotto.addEventListener('change', function () { motoRidotto.matches ? sospendi() : avvia(); });
+
+    var xIniziale = null;
+    viewport.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    viewport.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale;
+      xIniziale = null;
+      if (Math.abs(delta) &lt; 45) return;
+      vaiA(indice + (delta &lt; 0 ? 1 : -1));
+      riavvia();
+    });
+
+    if (motoRidotto.matches) { sospendi(); btnPausa.hidden = true; }
+    vaiA(0);
+    avvia();
+  });
+})();
+&lt;/script&gt;</code></pre>
+    <div class="cd-misura"><span>265 righe · 13.1 KB</span><span>stile + markup + script, tutto qui dentro</span></div>
+  </div>
+</section>
+
+<section class="cd-blocco" id="blocco-02">
+  <div class="cd-riga">
+    <div class="cd-numero">02</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Corsi in programma</h2>
+      <p class="cd-testo">Schede affiancate che scorrono con scroll-snap: dito, rotellina e frecce. Funziona anche a JavaScript spento, il JS aggiunge solo frecce e puntini.</p>
+    </div>
+    <div class="cd-lato">
+      <div class="cd-dove">Pagina corsi, home</div>
+      <div class="cd-file">caroselli/02-corsi-schede.html</div>
+      <button type="button" class="cd-copia" data-copia="#codice-02">Copia il codice</button>
+    </div>
+  </div>
+  <div class="cd-codice">
+    <pre id="codice-02" tabindex="0"><code>&lt;!-- ============================================================
+     CAROSELLO 2 · Corsi in programma (schede scorrevoli)
+     Trascinamento, rotellina e scorrimento nativo: il carrello usa
+     scroll-snap, quindi funziona anche senza JavaScript.
+     Per aggiungere un corso basta duplicare un &lt;article class="ads-corsi__scheda"&gt;.
+     ============================================================ --&gt;
+&lt;style&gt;
+.ads-corsi{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
+  --ads-testo:#4A3B30; --ads-linea:#C9B79C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-bordo:clamp(20px,6vw,86px);
+  background:var(--ads-crema); color:var(--ads-inchiostro);
+  font-family:var(--ads-sans); padding:clamp(48px,7vw,86px) 0; box-sizing:border-box;
+}
+.ads-corsi *,.ads-corsi *::before,.ads-corsi *::after{box-sizing:border-box}
+.ads-corsi__testata{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  flex-wrap:wrap; padding:0 var(--ads-bordo) clamp(26px,3vw,38px);
+}
+.ads-corsi__occhiello{
+  margin:0 0 10px; font-size:13px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ads-rosso);
+}
+.ads-corsi__titolo{
+  margin:0; font-family:var(--ads-serif); font-weight:400;
+  font-size:clamp(34px,4.6vw,54px); line-height:1.02; letter-spacing:-.01em;
+}
+.ads-corsi__frecce{display:flex; gap:10px}
+.ads-corsi__bottone{
+  width:48px; height:48px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--ads-inchiostro); background:transparent;
+  color:var(--ads-inchiostro); border-radius:50%;
+  transition:background .2s ease,color .2s ease,opacity .2s ease;
+}
+.ads-corsi__bottone:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__bottone[disabled]{opacity:.28; cursor:default}
+.ads-corsi__bottone[disabled]:hover{background:transparent; color:var(--ads-inchiostro)}
+.ads-corsi__carrello{
+  display:flex; gap:clamp(16px,2vw,26px);
+  padding:4px var(--ads-bordo) 6px;
+  scroll-padding-inline:var(--ads-bordo);
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none; -ms-overflow-style:none;
+  overscroll-behavior-x:contain;
+}
+.ads-corsi__carrello::-webkit-scrollbar{display:none}
+.ads-corsi__scheda{
+  flex:0 0 clamp(258px,26vw,340px); scroll-snap-align:start;
+  display:flex; flex-direction:column; background:var(--ads-carta);
+  border:1px solid var(--ads-linea); text-decoration:none; color:inherit;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.ads-corsi__scheda:hover{
+  transform:translateY(-4px); border-color:var(--ads-inchiostro);
+  box-shadow:0 14px 34px -22px rgba(42,31,23,.65);
+}
+.ads-corsi__figura{
+  position:relative; aspect-ratio:4/3;
+  background-image:var(--img); background-size:cover; background-position:center;
+}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-corsi__figura.is-segnaposto::after{
+  content:""; position:absolute; inset:0; opacity:.45;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.14) 0 1px,transparent 1px 13px);
+}
+.ads-corsi__etichetta{
+  position:absolute; top:14px; left:14px; z-index:1;
+  padding:6px 12px; background:var(--ads-crema); color:var(--ads-rosso);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+}
+.ads-corsi__etichetta--esaurito{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__corpo{display:flex; flex-direction:column; gap:10px; padding:22px 22px 24px; flex:1}
+.ads-corsi__data{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ads-grigio)}
+.ads-corsi__nome{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:26px; line-height:1.14}
+.ads-corsi__descrizione{margin:0; font-size:15px; line-height:1.55; color:var(--ads-testo); text-wrap:pretty}
+.ads-corsi__piede{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin-top:auto; padding-top:16px; border-top:1px solid var(--ads-linea);
+}
+.ads-corsi__prezzo{font-family:var(--ads-serif); font-size:22px}
+.ads-corsi__durata{font-size:13px; color:var(--ads-grigio)}
+.ads-corsi__link{
+  position:relative; /* aggancia gli span per i lettori di schermo */
+  margin-top:4px; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ads-rosso); text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+}
+.ads-corsi__scheda:hover .ads-corsi__link{gap:13px}
+.ads-corsi__link span{transition:transform .2s ease}
+.ads-corsi__barra{
+  display:flex; align-items:center; gap:8px; justify-content:center;
+  padding:clamp(22px,3vw,32px) var(--ads-bordo) 0;
+}
+.ads-corsi__punto{
+  position:relative; width:26px; height:2px; padding:0; border:0; cursor:pointer;
+  background:var(--ads-linea); transition:background .2s ease,width .2s ease;
+}
+.ads-corsi__punto.is-active{background:var(--ads-rosso); width:44px}
+.ads-corsi :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-corsi__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (max-width:640px){
+  .ads-corsi__scheda{flex-basis:78vw}
+  .ads-corsi__frecce{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-corsi__carrello{scroll-behavior:auto}
+  .ads-corsi__scheda:hover{transform:none}
+}
+&lt;/style&gt;
+
+&lt;section class="ads-corsi" aria-roledescription="carosello" aria-label="Corsi in programma"&gt;
+  &lt;div class="ads-corsi__testata"&gt;
+    &lt;div&gt;
+      &lt;p class="ads-corsi__occhiello"&gt;Calendario [ANNO]&lt;/p&gt;
+      &lt;h2 class="ads-corsi__titolo"&gt;I corsi in programma&lt;/h2&gt;
+    &lt;/div&gt;
+    &lt;div class="ads-corsi__frecce"&gt;
+      &lt;button type="button" class="ads-corsi__bottone ads-corsi__prec" aria-label="Corsi precedenti"&gt;
+        &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M15 5l-7 7 7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+      &lt;button type="button" class="ads-corsi__bottone ads-corsi__succ" aria-label="Corsi successivi"&gt;
+        &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M9 5l7 7-7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="ads-corsi__carrello" tabindex="0" role="group" aria-label="Elenco corsi, scorri orizzontalmente"&gt;
+
+    &lt;article class="ads-corsi__scheda"&gt;
+      &lt;div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 90% at 25% 20%,rgba(217,162,39,.55),transparent 62%),linear-gradient(160deg,#F2E9DA,#D8BE93)" aria-hidden="true"&gt;
+        &lt;span class="ads-corsi__etichetta"&gt;Base&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-corsi__corpo"&gt;
+        &lt;p class="ads-corsi__data"&gt;[Sabato] [GG] [mese] · [ORA]&lt;/p&gt;
+        &lt;h3 class="ads-corsi__nome"&gt;La sfoglia al mattarello&lt;/h3&gt;
+        &lt;p class="ads-corsi__descrizione"&gt;Uovo e farina, l'impasto, la tirata. Si esce sapendo fare le tagliatelle da soli.&lt;/p&gt;
+        &lt;div class="ads-corsi__piede"&gt;
+          &lt;span class="ads-corsi__prezzo"&gt;[PREZZO] €&lt;/span&gt;
+          &lt;span class="ads-corsi__durata"&gt;4 ore&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a class="ads-corsi__link" href="#prenota"&gt;Prenota &lt;span aria-hidden="true"&gt;→&lt;/span&gt;&lt;span class="ads-corsi__sr"&gt;il corso La sfoglia al mattarello&lt;/span&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-corsi__scheda"&gt;
+      &lt;div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 100% at 75% 25%,rgba(232,166,110,.6),transparent 60%),linear-gradient(190deg,#E9DCC4,#C4A87A)" aria-hidden="true"&gt;
+        &lt;span class="ads-corsi__etichetta"&gt;Intensivo&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-corsi__corpo"&gt;
+        &lt;p class="ads-corsi__data"&gt;[Domenica] [GG] [mese] · [ORA]&lt;/p&gt;
+        &lt;h3 class="ads-corsi__nome"&gt;Tortellini di Bologna&lt;/h3&gt;
+        &lt;p class="ads-corsi__descrizione"&gt;Ripieno, quadrello, chiusura sul dito. Sei ore per il formato più difficile che c'è.&lt;/p&gt;
+        &lt;div class="ads-corsi__piede"&gt;
+          &lt;span class="ads-corsi__prezzo"&gt;[PREZZO] €&lt;/span&gt;
+          &lt;span class="ads-corsi__durata"&gt;6 ore&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a class="ads-corsi__link" href="#prenota"&gt;Prenota &lt;span aria-hidden="true"&gt;→&lt;/span&gt;&lt;span class="ads-corsi__sr"&gt;il corso Tortellini di Bologna&lt;/span&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-corsi__scheda"&gt;
+      &lt;div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 90% at 40% 80%,rgba(169,59,39,.5),transparent 62%),linear-gradient(150deg,#EFE2C9,#B9945F)" aria-hidden="true"&gt;
+        &lt;span class="ads-corsi__etichetta"&gt;Formati ripieni&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-corsi__corpo"&gt;
+        &lt;p class="ads-corsi__data"&gt;[Sabato] [GG] [mese] · [ORA]&lt;/p&gt;
+        &lt;h3 class="ads-corsi__nome"&gt;Cappelletti e tortelloni&lt;/h3&gt;
+        &lt;p class="ads-corsi__descrizione"&gt;Due formati, due ripieni, una sfoglia sola. Con degustazione finale al tagliere.&lt;/p&gt;
+        &lt;div class="ads-corsi__piede"&gt;
+          &lt;span class="ads-corsi__prezzo"&gt;[PREZZO] €&lt;/span&gt;
+          &lt;span class="ads-corsi__durata"&gt;5 ore&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a class="ads-corsi__link" href="#prenota"&gt;Prenota &lt;span aria-hidden="true"&gt;→&lt;/span&gt;&lt;span class="ads-corsi__sr"&gt;il corso Cappelletti e tortelloni&lt;/span&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-corsi__scheda"&gt;
+      &lt;div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(100% 100% at 20% 30%,rgba(250,245,236,.6),transparent 55%),linear-gradient(170deg,#E4D3B6,#A97B4A)" aria-hidden="true"&gt;
+        &lt;span class="ads-corsi__etichetta ads-corsi__etichetta--esaurito"&gt;Esaurito&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-corsi__corpo"&gt;
+        &lt;p class="ads-corsi__data"&gt;[Sabato] [GG] [mese] · [ORA]&lt;/p&gt;
+        &lt;h3 class="ads-corsi__nome"&gt;Lasagne verdi&lt;/h3&gt;
+        &lt;p class="ads-corsi__descrizione"&gt;Spinaci nell'impasto, ragù e besciamella. Il piatto della domenica, fatto per bene.&lt;/p&gt;
+        &lt;div class="ads-corsi__piede"&gt;
+          &lt;span class="ads-corsi__prezzo"&gt;[PREZZO] €&lt;/span&gt;
+          &lt;span class="ads-corsi__durata"&gt;5 ore&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a class="ads-corsi__link" href="#lista-attesa"&gt;Lista d'attesa &lt;span aria-hidden="true"&gt;→&lt;/span&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-corsi__scheda"&gt;
+      &lt;div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 110% at 80% 70%,rgba(217,162,39,.6),transparent 60%),linear-gradient(200deg,#F2E9DA,#CBB287)" aria-hidden="true"&gt;
+        &lt;span class="ads-corsi__etichetta"&gt;Su misura&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-corsi__corpo"&gt;
+        &lt;p class="ads-corsi__data"&gt;Su richiesta · tutto l'anno&lt;/p&gt;
+        &lt;h3 class="ads-corsi__nome"&gt;Corso privato in bottega&lt;/h3&gt;
+        &lt;p class="ads-corsi__descrizione"&gt;Per gruppi, aziende o regali: il programma si costruisce insieme a voi.&lt;/p&gt;
+        &lt;div class="ads-corsi__piede"&gt;
+          &lt;span class="ads-corsi__prezzo"&gt;Su preventivo&lt;/span&gt;
+          &lt;span class="ads-corsi__durata"&gt;a partire da 3 ore&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;a class="ads-corsi__link" href="#contatti"&gt;Chiedi info &lt;span aria-hidden="true"&gt;→&lt;/span&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class="ads-corsi__barra" role="group" aria-label="Pagine del carosello"&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+(function () {
+  document.querySelectorAll('.ads-corsi').forEach(function (radice) {
+    var carrello = radice.querySelector('.ads-corsi__carrello');
+    var schede = Array.prototype.slice.call(carrello.querySelectorAll('.ads-corsi__scheda'));
+    var prec = radice.querySelector('.ads-corsi__prec');
+    var succ = radice.querySelector('.ads-corsi__succ');
+    var barra = radice.querySelector('.ads-corsi__barra');
+    if (!schede.length) return;
+
+    function passo() {
+      if (schede.length &lt; 2) return carrello.clientWidth;
+      return schede[1].getBoundingClientRect().left - schede[0].getBoundingClientRect().left;
+    }
+    function pagine() {
+      return Math.max(1, Math.ceil((carrello.scrollWidth - carrello.clientWidth) / Math.max(1, passo())) + 1);
+    }
+
+    var punti = [];
+    function costruisciPunti() {
+      var n = pagine();
+      barra.innerHTML = '';
+      punti = [];
+      if (n &lt; 2) return;
+      for (var i = 0; i &lt; n; i++) {
+        (function (i) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'ads-corsi__punto';
+          b.innerHTML = '&lt;span class="ads-corsi__sr"&gt;Vai alla scheda ' + (i + 1) + '&lt;/span&gt;';
+          b.addEventListener('click', function () { carrello.scrollTo({ left: i * passo(), behavior: 'smooth' }); });
+          barra.appendChild(b);
+          punti.push(b);
+        })(i);
+      }
+    }
+
+    function aggiorna() {
+      var x = carrello.scrollLeft;
+      var massimo = carrello.scrollWidth - carrello.clientWidth - 2;
+      prec.disabled = x &lt;= 2;
+      succ.disabled = x &gt;= massimo;
+      var attivo = Math.round(x / Math.max(1, passo()));
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === attivo);
+        p.setAttribute('aria-current', i === attivo ? 'true' : 'false');
+      });
+    }
+
+    prec.addEventListener('click', function () { carrello.scrollBy({ left: -passo(), behavior: 'smooth' }); });
+    succ.addEventListener('click', function () { carrello.scrollBy({ left: passo(), behavior: 'smooth' }); });
+
+    var attesa = null;
+    carrello.addEventListener('scroll', function () {
+      if (attesa) return;
+      attesa = window.requestAnimationFrame(function () { attesa = null; aggiorna(); });
+    }, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function () { costruisciPunti(); aggiorna(); });
+      ro.observe(carrello);
+    } else {
+      window.addEventListener('resize', function () { costruisciPunti(); aggiorna(); });
+    }
+
+    costruisciPunti();
+    aggiorna();
+  });
+})();
+&lt;/script&gt;</code></pre>
+    <div class="cd-misura"><span>285 righe · 13.8 KB</span><span>stile + markup + script, tutto qui dentro</span></div>
+  </div>
+</section>
+
+<section class="cd-blocco" id="blocco-03">
+  <div class="cd-riga">
+    <div class="cd-numero">03</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Le voci della bottega</h2>
+      <p class="cd-testo">Una testimonianza alla volta, in corsivo Bodoni. I testi qui sono fac-simile: vanno sostituiti con recensioni reali.</p>
+    </div>
+    <div class="cd-lato">
+      <div class="cd-dove">Sotto i corsi, prima del modulo di contatto</div>
+      <div class="cd-file">caroselli/03-testimonianze.html</div>
+      <button type="button" class="cd-copia" data-copia="#codice-03">Copia il codice</button>
+    </div>
+  </div>
+  <div class="cd-codice">
+    <pre id="codice-03" tabindex="0"><code>&lt;!-- ============================================================
+     CAROSELLO 3 · Le voci di chi è passato in bottega
+     ATTENZIONE: i testi qui sotto sono FAC-SIMILE, servono solo a
+     mostrare l'impaginazione. Vanno sostituiti con recensioni reali
+     e con il nome di chi le ha davvero scritte.
+     ============================================================ --&gt;
+&lt;style&gt;
+.ads-voci{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-testo:#4A3B30;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-voci-durata:8000ms;
+  position:relative; background:var(--ads-carta); color:var(--ads-inchiostro);
+  font-family:var(--ads-sans); padding:clamp(52px,7vw,92px) clamp(20px,6vw,86px);
+  box-sizing:border-box; overflow:hidden;
+}
+.ads-voci *,.ads-voci *::before,.ads-voci *::after{box-sizing:border-box}
+.ads-voci::before{
+  content:"“"; position:absolute; top:0; left:1.5vw;
+  font-family:var(--ads-serif); font-size:clamp(220px,30vw,420px);
+  line-height:1; color:var(--ads-oro); opacity:.16; pointer-events:none;
+}
+.ads-voci__intestazione{
+  position:relative; text-align:center; font-size:13px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ads-rosso); margin:0 0 clamp(28px,4vw,44px);
+}
+.ads-voci__pista{position:relative; display:grid; max-width:900px; margin:0 auto}
+.ads-voci__voce{
+  grid-area:1/1; display:flex; flex-direction:column; align-items:center; gap:26px;
+  margin:0; text-align:center; opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .6s ease, transform .6s ease, visibility 0s linear .6s;
+}
+.ads-voci__voce.is-active{
+  opacity:1; visibility:visible; transform:none;
+  transition:opacity .6s ease, transform .6s ease;
+}
+.ads-voci__stelle{display:flex; gap:5px; color:var(--ads-oro)}
+.ads-voci__citazione{
+  margin:0; font-family:var(--ads-serif); font-style:italic; font-weight:400;
+  font-size:clamp(23px,3vw,36px); line-height:1.36; letter-spacing:-.01em;
+  text-wrap:pretty;
+}
+.ads-voci__firma{display:flex; align-items:center; gap:14px}
+.ads-voci__sigla{
+  width:46px; height:46px; display:grid; place-items:center; border-radius:50%;
+  background:var(--ads-rosso); color:var(--ads-crema);
+  font-family:var(--ads-serif); font-size:17px; letter-spacing:.04em;
+}
+.ads-voci__chi{text-align:left}
+.ads-voci__nome{display:block; font-size:16px; font-weight:500}
+.ads-voci__corso{display:block; font-size:13px; color:var(--ads-grigio); margin-top:3px}
+.ads-voci__comandi{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  gap:16px; margin-top:clamp(32px,4vw,48px);
+}
+.ads-voci__bottone{
+  width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid rgba(42,31,23,.28); background:transparent; color:var(--ads-inchiostro);
+  border-radius:50%; transition:background .2s ease,border-color .2s ease;
+}
+.ads-voci__bottone:hover{background:rgba(42,31,23,.08); border-color:var(--ads-inchiostro)}
+.ads-voci__punti{display:flex; gap:9px}
+.ads-voci__punto{
+  position:relative; width:9px; height:9px; padding:0; border:1px solid var(--ads-inchiostro);
+  border-radius:50%; background:transparent; cursor:pointer; transition:background .2s ease;
+}
+.ads-voci__punto.is-active{background:var(--ads-inchiostro)}
+.ads-voci :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-voci__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){
+  .ads-voci__voce{transition:none; transform:none}
+}
+&lt;/style&gt;
+
+&lt;section class="ads-voci" data-autoplay="8000" aria-roledescription="carosello" aria-label="Testimonianze dei partecipanti"&gt;
+  &lt;p class="ads-voci__intestazione"&gt;Chi è passato in bottega&lt;/p&gt;
+
+  &lt;div class="ads-voci__pista"&gt;
+
+    &lt;!-- FAC-SIMILE — sostituire con una recensione reale --&gt;
+    &lt;figure class="ads-voci__voce is-active" aria-roledescription="diapositiva" aria-label="1 di 4"&gt;
+      &lt;div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque"&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;blockquote class="ads-voci__citazione"&gt;Sono arrivata convinta che il mattarello fosse una questione di forza. È una questione di pazienza, e in mezza giornata l'ho capito.&lt;/blockquote&gt;
+      &lt;figcaption class="ads-voci__firma"&gt;
+        &lt;span class="ads-voci__sigla" aria-hidden="true"&gt;NC&lt;/span&gt;
+        &lt;span class="ads-voci__chi"&gt;
+          &lt;span class="ads-voci__nome"&gt;[Nome Cognome]&lt;/span&gt;
+          &lt;span class="ads-voci__corso"&gt;Corso La sfoglia al mattarello · [mese anno]&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+    &lt;figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="2 di 4"&gt;
+      &lt;div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque"&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;blockquote class="ads-voci__citazione"&gt;Regalato a mio padre per il compleanno. Siamo tornati a casa con due chili di tortellini e una ricetta che adesso è di famiglia.&lt;/blockquote&gt;
+      &lt;figcaption class="ads-voci__firma"&gt;
+        &lt;span class="ads-voci__sigla" aria-hidden="true"&gt;NC&lt;/span&gt;
+        &lt;span class="ads-voci__chi"&gt;
+          &lt;span class="ads-voci__nome"&gt;[Nome Cognome]&lt;/span&gt;
+          &lt;span class="ads-voci__corso"&gt;Corso Tortellini di Bologna · [mese anno]&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+    &lt;figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="3 di 4"&gt;
+      &lt;div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque"&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;blockquote class="ads-voci__citazione"&gt;Nessuna macchina, nessuna fretta. Solo un tagliere, un mattarello e qualcuno che ti guarda le mani e ti dice dove sbagli.&lt;/blockquote&gt;
+      &lt;figcaption class="ads-voci__firma"&gt;
+        &lt;span class="ads-voci__sigla" aria-hidden="true"&gt;NC&lt;/span&gt;
+        &lt;span class="ads-voci__chi"&gt;
+          &lt;span class="ads-voci__nome"&gt;[Nome Cognome]&lt;/span&gt;
+          &lt;span class="ads-voci__corso"&gt;Corso Cappelletti e tortelloni · [mese anno]&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+    &lt;figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="4 di 4"&gt;
+      &lt;div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque"&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+        &lt;svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;blockquote class="ads-voci__citazione"&gt;Abbiamo portato tutto l'ufficio: otto persone, otto sfoglie diverse e la sensazione di aver imparato un mestiere vero.&lt;/blockquote&gt;
+      &lt;figcaption class="ads-voci__firma"&gt;
+        &lt;span class="ads-voci__sigla" aria-hidden="true"&gt;NC&lt;/span&gt;
+        &lt;span class="ads-voci__chi"&gt;
+          &lt;span class="ads-voci__nome"&gt;[Nome Cognome]&lt;/span&gt;
+          &lt;span class="ads-voci__corso"&gt;Corso privato in bottega · [mese anno]&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class="ads-voci__comandi"&gt;
+    &lt;button type="button" class="ads-voci__bottone ads-voci__prec" aria-label="Testimonianza precedente"&gt;
+      &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M15 5l-7 7 7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+    &lt;div class="ads-voci__punti"&gt;&lt;/div&gt;
+    &lt;button type="button" class="ads-voci__bottone ads-voci__succ" aria-label="Testimonianza successiva"&gt;
+      &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M9 5l7 7-7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+(function () {
+  document.querySelectorAll('.ads-voci').forEach(function (radice) {
+    var voci = Array.prototype.slice.call(radice.querySelectorAll('.ads-voci__voce'));
+    if (!voci.length) return;
+    var pista = radice.querySelector('.ads-voci__pista');
+    var contPunti = radice.querySelector('.ads-voci__punti');
+    var durata = parseInt(radice.dataset.autoplay, 10) || 8000;
+    var motoRidotto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var indice = 0, timer = null;
+
+    pista.setAttribute('aria-live', 'polite');
+
+    var punti = voci.map(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-voci__punto';
+      b.innerHTML = '&lt;span class="ads-voci__sr"&gt;Vai alla testimonianza ' + (i + 1) + '&lt;/span&gt;';
+      b.addEventListener('click', function () { vaiA(i); riavvia(); });
+      contPunti.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = (n + voci.length) % voci.length;
+      voci.forEach(function (v, i) {
+        var attiva = i === indice;
+        v.classList.toggle('is-active', attiva);
+        if (attiva) v.removeAttribute('inert'); else v.setAttribute('inert', '');
+      });
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+    }
+
+    function avvia() { ferma(); if (motoRidotto.matches) return; timer = window.setInterval(function () { vaiA(indice + 1); }, durata); }
+    function ferma() { if (timer) { window.clearInterval(timer); timer = null; } }
+    function riavvia() { avvia(); }
+
+    radice.querySelector('.ads-voci__prec').addEventListener('click', function () { vaiA(indice - 1); riavvia(); });
+    radice.querySelector('.ads-voci__succ').addEventListener('click', function () { vaiA(indice + 1); riavvia(); });
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); riavvia(); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); riavvia(); }
+    });
+    radice.addEventListener('mouseenter', ferma);
+    radice.addEventListener('mouseleave', riavvia);
+    radice.addEventListener('focusin', ferma);
+    radice.addEventListener('focusout', function (e) { if (!radice.contains(e.relatedTarget)) riavvia(); });
+    document.addEventListener('visibilitychange', function () { document.hidden ? ferma() : riavvia(); });
+
+    var xIniziale = null;
+    pista.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    pista.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) &lt; 45) return;
+      vaiA(indice + (delta &lt; 0 ? 1 : -1)); riavvia();
+    });
+
+    vaiA(0);
+    avvia();
+  });
+})();
+&lt;/script&gt;</code></pre>
+    <div class="cd-misura"><span>232 righe · 14.0 KB</span><span>stile + markup + script, tutto qui dentro</span></div>
+  </div>
+</section>
+
+<section class="cd-blocco" id="blocco-04">
+  <div class="cd-riga">
+    <div class="cd-numero">04</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Dentro la bottega</h2>
+      <p class="cd-testo">Immagine grande più provini in basso, contatore e didascalia. Lo scatto grande viene generato dai provini: la lista da aggiornare è una sola.</p>
+    </div>
+    <div class="cd-lato">
+      <div class="cd-dove">Pagina "chi siamo" o "la bottega"</div>
+      <div class="cd-file">caroselli/04-galleria-bottega.html</div>
+      <button type="button" class="cd-copia" data-copia="#codice-04">Copia il codice</button>
+    </div>
+  </div>
+  <div class="cd-codice">
+    <pre id="codice-04" tabindex="0"><code>&lt;!-- ============================================================
+     CAROSELLO 4 · Galleria della bottega (immagine grande + provini)
+     Ogni scatto è un &lt;button class="ads-galleria__provino"&gt; con
+     --img (miniatura) e data-grande (immagine a piena misura).
+     Con le foto vere: --img:url('/immagini/bottega-01-thumb.jpg')
+     e data-grande="url('/immagini/bottega-01.jpg')" — poi togliere
+     la classe "is-segnaposto".
+     ============================================================ --&gt;
+&lt;style&gt;
+.ads-galleria{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-linea:#C9B79C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  background:var(--ads-crema); color:var(--ads-inchiostro); font-family:var(--ads-sans);
+  padding:clamp(48px,7vw,86px) clamp(20px,6vw,86px); box-sizing:border-box;
+}
+.ads-galleria *,.ads-galleria *::before,.ads-galleria *::after{box-sizing:border-box}
+.ads-galleria__testata{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:20px; flex-wrap:wrap; margin-bottom:clamp(24px,3vw,34px);
+}
+.ads-galleria__occhiello{margin:0 0 10px; font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--ads-rosso)}
+.ads-galleria__titolo{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:clamp(34px,4.6vw,54px); line-height:1.02}
+.ads-galleria__contatore{font-family:var(--ads-serif); font-size:20px; color:var(--ads-grigio); font-variant-numeric:tabular-nums}
+.ads-galleria__contatore strong{color:var(--ads-inchiostro); font-weight:400; font-size:28px}
+.ads-galleria__palco{
+  position:relative; display:grid; aspect-ratio:16/9; min-height:260px;
+  border:1px solid var(--ads-linea); overflow:hidden; background:var(--ads-carta);
+}
+.ads-galleria__scatto{
+  grid-area:1/1; background-image:var(--img); background-size:cover; background-position:center;
+  opacity:0; transition:opacity .5s ease;
+}
+.ads-galleria__scatto.is-active{opacity:1}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-galleria__scatto.is-segnaposto::after{
+  content:""; position:absolute; inset:0; opacity:.4;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.13) 0 1px,transparent 1px 15px);
+}
+.ads-galleria__didascalia{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  padding:44px clamp(18px,3vw,30px) clamp(16px,2.4vw,24px);
+  background:linear-gradient(to top,rgba(28,19,13,.85),rgba(28,19,13,0));
+  color:var(--ads-crema); font-size:15px; line-height:1.5;
+}
+.ads-galleria__navigazione{
+  position:absolute; inset:0; z-index:3; display:flex; align-items:center;
+  justify-content:space-between; padding:0 clamp(10px,1.6vw,18px); pointer-events:none;
+}
+.ads-galleria__bottone{
+  pointer-events:auto; width:46px; height:46px; display:grid; place-items:center;
+  cursor:pointer; border:0; border-radius:50%;
+  background:rgba(250,245,236,.9); color:var(--ads-inchiostro);
+  transition:background .2s ease, transform .2s ease;
+}
+.ads-galleria__bottone:hover{background:var(--ads-crema); transform:scale(1.06)}
+.ads-galleria__provini{
+  display:flex; gap:10px; margin-top:12px; padding-bottom:4px;
+  overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none; -ms-overflow-style:none;
+}
+.ads-galleria__provini::-webkit-scrollbar{display:none}
+.ads-galleria__provino{
+  position:relative; flex:0 0 clamp(88px,11vw,132px); aspect-ratio:4/3; padding:0; cursor:pointer;
+  border:1px solid var(--ads-linea); background-image:var(--img);
+  background-size:cover; background-position:center; opacity:.55;
+  transition:opacity .2s ease, border-color .2s ease, transform .2s ease;
+}
+.ads-galleria__provino:hover{opacity:.85}
+.ads-galleria__provino.is-active{opacity:1; border-color:var(--ads-rosso); border-width:2px}
+.ads-galleria :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-galleria__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (max-width:640px){
+  .ads-galleria__palco{aspect-ratio:4/3}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-galleria__scatto{transition:none}
+  .ads-galleria__provini{scroll-behavior:auto}
+}
+&lt;/style&gt;
+
+&lt;section class="ads-galleria" aria-roledescription="carosello" aria-label="Galleria fotografica della bottega"&gt;
+  &lt;div class="ads-galleria__testata"&gt;
+    &lt;div&gt;
+      &lt;p class="ads-galleria__occhiello"&gt;Via della Moscova · Milano&lt;/p&gt;
+      &lt;h2 class="ads-galleria__titolo"&gt;Dentro la bottega&lt;/h2&gt;
+    &lt;/div&gt;
+    &lt;p class="ads-galleria__contatore"&gt;&lt;strong class="ads-galleria__corrente"&gt;01&lt;/strong&gt; / &lt;span class="ads-galleria__totale"&gt;06&lt;/span&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="ads-galleria__palco" tabindex="0" role="group" aria-label="Fotografia in evidenza"&gt;
+    &lt;div class="ads-galleria__didascalia" aria-live="polite"&gt;&lt;/div&gt;
+    &lt;div class="ads-galleria__navigazione"&gt;
+      &lt;button type="button" class="ads-galleria__bottone ads-galleria__prec" aria-label="Foto precedente"&gt;
+        &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M15 5l-7 7 7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+      &lt;button type="button" class="ads-galleria__bottone ads-galleria__succ" aria-label="Foto successiva"&gt;
+        &lt;svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M9 5l7 7-7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="ads-galleria__provini" role="group" aria-label="Scegli la fotografia"&gt;
+    &lt;button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="Il tagliere di legno, prima che arrivi la farina."
+      style="--img:radial-gradient(110% 90% at 25% 25%,rgba(217,162,39,.6),transparent 62%),linear-gradient(155deg,#F2E9DA,#D8BE93)"&gt;&lt;span class="ads-galleria__sr"&gt;Foto 1: il tagliere di legno&lt;/span&gt;&lt;/button&gt;
+    &lt;button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La fontana di farina e le uova, il punto di partenza di tutto."
+      style="--img:radial-gradient(110% 100% at 75% 30%,rgba(232,166,110,.6),transparent 60%),linear-gradient(195deg,#E9DCC4,#C4A87A)"&gt;&lt;span class="ads-galleria__sr"&gt;Foto 2: la fontana di farina&lt;/span&gt;&lt;/button&gt;
+    &lt;button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La tirata: il mattarello lungo un metro, come si è sempre fatto."
+      style="--img:radial-gradient(120% 90% at 45% 75%,rgba(169,59,39,.5),transparent 62%),linear-gradient(150deg,#EFE2C9,#B9945F)"&gt;&lt;span class="ads-galleria__sr"&gt;Foto 3: la tirata al mattarello&lt;/span&gt;&lt;/button&gt;
+    &lt;button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La sfoglia velata sul tagliere, pronta per il taglio."
+      style="--img:radial-gradient(100% 100% at 20% 30%,rgba(250,245,236,.65),transparent 55%),linear-gradient(170deg,#E4D3B6,#A97B4A)"&gt;&lt;span class="ads-galleria__sr"&gt;Foto 4: la sfoglia velata&lt;/span&gt;&lt;/button&gt;
+    &lt;button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="Tagliatelle a nido, larghe come vuole la tradizione."
+      style="--img:radial-gradient(120% 110% at 80% 65%,rgba(217,162,39,.65),transparent 60%),linear-gradient(205deg,#F2E9DA,#CBB287)"&gt;&lt;span class="ads-galleria__sr"&gt;Foto 5: tagliatelle a nido&lt;/span&gt;&lt;/button&gt;
+    &lt;button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La degustazione finale, con i piatti fatti dai partecipanti."
+      style="--img:radial-gradient(130% 100% at 35% 20%,rgba(169,59,39,.45),transparent 58%),linear-gradient(160deg,#EDE0C6,#B08050)"&gt;&lt;span class="ads-galleria__sr"&gt;Foto 6: la degustazione finale&lt;/span&gt;&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+(function () {
+  document.querySelectorAll('.ads-galleria').forEach(function (radice) {
+    var provini = Array.prototype.slice.call(radice.querySelectorAll('.ads-galleria__provino'));
+    if (!provini.length) return;
+    var palco = radice.querySelector('.ads-galleria__palco');
+    var didascalia = radice.querySelector('.ads-galleria__didascalia');
+    var corrente = radice.querySelector('.ads-galleria__corrente');
+    var totale = radice.querySelector('.ads-galleria__totale');
+    var indice = 0;
+
+    // Lo scatto grande viene generato dai provini: una sola lista da mantenere.
+    var scatti = provini.map(function (p, i) {
+      var d = document.createElement('div');
+      d.className = 'ads-galleria__scatto' + (p.classList.contains('is-segnaposto') ? ' is-segnaposto' : '');
+      d.style.setProperty('--img', p.dataset.grande || getComputedStyle(p).getPropertyValue('--img'));
+      d.setAttribute('role', 'img');
+      var testo = p.querySelector('.ads-galleria__sr');
+      d.setAttribute('aria-label', testo ? testo.textContent : 'Fotografia ' + (i + 1));
+      palco.insertBefore(d, palco.firstChild);
+      p.addEventListener('click', function () { vaiA(i, true); });
+      return d;
+    });
+
+    function pad(n) { return (n &lt; 10 ? '0' : '') + n; }
+
+    function vaiA(n, seguiProvino) {
+      indice = (n + scatti.length) % scatti.length;
+      scatti.forEach(function (s, i) { s.classList.toggle('is-active', i === indice); });
+      provini.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+      didascalia.textContent = provini[indice].dataset.didascalia || '';
+      if (corrente) corrente.textContent = pad(indice + 1);
+      // Solo dopo un gesto: all'avvio farebbe saltare la pagina fin qui.
+      if (seguiProvino) provini[indice].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    radice.querySelector('.ads-galleria__prec').addEventListener('click', function () { vaiA(indice - 1, true); });
+    radice.querySelector('.ads-galleria__succ').addEventListener('click', function () { vaiA(indice + 1, true); });
+    palco.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); vaiA(indice - 1, true); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); vaiA(indice + 1, true); }
+    });
+
+    var xIniziale = null;
+    palco.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    palco.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) &lt; 45) return;
+      vaiA(indice + (delta &lt; 0 ? 1 : -1), true);
+    });
+
+    if (totale) totale.textContent = pad(scatti.length);
+    vaiA(0);
+  });
+})();
+&lt;/script&gt;</code></pre>
+    <div class="cd-misura"><span>178 righe · 10.5 KB</span><span>stile + markup + script, tutto qui dentro</span></div>
+  </div>
+</section>
+
+<section class="cd-blocco" id="blocco-05">
+  <div class="cd-riga">
+    <div class="cd-numero">05</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Come nasce una sfoglia</h2>
+      <p class="cd-testo">Quattro passi illustrati a tratto, con rotaia di avanzamento in alto. Racconta il metodo senza bisogno di fotografie.</p>
+    </div>
+    <div class="cd-lato">
+      <div class="cd-dove">Pagina "il metodo"</div>
+      <div class="cd-file">caroselli/05-passo-passo.html</div>
+      <button type="button" class="cd-copia" data-copia="#codice-05">Copia il codice</button>
+    </div>
+  </div>
+  <div class="cd-codice">
+    <pre id="codice-05" tabindex="0"><code>&lt;!-- ============================================================
+     CAROSELLO 5 · Come nasce una sfoglia (passo per passo)
+     Le illustrazioni sono SVG a tratto, si ricolorano da sole con
+     le variabili del blocco. Per aggiungere un passo basta duplicare
+     un &lt;article class="ads-passi__passo"&gt;: la barra si aggiorna da sola.
+     ============================================================ --&gt;
+&lt;style&gt;
+.ads-passi{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-testo:#4A3B30; --ads-linea:#C9B79C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  background:var(--ads-inchiostro); color:var(--ads-crema); font-family:var(--ads-sans);
+  padding:clamp(48px,7vw,90px) clamp(20px,6vw,86px); box-sizing:border-box;
+}
+.ads-passi *,.ads-passi *::before,.ads-passi *::after{box-sizing:border-box}
+.ads-passi__occhiello{margin:0 0 10px; font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--ads-oro)}
+.ads-passi__titolo{margin:0 0 clamp(30px,4vw,44px); font-family:var(--ads-serif); font-weight:400; font-size:clamp(34px,4.6vw,54px); line-height:1.02}
+.ads-passi__rotaia{position:relative; display:flex; justify-content:space-between; gap:8px; margin-bottom:clamp(30px,4vw,46px)}
+.ads-passi__rotaia::before{
+  content:""; position:absolute; left:0; right:0; top:19px; height:1px;
+  background:rgba(250,245,236,.22);
+}
+.ads-passi__avanzamento{
+  position:absolute; left:0; top:19px; height:1px; width:0;
+  background:var(--ads-oro); transition:width .45s ease;
+}
+.ads-passi__tappa{
+  position:relative; z-index:1; display:flex; flex-direction:column;
+  align-items:center; gap:9px; flex:1; padding:0; border:0; background:transparent;
+  color:rgba(250,245,236,.55); cursor:pointer; transition:color .25s ease;
+}
+.ads-passi__tappa:hover{color:var(--ads-crema)}
+.ads-passi__numero{
+  width:38px; height:38px; display:grid; place-items:center; border-radius:50%;
+  background:var(--ads-inchiostro); border:1px solid rgba(250,245,236,.35);
+  font-family:var(--ads-serif); font-size:16px; transition:all .25s ease;
+}
+.ads-passi__tappa.is-active .ads-passi__numero{background:var(--ads-oro); border-color:var(--ads-oro); color:var(--ads-inchiostro)}
+.ads-passi__tappa.is-fatto .ads-passi__numero{border-color:var(--ads-oro); color:var(--ads-oro)}
+.ads-passi__tappa.is-active{color:var(--ads-crema)}
+.ads-passi__etichetta{font-size:12px; letter-spacing:.14em; text-transform:uppercase; text-align:center}
+.ads-passi__pista{display:grid}
+.ads-passi__passo{
+  grid-area:1/1; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+  gap:clamp(26px,4vw,58px); align-items:center;
+  opacity:0; visibility:hidden; transform:translateX(14px);
+  transition:opacity .45s ease, transform .45s ease, visibility 0s linear .45s;
+}
+.ads-passi__passo.is-active{opacity:1; visibility:visible; transform:none; transition:opacity .45s ease, transform .45s ease}
+.ads-passi__disegno{
+  display:grid; place-items:center; padding:clamp(18px,3vw,32px);
+  background:rgba(250,245,236,.05); border:1px solid rgba(250,245,236,.14);
+}
+.ads-passi__disegno svg{width:100%; height:auto; max-width:340px}
+.ads-passi__testo{display:flex; flex-direction:column; gap:16px}
+.ads-passi__nome{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:clamp(28px,3.4vw,40px); line-height:1.1}
+.ads-passi__nome em{font-style:italic; color:var(--ads-oro)}
+.ads-passi__descrizione{margin:0; font-size:17px; line-height:1.6; color:rgba(250,245,236,.8); max-width:46ch; text-wrap:pretty}
+.ads-passi__nota{
+  margin:0; padding-left:16px; border-left:2px solid var(--ads-rosso);
+  font-size:14px; line-height:1.55; color:rgba(250,245,236,.62);
+}
+.ads-passi__comandi{display:flex; align-items:center; gap:12px; margin-top:clamp(28px,3.5vw,40px)}
+.ads-passi__bottone{
+  position:relative; display:inline-flex; align-items:center; gap:10px; padding:13px 22px; cursor:pointer;
+  border:1px solid rgba(250,245,236,.4); background:transparent; color:var(--ads-crema);
+  font-family:inherit; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease, opacity .2s ease, border-color .2s ease;
+}
+.ads-passi__bottone:hover{background:rgba(250,245,236,.12); border-color:var(--ads-crema)}
+.ads-passi__bottone[disabled]{opacity:.3; cursor:default}
+.ads-passi__bottone[disabled]:hover{background:transparent; border-color:rgba(250,245,236,.4)}
+.ads-passi__bottone--pieno{background:var(--ads-rosso); border-color:var(--ads-rosso)}
+.ads-passi__bottone--pieno:hover{background:#8A2F1F; border-color:#8A2F1F}
+.ads-passi :focus-visible{outline:2px solid var(--ads-oro); outline-offset:3px}
+.ads-passi__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (max-width:820px){
+  .ads-passi__passo{grid-template-columns:minmax(0,1fr)}
+  .ads-passi__etichetta{display:none}
+  .ads-passi__rotaia{justify-content:space-between}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-passi__passo{transition:none; transform:none}
+  .ads-passi__avanzamento{transition:none}
+}
+&lt;/style&gt;
+
+&lt;section class="ads-passi" aria-roledescription="carosello" aria-label="Come nasce una sfoglia, passo per passo"&gt;
+  &lt;p class="ads-passi__occhiello"&gt;Il metodo dell'Accademia&lt;/p&gt;
+  &lt;h2 class="ads-passi__titolo"&gt;Come nasce una sfoglia&lt;/h2&gt;
+
+  &lt;div class="ads-passi__rotaia" role="group" aria-label="Passaggi"&gt;
+    &lt;span class="ads-passi__avanzamento" aria-hidden="true"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class="ads-passi__pista"&gt;
+
+    &lt;article class="ads-passi__passo is-active" data-etichetta="La fontana" aria-roledescription="diapositiva" aria-label="Passo 1 di 4"&gt;
+      &lt;div class="ads-passi__disegno"&gt;
+        &lt;svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: la fontana di farina con le uova e la forchetta"&gt;
+          &lt;ellipse cx="146" cy="142" rx="104" ry="30" fill="rgba(250,245,236,.05)" stroke="#D9A227" stroke-width="1.6"&gt;&lt;/ellipse&gt;
+          &lt;path d="M42 142c6-36 42-58 104-58s98 22 104 58" stroke="#FAF5EC" stroke-width="1.4" stroke-linecap="round"&gt;&lt;/path&gt;
+          &lt;ellipse cx="146" cy="116" rx="46" ry="17" stroke="#FAF5EC" stroke-width="1.3"&gt;&lt;/ellipse&gt;
+          &lt;ellipse cx="134" cy="116" rx="12" ry="9" fill="rgba(217,162,39,.3)" stroke="#D9A227" stroke-width="1.5"&gt;&lt;/ellipse&gt;
+          &lt;ellipse cx="159" cy="120" rx="12" ry="9" fill="rgba(217,162,39,.3)" stroke="#D9A227" stroke-width="1.5"&gt;&lt;/ellipse&gt;
+          &lt;g stroke="#A93B27" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"&gt;
+            &lt;path d="M242 44v24c0 7 5 12 11 12s11-5 11-12V44"&gt;&lt;/path&gt;
+            &lt;path d="M248 44v22M258 44v22"&gt;&lt;/path&gt;
+            &lt;path d="M253 80v46"&gt;&lt;/path&gt;
+          &lt;/g&gt;
+          &lt;path d="M74 106c5-7 11-12 18-15M214 96c7 5 13 11 17 18" stroke="#D9A227" stroke-width="1.2" stroke-linecap="round"&gt;&lt;/path&gt;
+        &lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-passi__testo"&gt;
+        &lt;h3 class="ads-passi__nome"&gt;Uovo e farina, &lt;em&gt;niente altro&lt;/em&gt;&lt;/h3&gt;
+        &lt;p class="ads-passi__descrizione"&gt;Un uovo ogni cento grammi di farina, la fontana aperta sul tagliere e la forchetta che raccoglie piano dai bordi. Nessuna bilancia digitale: si impara a leggere l'impasto con le dita.&lt;/p&gt;
+        &lt;p class="ads-passi__nota"&gt;In bottega usiamo farina di grano tenero macinata a pietra e uova del giorno.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-passi__passo" data-etichetta="L'impasto" aria-roledescription="diapositiva" aria-label="Passo 2 di 4"&gt;
+      &lt;div class="ads-passi__disegno"&gt;
+        &lt;svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: la palla d'impasto e la ciotola per il riposo"&gt;
+          &lt;path d="M28 132h214v20H28z" fill="rgba(250,245,236,.05)" stroke="#D9A227" stroke-width="1.6" stroke-linejoin="round"&gt;&lt;/path&gt;
+          &lt;path d="M242 136h26v12h-26" stroke="#D9A227" stroke-width="1.6" stroke-linejoin="round"&gt;&lt;/path&gt;
+          &lt;circle cx="98" cy="102" r="30" fill="rgba(250,245,236,.06)" stroke="#FAF5EC" stroke-width="1.6"&gt;&lt;/circle&gt;
+          &lt;path d="M166 132c0-25 19-45 42-45s42 20 42 45" fill="rgba(250,245,236,.04)" stroke="#FAF5EC" stroke-width="1.6"&gt;&lt;/path&gt;
+          &lt;path d="M182 116c6-9 15-15 25-16" stroke="#D9A227" stroke-width="1.2" stroke-linecap="round"&gt;&lt;/path&gt;
+          &lt;g stroke="#D9A227" stroke-width="1.2" stroke-linecap="round"&gt;
+            &lt;path d="M52 84v-8M64 96l-6-6M138 88v-8M150 100l-6-6"&gt;&lt;/path&gt;
+          &lt;/g&gt;
+        &lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-passi__testo"&gt;
+        &lt;h3 class="ads-passi__nome"&gt;Dieci minuti &lt;em&gt;di braccia&lt;/em&gt;&lt;/h3&gt;
+        &lt;p class="ads-passi__descrizione"&gt;Si impasta finché la pasta non diventa liscia e tiepida, poi riposa sotto una ciotola. È il passaggio in cui quasi tutti hanno fretta, ed è quello che non si può accorciare.&lt;/p&gt;
+        &lt;p class="ads-passi__nota"&gt;Riposo: almeno trenta minuti, coperto, lontano dalle correnti d'aria.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-passi__passo" data-etichetta="La tirata" aria-roledescription="diapositiva" aria-label="Passo 3 di 4"&gt;
+      &lt;div class="ads-passi__disegno"&gt;
+        &lt;svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: la sfoglia tirata con il mattarello"&gt;
+          &lt;ellipse cx="150" cy="130" rx="112" ry="42" fill="rgba(250,245,236,.07)" stroke="#D9A227" stroke-width="1.6"&gt;&lt;/ellipse&gt;
+          &lt;path d="M52 122c30-12 62-18 98-18s68 6 98 18" stroke="#FAF5EC" stroke-width="1.2" stroke-linecap="round"&gt;&lt;/path&gt;
+          &lt;g transform="rotate(-6 150 92)"&gt;
+            &lt;rect x="34" y="84" width="232" height="16" rx="8" fill="#2A1F17" stroke="#FAF5EC" stroke-width="1.6"&gt;&lt;/rect&gt;
+            &lt;rect x="16" y="87" width="20" height="10" rx="5" fill="#2A1F17" stroke="#FAF5EC" stroke-width="1.6"&gt;&lt;/rect&gt;
+            &lt;rect x="264" y="87" width="20" height="10" rx="5" fill="#2A1F17" stroke="#FAF5EC" stroke-width="1.6"&gt;&lt;/rect&gt;
+          &lt;/g&gt;
+        &lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-passi__testo"&gt;
+        &lt;h3 class="ads-passi__nome"&gt;Il mattarello, &lt;em&gt;mai la macchina&lt;/em&gt;&lt;/h3&gt;
+        &lt;p class="ads-passi__descrizione"&gt;La sfoglia si tira dal centro verso l'esterno, girandola di un quarto ogni volta. Deve restare ruvida e porosa: è così che tiene il condimento, cosa che la pasta laminata non fa.&lt;/p&gt;
+        &lt;p class="ads-passi__nota"&gt;Pronta quando, sollevandola, si vede la mano in trasparenza attraverso la pasta.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+    &lt;article class="ads-passi__passo" data-etichetta="Il taglio" aria-roledescription="diapositiva" aria-label="Passo 4 di 4"&gt;
+      &lt;div class="ads-passi__disegno"&gt;
+        &lt;svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: il taglio delle tagliatelle"&gt;
+          &lt;rect x="52" y="66" width="196" height="76" rx="4" fill="rgba(250,245,236,.07)" stroke="#D9A227" stroke-width="1.6"&gt;&lt;/rect&gt;
+          &lt;g stroke="#FAF5EC" stroke-width="1.3"&gt;
+            &lt;path d="M52 80h196M52 94h196M52 108h196M52 122h196"&gt;&lt;/path&gt;
+          &lt;/g&gt;
+          &lt;g transform="rotate(-24 206 60)"&gt;
+            &lt;path d="M186 52h54l14 8-14 8h-54z" fill="rgba(250,245,236,.06)" stroke="#FAF5EC" stroke-width="1.6" stroke-linejoin="round"&gt;&lt;/path&gt;
+            &lt;rect x="150" y="53" width="36" height="14" rx="4" fill="#A93B27" stroke="#A93B27" stroke-width="1.4"&gt;&lt;/rect&gt;
+          &lt;/g&gt;
+          &lt;g stroke="#D9A227" stroke-width="1.3"&gt;
+            &lt;ellipse cx="96" cy="166" rx="27" ry="10"&gt;&lt;/ellipse&gt;
+            &lt;ellipse cx="96" cy="166" rx="14" ry="5"&gt;&lt;/ellipse&gt;
+            &lt;ellipse cx="164" cy="170" rx="27" ry="10"&gt;&lt;/ellipse&gt;
+            &lt;ellipse cx="164" cy="170" rx="14" ry="5"&gt;&lt;/ellipse&gt;
+          &lt;/g&gt;
+        &lt;/svg&gt;
+      &lt;/div&gt;
+      &lt;div class="ads-passi__testo"&gt;
+        &lt;h3 class="ads-passi__nome"&gt;Otto millimetri, &lt;em&gt;non uno di più&lt;/em&gt;&lt;/h3&gt;
+        &lt;p class="ads-passi__descrizione"&gt;Si arrotola la sfoglia e si taglia con il coltello, a occhio. Tagliatelle, tagliolini, maltagliati: cambia solo la larghezza, il gesto è sempre lo stesso.&lt;/p&gt;
+        &lt;p class="ads-passi__nota"&gt;Poi si aprono subito a nido, infarinate, ad asciugare sul tagliere.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+
+  &lt;/div&gt;
+
+  &lt;div class="ads-passi__comandi"&gt;
+    &lt;button type="button" class="ads-passi__bottone ads-passi__prec"&gt;
+      &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M15 5l-7 7 7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+      Indietro
+    &lt;/button&gt;
+    &lt;button type="button" class="ads-passi__bottone ads-passi__bottone--pieno ads-passi__succ"&gt;
+      &lt;span class="ads-passi__prossimo"&gt;Passo successivo&lt;/span&gt;
+      &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"&gt;&lt;path d="M9 5l7 7-7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+(function () {
+  document.querySelectorAll('.ads-passi').forEach(function (radice) {
+    var passi = Array.prototype.slice.call(radice.querySelectorAll('.ads-passi__passo'));
+    if (!passi.length) return;
+    var rotaia = radice.querySelector('.ads-passi__rotaia');
+    var avanzamento = radice.querySelector('.ads-passi__avanzamento');
+    var pista = radice.querySelector('.ads-passi__pista');
+    var prec = radice.querySelector('.ads-passi__prec');
+    var succ = radice.querySelector('.ads-passi__succ');
+    var etichettaSucc = succ.querySelector('.ads-passi__prossimo');
+    var indice = 0;
+
+    pista.setAttribute('aria-live', 'polite');
+
+    var tappe = passi.map(function (p, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-passi__tappa';
+      b.innerHTML =
+        '&lt;span class="ads-passi__numero" aria-hidden="true"&gt;' + (i + 1) + '&lt;/span&gt;' +
+        '&lt;span class="ads-passi__etichetta"&gt;' + (p.dataset.etichetta || ('Passo ' + (i + 1))) + '&lt;/span&gt;' +
+        '&lt;span class="ads-passi__sr"&gt;Vai al passo ' + (i + 1) + '&lt;/span&gt;';
+      b.addEventListener('click', function () { vaiA(i); });
+      rotaia.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = Math.max(0, Math.min(n, passi.length - 1));
+      passi.forEach(function (p, i) {
+        var attivo = i === indice;
+        p.classList.toggle('is-active', attivo);
+        if (attivo) p.removeAttribute('inert'); else p.setAttribute('inert', '');
+      });
+      tappe.forEach(function (t, i) {
+        t.classList.toggle('is-active', i === indice);
+        t.classList.toggle('is-fatto', i &lt; indice);
+        t.setAttribute('aria-current', i === indice ? 'step' : 'false');
+      });
+      var quota = passi.length &gt; 1 ? (indice / (passi.length - 1)) * 100 : 100;
+      avanzamento.style.width = quota + '%';
+      prec.disabled = indice === 0;
+      succ.disabled = indice === passi.length - 1;
+      etichettaSucc.textContent = indice === passi.length - 2 ? 'Ultimo passo' : 'Passo successivo';
+    }
+
+    prec.addEventListener('click', function () { vaiA(indice - 1); });
+    succ.addEventListener('click', function () { vaiA(indice + 1); });
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); }
+    });
+
+    var xIniziale = null;
+    pista.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    pista.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) &lt; 45) return;
+      vaiA(indice + (delta &lt; 0 ? 1 : -1));
+    });
+
+    vaiA(0);
+  });
+})();
+&lt;/script&gt;</code></pre>
+    <div class="cd-misura"><span>267 righe · 15.4 KB</span><span>stile + markup + script, tutto qui dentro</span></div>
+  </div>
+</section>
+
+<section class="cd-blocco" id="blocco-06">
+  <div class="cd-riga">
+    <div class="cd-numero">06</div>
+    <div class="cd-dati">
+      <h2 class="cd-nome">Nastro scorrevole</h2>
+      <p class="cd-testo">Marquee infinito su due righe in direzioni opposte, in pausa al passaggio del mouse. Con i loghi al posto delle parole diventa la fascia dei partner.</p>
+    </div>
+    <div class="cd-lato">
+      <div class="cd-dove">Divisorio fra due sezioni</div>
+      <div class="cd-file">caroselli/06-nastro-scorrevole.html</div>
+      <button type="button" class="cd-copia" data-copia="#codice-06">Copia il codice</button>
+    </div>
+  </div>
+  <div class="cd-codice">
+    <pre id="codice-06" tabindex="0"><code>&lt;!-- ============================================================
+     CAROSELLO 6 · Nastro scorrevole (marquee infinito)
+     Divisorio fra due sezioni: scorre da solo, si ferma al passaggio
+     del mouse. La copia del nastro la fa il JavaScript, quindi la
+     lista va scritta una volta sola.
+     Per usarlo con i loghi dei partner: al posto del testo dentro
+     &lt;li class="ads-nastro__voce"&gt; mettere &lt;img src="..." alt="Nome"&gt;
+     e portare .ads-nastro__voce a font-size normale.
+     ============================================================ --&gt;
+&lt;style&gt;
+.ads-nastro{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-nastro-velocita:46s;
+  position:relative; overflow:hidden; box-sizing:border-box;
+  background:var(--ads-rosso); color:var(--ads-crema);
+  font-family:var(--ads-sans); padding:clamp(22px,3vw,34px) 0;
+  border-top:1px solid rgba(250,245,236,.2); border-bottom:1px solid rgba(250,245,236,.2);
+}
+.ads-nastro *,.ads-nastro *::before,.ads-nastro *::after{box-sizing:border-box}
+.ads-nastro__riga{display:flex; width:max-content; will-change:transform}
+.ads-nastro.is-pronto .ads-nastro__riga{animation:ads-nastro-avanti var(--ads-nastro-velocita) linear infinite}
+.ads-nastro.is-pronto .ads-nastro__riga--indietro{animation-name:ads-nastro-indietro}
+.ads-nastro:hover .ads-nastro__riga,
+.ads-nastro:focus-within .ads-nastro__riga{animation-play-state:paused}
+@keyframes ads-nastro-avanti{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ads-nastro-indietro{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.ads-nastro__gruppo{
+  display:flex; align-items:center; gap:clamp(22px,3vw,44px);
+  margin:0; padding:0 clamp(11px,1.5vw,22px); list-style:none;
+}
+.ads-nastro__voce{
+  display:flex; align-items:center; gap:clamp(22px,3vw,44px);
+  font-family:var(--ads-serif); font-size:clamp(24px,3.4vw,42px);
+  line-height:1.1; white-space:nowrap;
+}
+.ads-nastro__voce::after{
+  content:""; flex:none; width:8px; height:8px; transform:rotate(45deg);
+  background:var(--ads-oro);
+}
+.ads-nastro__voce--corsivo{font-style:italic; color:#F6D9A8}
+.ads-nastro__riga--seconda{margin-top:clamp(10px,1.4vw,18px)}
+.ads-nastro__riga--seconda .ads-nastro__voce{
+  font-family:var(--ads-sans); font-size:clamp(12px,1.3vw,15px);
+  letter-spacing:.24em; text-transform:uppercase; color:rgba(250,245,236,.78);
+}
+.ads-nastro__riga--seconda .ads-nastro__voce::after{width:5px; height:5px; background:rgba(250,245,236,.5)}
+/* sfumature laterali, perché il nastro entri ed esca senza tagliare */
+.ads-nastro::before,.ads-nastro::after{
+  content:""; position:absolute; top:0; bottom:0; width:clamp(40px,7vw,120px);
+  z-index:1; pointer-events:none;
+}
+.ads-nastro::before{left:0; background:linear-gradient(90deg,var(--ads-rosso),transparent)}
+.ads-nastro::after{right:0; background:linear-gradient(270deg,var(--ads-rosso),transparent)}
+@media (prefers-reduced-motion:reduce){
+  .ads-nastro.is-pronto .ads-nastro__riga{animation:none}
+  .ads-nastro__riga{width:100%; overflow-x:auto; scrollbar-width:none}
+  .ads-nastro__riga::-webkit-scrollbar{display:none}
+}
+&lt;/style&gt;
+
+&lt;section class="ads-nastro" aria-label="Cosa si impara in Accademia"&gt;
+  &lt;div class="ads-nastro__riga"&gt;
+    &lt;ul class="ads-nastro__gruppo"&gt;
+      &lt;li class="ads-nastro__voce"&gt;Tagliatelle&lt;/li&gt;
+      &lt;li class="ads-nastro__voce ads-nastro__voce--corsivo"&gt;Tortellini&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Cappelletti&lt;/li&gt;
+      &lt;li class="ads-nastro__voce ads-nastro__voce--corsivo"&gt;Garganelli&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Tortelloni&lt;/li&gt;
+      &lt;li class="ads-nastro__voce ads-nastro__voce--corsivo"&gt;Maltagliati&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Lasagne verdi&lt;/li&gt;
+      &lt;li class="ads-nastro__voce ads-nastro__voce--corsivo"&gt;Strichetti&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+
+  &lt;div class="ads-nastro__riga ads-nastro__riga--seconda ads-nastro__riga--indietro"&gt;
+    &lt;ul class="ads-nastro__gruppo"&gt;
+      &lt;li class="ads-nastro__voce"&gt;Solo mattarello&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Farina macinata a pietra&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Uova del giorno&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Massimo [N] partecipanti&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Grembiule incluso&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Degustazione finale&lt;/li&gt;
+      &lt;li class="ads-nastro__voce"&gt;Dal 2018&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+(function () {
+  document.querySelectorAll('.ads-nastro').forEach(function (radice) {
+    radice.querySelectorAll('.ads-nastro__riga').forEach(function (riga) {
+      var gruppo = riga.querySelector('.ads-nastro__gruppo');
+      if (!gruppo) return;
+      // La copia serve solo all'occhio: per chi legge con lo schermo è invisibile.
+      var copia = gruppo.cloneNode(true);
+      copia.setAttribute('aria-hidden', 'true');
+      riga.appendChild(copia);
+    });
+    radice.classList.add('is-pronto');
+  });
+})();
+&lt;/script&gt;</code></pre>
+    <div class="cd-misura"><span>105 righe · 5.0 KB</span><span>stile + markup + script, tutto qui dentro</span></div>
+  </div>
+</section>
+
+<footer class="cd-piede">
+  <p><strong>Se serve il file intero.</strong> Ogni carosello vive anche come pagina a sé in <code>caroselli/</code>, apribile nel browser per vederlo da solo; il blocco qui sopra è la parte compresa fra i marcatori <code>▼ COPIA DA QUI ▼</code> e <code>▲ FINO A QUI ▲</code>.</p>
+  <p><strong>Questa pagina è generata.</strong> Dopo una modifica ai componenti si rifà con <code>node caroselli/costruisci-da-incollare.mjs</code>, così il codice mostrato resta quello vero.</p>
+</footer>
+
+<script>
+(function () {
+  function scrivi(bottone, testo) {
+    var vecchio = bottone.dataset.etichetta || bottone.textContent;
+    bottone.dataset.etichetta = vecchio;
+    bottone.textContent = testo;
+    bottone.classList.add('is-fatto');
+    window.setTimeout(function () {
+      bottone.textContent = bottone.dataset.etichetta;
+      bottone.classList.remove('is-fatto');
+    }, 2200);
+  }
+
+  function copia(testo, bottone, elemento) {
+    var riuscito = false;
+    try {
+      var area = document.createElement('textarea');
+      area.value = testo;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.top = '-1000px';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      riuscito = document.execCommand('copy');
+      area.remove();
+    } catch (e) { riuscito = false; }
+
+    if (riuscito) { scrivi(bottone, 'Copiato'); return; }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(testo).then(function () {
+        scrivi(bottone, 'Copiato');
+      }).catch(function () { seleziona(bottone, elemento); });
+      return;
+    }
+    seleziona(bottone, elemento);
+  }
+
+  // Ultima spiaggia: se gli appunti sono negati, almeno selezioniamo il testo.
+  function seleziona(bottone, elemento) {
+    if (!elemento) { scrivi(bottone, 'Copia a mano'); return; }
+    var intervallo = document.createRange();
+    intervallo.selectNodeContents(elemento);
+    var scelta = window.getSelection();
+    scelta.removeAllRanges();
+    scelta.addRange(intervallo);
+    elemento.focus();
+    scrivi(bottone, 'Selezionato: Ctrl+C');
+  }
+
+  function tuttoIlPacchetto() {
+    var parti = [document.querySelector('#istruzioni-testo').textContent];
+    document.querySelectorAll('[id^="codice-"]').forEach(function (pre) {
+      var sezione = pre.closest('.cd-blocco');
+      var nome = sezione.querySelector('.cd-nome').textContent;
+      var numero = sezione.querySelector('.cd-numero').textContent;
+      parti.push('--- ' + numero + ' · ' + nome + ' ---\n\n' + pre.textContent);
+    });
+    return parti.join('\n\n');
+  }
+
+  document.querySelectorAll('.cd-copia').forEach(function (bottone) {
+    bottone.addEventListener('click', function () {
+      if (bottone.dataset.tutto) { copia(tuttoIlPacchetto(), bottone, null); return; }
+      var elemento = document.querySelector(bottone.dataset.copia);
+      copia(elemento.textContent, bottone, elemento);
+    });
+  });
+})();
+</script>
+</body>
+</html>

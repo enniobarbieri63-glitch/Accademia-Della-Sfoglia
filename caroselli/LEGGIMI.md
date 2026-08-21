@@ -13,8 +13,13 @@ l'uno. Stessa palette e stessi caratteri del volantino in `design/`.
 | 05 | `05-passo-passo.html` | Quattro passi illustrati, con barra di avanzamento | Pagina "il metodo" |
 | 06 | `06-nastro-scorrevole.html` | Nastro infinito su due righe | Divisorio fra due sezioni |
 
-`index.html` è la pagina di anteprima con tutti e sei insieme: si apre nel
-browser con un doppio clic, senza server.
+Due pagine di servizio, entrambe generate dai file qui sopra:
+
+- `index.html` — l'anteprima con tutti e sei i caroselli in funzione;
+- `da-incollare.html` — gli stessi sei in forma di codice da copiare, con in
+  cima il messaggio da consegnare a chi (o a cosa) li inserirà nel sito.
+
+Si aprono nel browser con un doppio clic, senza server.
 
 ## Come si inserisce un carosello nel sito
 
@@ -106,8 +111,12 @@ di stile del sito e si cancellano dai singoli blocchi.
 Dopo una modifica a un componente basta:
 
 ```sh
-node caroselli/costruisci-anteprima.mjs
+node caroselli/costruisci-anteprima.mjs     # rifà index.html
+node caroselli/costruisci-da-incollare.mjs  # rifà da-incollare.html
 ```
+
+L'elenco dei caroselli e la lettura dei blocchi stanno in `blocchi.mjs`, che
+i due script si dividono.
 
 Serve Node 18 o successivo. Con `node costruisci-anteprima.mjs uscita.html
 --artifact` si ottiene la sola parte interna, per incorporarla altrove.

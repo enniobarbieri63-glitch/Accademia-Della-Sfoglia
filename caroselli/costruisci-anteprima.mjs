@@ -4,60 +4,9 @@
 // Uso:  node costruisci-anteprima.mjs [percorso/di/uscita.html] [--artifact]
 // Con --artifact produce solo il contenuto del <body>, senza intestazione.
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const QUI = dirname(fileURLToPath(import.meta.url));
-const APERTURA = '<!-- ▼ COPIA DA QUI ▼ -->';
-const CHIUSURA = '<!-- ▲ FINO A QUI ▲ -->';
-
-const CAROSELLI = [
-  {
-    file: '01-slideshow-apertura.html',
-    nome: "Slideshow d'apertura",
-    dove: 'Testata della home',
-    testo: 'Tre messaggi che si alternano da soli in dissolvenza, con barra di avanzamento sui punti, tasto di pausa, frecce e scorrimento col dito.'
-  },
-  {
-    file: '02-corsi-schede.html',
-    nome: 'Corsi in programma',
-    dove: 'Pagina corsi, home',
-    testo: 'Schede affiancate che scorrono con scroll-snap: dito, rotellina e frecce. Funziona anche a JavaScript spento, il JS aggiunge solo frecce e puntini.'
-  },
-  {
-    file: '03-testimonianze.html',
-    nome: 'Le voci della bottega',
-    dove: 'Sotto i corsi, prima del modulo di contatto',
-    testo: 'Una testimonianza alla volta, in corsivo Bodoni. I testi qui sono fac-simile: vanno sostituiti con recensioni reali.'
-  },
-  {
-    file: '04-galleria-bottega.html',
-    nome: 'Dentro la bottega',
-    dove: 'Pagina "chi siamo" o "la bottega"',
-    testo: 'Immagine grande più provini in basso, contatore e didascalia. Lo scatto grande viene generato dai provini: la lista da aggiornare è una sola.'
-  },
-  {
-    file: '05-passo-passo.html',
-    nome: 'Come nasce una sfoglia',
-    dove: 'Pagina "il metodo"',
-    testo: 'Quattro passi illustrati a tratto, con rotaia di avanzamento in alto. Racconta il metodo senza bisogno di fotografie.'
-  },
-  {
-    file: '06-nastro-scorrevole.html',
-    nome: 'Nastro scorrevole',
-    dove: 'Divisorio fra due sezioni',
-    testo: 'Marquee infinito su due righe in direzioni opposte, in pausa al passaggio del mouse. Con i loghi al posto delle parole diventa la fascia dei partner.'
-  }
-];
-
-function estrai(file) {
-  const testo = readFileSync(resolve(QUI, file), 'utf8');
-  const a = testo.indexOf(APERTURA);
-  const b = testo.indexOf(CHIUSURA);
-  if (a === -1 || b === -1) throw new Error(`Marcatori mancanti in ${file}`);
-  return testo.slice(a + APERTURA.length, b).trim();
-}
+import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { CAROSELLI, QUI, estrai, FONT } from './blocchi.mjs';
 
 const CSS_ANTEPRIMA = `
   :root{color-scheme:light}
@@ -147,8 +96,6 @@ const soloCorpo = process.argv.includes('--artifact');
 const uscita = process.argv[2] && !process.argv[2].startsWith('--')
   ? resolve(process.cwd(), process.argv[2])
   : resolve(QUI, 'index.html');
-
-const FONT = 'https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap';
 
 const pagina = soloCorpo
   ? `<title>Caroselli della Sfoglia</title>\n<style>@import url("${FONT}");\n${CSS_ANTEPRIMA}</style>\n${corpo}\n`
