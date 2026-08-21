@@ -38,13 +38,15 @@
                          a intervalli di 8-20 secondi, come risate che
                          scappano ogni tanto; "anello" la ripete senza sosta
                          (adatta solo a un sottofondo d ambiente)
-       data-voci         "si" = ogni tanto una vocina italiana dice una frase,
-                         usando le voci di sintesi gia' presenti nel
-                         dispositivo di chi guarda (cambiano da telefono a
-                         computer, e su qualche apparecchio non ci sono)
-       data-voci-frasi   le frasi, separate da |
-                         (default "ih ih ih|ah ah ah|eh eh eh|che bella
-                         sfoglia|guarda come volo")
+       data-voci         "si" = ogni tanto un palloncino dice una frase.
+                         La voce e' costruita qui dentro, suono per suono,
+                         quindi e' la stessa su ogni apparecchio: niente
+                         voci di sistema, niente file da scaricare
+       data-voci-frasi   le frasi, separate da |. Le vocali ripetute si
+                         allungano cantando: "bellooooo", "tuuuuu"
+                         (default "guarda come volo|ohhh che bellooooo|
+                         vieni anche tuuuuu|su dai vieni che ci
+                         divertiamooooo|che bella sfoglia")
      Per dare al visitatore un interruttore, metti un tuo bottone e chiama:
        <button onclick="PalloncinISfogline.suono(true)">Accendi il suono</button>
        <button onclick="PalloncinISfogline.suono(false)">Silenzio</button>
@@ -482,30 +484,264 @@
       src.start();
     }
 
-    /* Voci di sintesi: quelle installate nel dispositivo di chi guarda.
-       Nessun file da scaricare, ma la voce cambia da telefono a computer
-       e su qualche apparecchio l italiano non c e: e' un di piu', non una
-       certezza. */
+    /* La vocina che parla. Dalle lettere ai suoni con le regole
+       dell italiano, dai suoni alle formanti che scivolano senza scatti.
+       Il tono e' una linea sola: sale sull accento, scende alla fine, e
+       le vocali ripetute si allungano cantando ("bellooooo").
+       Nessuna voce di sistema: suona uguale su ogni apparecchio. */
+    var SUONI = {
+      a:{F:[950,1550,3000,3900],t:"voc",d:0.115},
+      e:{F:[600,2150,2950,3800],t:"voc",d:0.110},
+      E:{F:[720,1900,2900,3800],t:"voc",d:0.115},
+      i:{F:[380,2900,3400,4200],t:"voc",d:0.100},
+      o:{F:[570,1000,2750,3700],t:"voc",d:0.110},
+      O:{F:[700,1150,2800,3700],t:"voc",d:0.115},
+      u:{F:[370,880,2650,3600],t:"voc",d:0.100},
+      j:{F:[350,2950,3400,4200],t:"sem",d:0.055},
+      w:{F:[350,800,2600,3600],t:"sem",d:0.055},
+      m:{F:[300,1100,2300,3300],t:"nas",d:0.070},
+      n:{F:[300,1650,2700,3400],t:"nas",d:0.070},
+      N:{F:[300,2100,2900,3500],t:"nas",d:0.080},
+      l:{F:[400,1400,2900,3800],t:"liq",d:0.060},
+      L:{F:[350,2400,3000,3900],t:"liq",d:0.070},
+      r:{F:[500,1400,2700,3600],t:"tap",d:0.045},
+      v:{F:[350,1200,2400,3400],t:"fri",d:0.070,rumore:0.10,banda:[1400,1.2]},
+      f:{F:[350,1200,2400,3400],t:"fri",d:0.085,rumore:0.16,banda:[1800,1.0],sordo:1},
+      s:{F:[350,1800,2600,3600],t:"fri",d:0.095,rumore:0.22,banda:[5200,2.4],sordo:1},
+      z:{F:[350,1800,2600,3600],t:"fri",d:0.080,rumore:0.14,banda:[5000,2.4]},
+      S:{F:[350,2000,2700,3600],t:"fri",d:0.100,rumore:0.22,banda:[3000,1.6],sordo:1},
+      p:{F:[400,900,2400,3500],t:"occ",d:0.060,scoppio:[800,0.9],sordo:1},
+      b:{F:[350,900,2400,3500],t:"occ",d:0.055,scoppio:[800,0.7]},
+      t:{F:[400,1700,2700,3600],t:"occ",d:0.060,scoppio:[3600,0.9],sordo:1},
+      d:{F:[350,1700,2700,3600],t:"occ",d:0.055,scoppio:[2800,0.7]},
+      k:{F:[400,1900,2500,3500],t:"occ",d:0.062,scoppio:[2100,0.9],sordo:1},
+      g:{F:[350,1900,2500,3500],t:"occ",d:0.055,scoppio:[1900,0.7]},
+      C:{F:[350,2000,2700,3600],t:"aff",d:0.085,scoppio:[2900,0.85],rumore:0.2,banda:[3000,1.6],sordo:1},
+      G:{F:[350,2000,2700,3600],t:"aff",d:0.080,scoppio:[2600,0.7],rumore:0.14,banda:[2800,1.6]},
+      " ":{F:[500,1500,2700,3600],t:"pausa",d:0.075}
+    };
+
+    function eVocale(c) { return "aeiouàèéìòóù".indexOf(c) >= 0; }
+
+    function leggi(testo) {
+      var s = testo.toLowerCase().replace(/[^a-zàèéìòóù ]/g, "");
+      var out = [], i = 0;
+      while (i < s.length) {
+        var c = s.charAt(i), d = s.charAt(i + 1), e = s.charAt(i + 2), f = null, salta = 1;
+        if (c === "c" && d === "h") { f = "k"; salta = 2; }
+        else if (c === "c" && (d === "i" || d === "e")) { f = "C"; salta = (d === "i" && eVocale(e)) ? 2 : 1; }
+        else if (c === "c") f = "k";
+        else if (c === "g" && d === "h") { f = "g"; salta = 2; }
+        else if (c === "g" && d === "n") { f = "N"; salta = 2; }
+        else if (c === "g" && d === "l" && e === "i") { f = "L"; salta = 3; }
+        else if (c === "g" && (d === "i" || d === "e")) { f = "G"; salta = (d === "i" && eVocale(e)) ? 2 : 1; }
+        else if (c === "g") f = "g";
+        else if (c === "s" && d === "c" && (e === "i" || e === "e")) { f = "S"; salta = (e === "i" && eVocale(s.charAt(i + 3))) ? 3 : 2; }
+        else if (c === "q") { out.push({ p: "k" }); f = "w"; salta = 2; }
+        else if (c === "h") {
+          var quante = 0;
+          while (s.charAt(i + quante) === "h") quante++;
+          var ultimo = out[out.length - 1];
+          if (ultimo && SUONI[ultimo.p] && SUONI[ultimo.p].t === "voc") ultimo.lunga = Math.max(ultimo.lunga || 1, quante + 1);
+          i += quante;
+          continue;
+        }
+        else if (c === "z") { out.push({ p: "t" }); f = "s"; }
+        else if (c === "à") f = "a";
+        else if (c === "è") f = "E";
+        else if (c === "é") f = "e";
+        else if (c === "ì") f = "i";
+        else if (c === "ò") f = "O";
+        else if (c === "ó") f = "o";
+        else if (c === "ù") f = "u";
+        else if (SUONI[c]) f = c;
+        if (!f) { i += salta; continue; }
+        if (eVocale(c)) {
+          var n = 1;
+          while (s.charAt(i + n) === c) n++;
+          out.push(n > 1 ? { p: f, lunga: n } : { p: f });
+          i += n;
+          continue;
+        }
+        if (s.charAt(i + salta) === c) { out.push({ p: f, doppia: true }); i += salta + 1; continue; }
+        out.push({ p: f });
+        i += salta;
+      }
+      /* i e u davanti a vocale diventano semivocali: vieni, guarda */
+      for (var k = 0; k < out.length - 1; k++) {
+        var q = out[k], dopo = out[k + 1];
+        if (q.lunga || !dopo || !SUONI[dopo.p] || SUONI[dopo.p].t !== "voc") continue;
+        if (q.p === "i") q.p = "j";
+        else if (q.p === "u") q.p = "w";
+      }
+      return out;
+    }
+
+    function costruisciFrase(testo, vc) {
+      var sr = ctx.sampleRate;
+      var seq = leggi(testo);
+      if (!seq.length) return null;
+
+      /* accento sulla penultima vocale di ogni parola */
+      var parola = [];
+      for (var q = 0; q <= seq.length; q++) {
+        var x = seq[q];
+        if (!x || x.p === " ") {
+          var voc = [];
+          for (var z = 0; z < parola.length; z++) if (SUONI[parola[z].p].t === "voc") voc.push(parola[z]);
+          if (voc.length) voc[Math.max(0, voc.length - 2)].accento = true;
+          parola = [];
+        } else parola.push(x);
+      }
+
+      var segs = [], totale = 0, i, j, k;
+      for (i = 0; i < seq.length; i++) {
+        var su = SUONI[seq[i].p], dd = su.d;
+        if (seq[i].lunga) dd = 0.16 + 0.12 * Math.min(5, seq[i].lunga);
+        else if (seq[i].accento) dd *= 1.5;
+        if (seq[i].doppia) dd *= 1.8;
+        dd *= vc.ritmo;
+        segs.push({ s: su, d: dd, accento: !!seq[i].accento, lunga: seq[i].lunga || 0, inizio: totale });
+        totale += dd;
+      }
+      totale += 0.28;
+
+      var n = Math.ceil(sr * totale);
+      var buf = ctx.createBuffer(1, n, sr);
+      var out = buf.getChannelData(0);
+      var F0a = new Float32Array(n), F1a = new Float32Array(n), F2a = new Float32Array(n), F3a = new Float32Array(n);
+      var amp = new Float32Array(n), voz = new Float32Array(n), nas = new Float32Array(n);
+      var rum = new Float32Array(n), scop = new Float32Array(n);
+      var bF = new Float32Array(n), bQ = new Float32Array(n), tono = new Float32Array(n);
+
+      for (i = 0; i < n; i++) tono[i] = vc.f0 * (1.04 - 0.2 * (i / n));
+
+      for (k = 0; k < segs.length; k++) {
+        var sg = segs[k], i0 = Math.floor(sg.inizio * sr), len = Math.max(1, Math.floor(sg.d * sr));
+        var tp = sg.s.t;
+        for (i = 0; i < len && i0 + i < n; i++) {
+          var idx = i0 + i, u = i / len;
+          F0a[idx] = sg.s.F[0] * vc.tratto;
+          F1a[idx] = sg.s.F[1] * vc.tratto;
+          F2a[idx] = sg.s.F[2] * vc.tratto;
+          F3a[idx] = sg.s.F[3] * vc.tratto;
+          if (sg.lunga) tono[idx] *= 1 + 0.12 * Math.sin(Math.PI * Math.min(1, u * 1.15)) - 0.14 * u * u;
+          else if (sg.accento) tono[idx] *= 1 + 0.1 * Math.sin(Math.PI * u);
+          if (tp === "voc") { amp[idx] = sg.accento ? 1 : 0.9; voz[idx] = 1; }
+          else if (tp === "sem") { amp[idx] = 0.75; voz[idx] = 1; }
+          else if (tp === "nas") { amp[idx] = 0.55; voz[idx] = 1; nas[idx] = 1; }
+          else if (tp === "liq") { amp[idx] = 0.7; voz[idx] = 1; }
+          else if (tp === "tap") { amp[idx] = 0.35 + 0.8 * Math.abs(u - 0.5); voz[idx] = 1; }
+          else if (tp === "fri") {
+            amp[idx] = sg.s.sordo ? 0 : 0.35;
+            voz[idx] = sg.s.sordo ? 0 : 1;
+            rum[idx] = sg.s.rumore; bF[idx] = sg.s.banda[0]; bQ[idx] = sg.s.banda[1];
+          } else if (tp === "occ" || tp === "aff") {
+            var chiusa = tp === "occ" ? 0.72 : 0.45;
+            if (u < chiusa) { amp[idx] = sg.s.sordo ? 0 : 0.12; voz[idx] = sg.s.sordo ? 0 : 1; }
+            else if (u < chiusa + 0.12) { scop[idx] = sg.s.scoppio[1]; bF[idx] = sg.s.scoppio[0]; bQ[idx] = 1.4; }
+            else if (tp === "aff") { rum[idx] = sg.s.rumore; bF[idx] = sg.s.banda[0]; bQ[idx] = sg.s.banda[1]; amp[idx] = sg.s.sordo ? 0 : 0.3; voz[idx] = sg.s.sordo ? 0 : 1; }
+            else { amp[idx] = 0.1; voz[idx] = sg.s.sordo ? 0 : 0.4; }
+          }
+        }
+      }
+
+      /* tutto scivola: e' questo che toglie gli scatti */
+      function lisc(arr, tau) {
+        var a = Math.exp(-1 / (tau * sr)), y = arr[0];
+        for (var q2 = 0; q2 < n; q2++) { y = a * y + (1 - a) * arr[q2]; arr[q2] = y; }
+      }
+      lisc(F0a, 0.022); lisc(F1a, 0.022); lisc(F2a, 0.022); lisc(F3a, 0.022);
+      lisc(amp, 0.012); lisc(voz, 0.010); lisc(nas, 0.020);
+      lisc(bF, 0.006); lisc(bQ, 0.006); lisc(rum, 0.008);
+
+      var poli = [{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0}];
+      var banda = { y1: 0, y2: 0 };
+      var fase = 0, nn = 0, prec = 0, drift = 0, zx1 = 0, zx2 = 0;
+      var a1 = [], a2 = [], A = [], gn = 0, thz = 0, ba1 = 0, ba2 = 0, bA = 0;
+      for (i = 0; i < n; i++) {
+        if (i % 32 === 0) {
+          var Fs = [F0a[i], F1a[i], F2a[i], F3a[i], 1000 * vc.tratto];
+          var Bs = [95, 130, 180, 250, 120];
+          a1 = []; a2 = []; A = [];
+          for (j = 0; j < 5; j++) {
+            var r = Math.exp(-Math.PI * Bs[j] / sr), th = 2 * Math.PI * Math.max(120, Fs[j]) / sr;
+            a1.push(2 * r * Math.cos(th)); a2.push(-r * r); A.push(1 - a1[j] - a2[j]);
+          }
+          gn = nas[i] * 0.6;
+          thz = 2 * Math.PI * (820 * vc.tratto) / sr;
+          var bf = Math.max(300, bF[i]), bq = Math.max(0.6, bQ[i]);
+          var rr = Math.exp(-Math.PI * (bf / bq) / sr), tt = 2 * Math.PI * bf / sr;
+          ba1 = 2 * rr * Math.cos(tt); ba2 = -rr * rr; bA = 1 - ba1 - ba2;
+        }
+        if (i % 200 === 0) drift = drift * 0.9 + gauss() * 0.006;
+        var f0 = tono[i] * (1 + drift + 0.012 * Math.sin(2 * Math.PI * 4.6 * i / sr));
+        if (fase <= 0) { fase = sr / f0 * (1 + gauss() * 0.012); nn = 0; }
+        var T1 = fase * 0.44, T2 = fase * 0.16, g = 0;
+        if (nn < T1) g = 0.5 * (1 - Math.cos(Math.PI * nn / T1));
+        else if (nn < T1 + T2) g = Math.cos(Math.PI * (nn - T1) / (2 * T2));
+        nn++; fase--;
+
+        var x = g * voz[i] * amp[i];
+        if (gn > 0) {
+          var zz = x - 2 * 0.96 * Math.cos(thz) * zx1 + 0.9216 * zx2;
+          zx2 = zx1; zx1 = x;
+          x = x * (1 - gn) + zz * gn;
+        } else { zx2 = zx1; zx1 = x; }
+        var orale = x, ff, yy;
+        for (j = 0; j < 4; j++) {
+          ff = poli[j];
+          yy = A[j] * orale + a1[j] * ff.y1 + a2[j] * ff.y2;
+          ff.y2 = ff.y1; ff.y1 = yy; orale = yy;
+        }
+        var nsl = 0;
+        if (gn > 0) { ff = poli[4]; nsl = A[4] * x + a1[4] * ff.y1 + a2[4] * ff.y2; ff.y2 = ff.y1; ff.y1 = nsl; }
+        var bianco = (Math.random() * 2 - 1) * (rum[i] + scop[i] * 1.2);
+        var yb = bA * bianco + ba1 * banda.y1 + ba2 * banda.y2;
+        banda.y2 = banda.y1; banda.y1 = yb;
+        var somma = orale + nsl * gn * 0.6 + yb * 0.9;
+        out[i] = somma - 0.96 * prec;
+        prec = somma;
+      }
+
+      var picco = 0;
+      for (i = 0; i < n; i++) picco = Math.max(picco, Math.abs(out[i]));
+      if (picco > 0) { var qq = 0.78 / picco; for (i = 0; i < n; i++) out[i] *= qq; }
+      return buf;
+    }
+
+    var VOCINE = [
+      { f0: 340, tratto: 1.00, ritmo: 1.0 },
+      { f0: 385, tratto: 1.06, ritmo: 0.95 },
+      { f0: 315, tratto: 0.95, ritmo: 1.05 }
+    ];
+    var fraseFatta = {};
+
     function voce(frase) {
-      if (!window.speechSynthesis) return;
-      var u = new SpeechSynthesisUtterance(frase);
-      var elenco = window.speechSynthesis.getVoices().filter(function (v) {
-        return /^it/i.test(v.lang);
-      });
-      if (elenco.length) u.voice = elenco[Math.floor(Math.random() * elenco.length)];
-      u.lang = "it-IT";
-      u.pitch = 1.55 + Math.random() * 0.4;
-      u.rate = 0.92 + Math.random() * 0.18;
-      u.volume = opz.volume + 0.15;
-      window.speechSynthesis.speak(u);
+      if (!ctx) return;
+      var vc = VOCINE[Math.floor(Math.random() * VOCINE.length)];
+      var chiave = frase + "|" + vc.f0;
+      if (!fraseFatta[chiave]) fraseFatta[chiave] = costruisciFrase(frase, vc);
+      var b = fraseFatta[chiave];
+      if (!b) return;
+      var src = ctx.createBufferSource();
+      src.buffer = b;
+      var g = ctx.createGain();
+      g.gain.value = 0.75;
+      src.connect(g);
+      g.connect(master);
+      src.start();
     }
 
     return {
       attivo: function () { return acceso; },
       accendiVoci: function (si) {
         vociAccese = !!si;
-        if (vociAccese) prossimaVoce = performance.now() + 1500;
-        else if (window.speechSynthesis) window.speechSynthesis.cancel();
+        if (vociAccese) {
+          apri();
+          if (ctx && ctx.state === "suspended") ctx.resume();
+          prossimaVoce = performance.now() + 1500;
+        }
       },
       accendi: function (si) {
         acceso = !!si;
@@ -554,7 +790,7 @@
           if (pf && pf.catch) pf.catch(function () {});
         }
         if (vociAccese && !document.hidden && adesso > prossimaVoce) {
-          prossimaVoce = adesso + 7000 + Math.random() * 8000;
+          prossimaVoce = adesso + 5000 + Math.random() * 6000;
           voce(opz.frasi[Math.floor(Math.random() * opz.frasi.length)]);
         }
         if (!acceso || !ctx || document.hidden) return;
@@ -610,7 +846,7 @@
     }
 
     var vol = parseFloat(nodo.dataset.suonoVolume);
-    var frasi = (nodo.dataset.vociFrasi || "ih ih ih|ah ah ah|eh eh eh|che bella sfoglia|guarda come volo")
+    var frasi = (nodo.dataset.vociFrasi || "guarda come volo|ohhh che bellooooo|vieni anche tuuuuu|su dai vieni che ci divertiamooooo|che bella sfoglia")
       .split("|").map(function (f) { return f.trim(); }).filter(Boolean);
     var suono = creaSuono({
       sintetico: nodo.dataset.suono === "si",
