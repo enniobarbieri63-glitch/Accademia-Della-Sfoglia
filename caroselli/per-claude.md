@@ -1,0 +1,1887 @@
+# Sei caroselli per accademiadellasfoglia.it
+
+Questo file contiene sei componenti carosello già scritti e verificati, con
+le istruzioni per inserirli nel sito. I blocchi di codice vanno usati così
+come sono.
+
+## Come inserirli
+
+- Ogni blocco è autosufficiente: contiene stile, markup e script del
+  carosello. Va incollato nella pagina indicata senza riscriverlo e senza
+  estrarne i pezzi.
+- Le classi cominciano tutte per `ads-`: non vanno rinominate, servono a non
+  far collidere questi stili con il resto del sito.
+- I sei blocchi possono convivere nella stessa pagina.
+- Nel `<head>` del sito vanno caricati una volta sola i caratteri Bodoni Moda
+  e Archivo:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap">
+```
+
+## Cosa va cambiato, e solo questo
+
+- Il testo fra parentesi quadre (`[PREZZO]`, `[GG]`, `[mese]`, `[ANNO]`,
+  `[N]`, `[Nome Cognome]`) va sostituito con i dati veri.
+- Le immagini sono segnaposto in CSS: per metterci le foto si cambia la
+  variabile `--img` in `url('/percorso/foto.jpg')` e si toglie la classe
+  `is-segnaposto`.
+- Gli `href` dei link (`#corsi`, `#prenota`, `#contatti`…) vanno puntati alle
+  pagine vere.
+- Le testimonianze del carosello 3 sono testi fac-simile: vanno sostituite
+  con recensioni reali.
+- Nel carosello 2 il calendario si aggiorna dagli attributi delle schede:
+  `data-corso`, `data-tipo` (base, intensivo, ripieni, sumisura),
+  `data-posti` (0 = esaurito, 1–2 = ultimi posti) e `data-totale`. Il
+  cartellino e la riga della disponibilità li scrive il JavaScript da questi
+  numeri. L'indirizzo per le prenotazioni è la costante `MAIL` in cima allo
+  script.
+
+## Da non toccare
+
+La struttura ARIA, gli attributi `inert`, i blocchi
+`@media (prefers-reduced-motion)` e la logica JavaScript: servono a far
+funzionare i caroselli con la tastiera, con i lettori di schermo e per chi
+ha chiesto meno animazioni.
+
+---
+
+## 01 · Slideshow d'apertura
+
+**Dove va:** Testata della home
+**File di origine:** `caroselli/01-slideshow-apertura.html`
+
+Tre messaggi che si alternano da soli in dissolvenza, con barra di avanzamento sui punti, tasto di pausa, frecce e scorrimento col dito.
+
+```html
+<!-- ============================================================
+     CAROSELLO 1 · Slideshow d'apertura (hero)
+     Immagini: sostituire il valore di --img su ogni .ads-hero__slide
+     con url('/immagini/nome-file.jpg') e togliere la classe
+     "is-segnaposto" dal div .ads-hero__media.
+     ============================================================ -->
+<style>
+.ads-hero{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-hero-durata:6000ms;
+  position:relative; overflow:hidden; background:var(--ads-inchiostro);
+  font-family:var(--ads-sans); color:var(--ads-crema);
+  box-sizing:border-box;
+}
+.ads-hero *,.ads-hero *::before,.ads-hero *::after{box-sizing:border-box}
+.ads-hero__viewport{position:relative; height:clamp(440px,68vh,680px)}
+.ads-hero__slide{
+  position:absolute; inset:0; margin:0; opacity:0; visibility:hidden;
+  transition:opacity .9s ease, visibility 0s linear .9s;
+}
+.ads-hero__slide.is-active{opacity:1; visibility:visible; transition:opacity .9s ease}
+.ads-hero__media{
+  position:absolute; inset:0;
+  background-image:var(--img); background-size:cover; background-position:center;
+  transform:scale(1.02);
+}
+.ads-hero__slide.is-active .ads-hero__media{animation:ads-hero-zoom 12s ease-out both}
+@keyframes ads-hero-zoom{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-hero__media.is-segnaposto::before{
+  content:""; position:absolute; inset:0; opacity:.5;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.13) 0 1px,transparent 1px 14px);
+}
+.ads-hero__velo{
+  position:absolute; inset:0;
+  background:linear-gradient(92deg,rgba(28,19,13,.86) 0%,rgba(28,19,13,.58) 42%,rgba(28,19,13,.12) 100%);
+}
+.ads-hero__contenuto{
+  position:relative; height:100%; display:flex; flex-direction:column;
+  justify-content:center; gap:20px; max-width:660px;
+  padding:0 clamp(24px,6vw,86px);
+}
+.ads-hero__occhiello{
+  margin:0; font-size:13px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ads-oro);
+}
+.ads-hero__titolo{
+  margin:0; font-family:var(--ads-serif); font-weight:400;
+  font-size:clamp(46px,7.4vw,86px); line-height:.96; letter-spacing:-.02em;
+}
+.ads-hero__titolo em{font-style:italic; color:#E8A66E}
+.ads-hero__testo{
+  margin:0; max-width:46ch; font-size:clamp(16px,1.35vw,19px); line-height:1.55;
+  color:rgba(250,245,236,.86); text-wrap:pretty;
+}
+.ads-hero__azioni{display:flex; flex-wrap:wrap; gap:14px; margin-top:6px}
+.ads-hero__cta{
+  display:inline-flex; align-items:center; gap:10px; padding:14px 26px;
+  background:var(--ads-rosso); color:var(--ads-crema); text-decoration:none;
+  font-size:14px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease, transform .2s ease;
+}
+.ads-hero__cta:hover{background:#8A2F1F; transform:translateY(-1px)}
+.ads-hero__cta--fantasma{background:transparent; border:1px solid rgba(250,245,236,.45)}
+.ads-hero__cta--fantasma:hover{background:rgba(250,245,236,.1)}
+.ads-hero__comandi{
+  position:absolute; left:0; right:0; bottom:0;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  padding:0 clamp(24px,6vw,86px) clamp(22px,4vw,34px);
+}
+.ads-hero__punti{display:flex; align-items:center; gap:10px}
+.ads-hero__punto{
+  position:relative; width:52px; height:3px; padding:0; border:0; cursor:pointer;
+  background:rgba(250,245,236,.3); overflow:hidden;
+}
+.ads-hero__punto-riempimento{position:absolute; inset:0; width:0; background:var(--ads-crema)}
+.ads-hero__punto.is-active .ads-hero__punto-riempimento{
+  animation:ads-hero-barra var(--ads-hero-durata) linear forwards;
+}
+.ads-hero.is-in-pausa .ads-hero__punto.is-active .ads-hero__punto-riempimento{animation-play-state:paused}
+@keyframes ads-hero-barra{from{width:0}to{width:100%}}
+.ads-hero__frecce{display:flex; gap:8px; margin-left:auto}
+.ads-hero__bottone{
+  width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid rgba(250,245,236,.4); background:transparent; color:var(--ads-crema);
+  border-radius:50%; transition:background .2s ease, border-color .2s ease;
+}
+.ads-hero__bottone:hover{background:rgba(250,245,236,.14); border-color:var(--ads-crema)}
+.ads-hero :focus-visible{outline:2px solid var(--ads-oro); outline-offset:3px}
+.ads-hero__sr{
+  display:inline-block; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;
+}
+@media (max-width:640px){
+  .ads-hero__comandi{gap:12px}
+  .ads-hero__punto{width:34px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-hero__slide{transition:none}
+  .ads-hero__slide.is-active .ads-hero__media{animation:none}
+  .ads-hero__punto.is-active .ads-hero__punto-riempimento{animation:none; width:100%}
+}
+</style>
+
+<section class="ads-hero" data-autoplay="6000" aria-roledescription="carosello" aria-label="Accademia della Sfoglia in breve">
+  <div class="ads-hero__viewport">
+
+    <article class="ads-hero__slide is-active" aria-roledescription="diapositiva" aria-label="1 di 3"
+             style="--img:radial-gradient(120% 95% at 18% 22%,rgba(217,162,39,.62),transparent 62%),radial-gradient(110% 110% at 88% 78%,rgba(169,59,39,.5),transparent 60%),linear-gradient(155deg,#F2E9DA,#D8BE93)">
+      <div class="ads-hero__media is-segnaposto"></div>
+      <div class="ads-hero__velo"></div>
+      <div class="ads-hero__contenuto">
+        <p class="ads-hero__occhiello">Bottega Via Emilia · Milano</p>
+        <h2 class="ads-hero__titolo">La sfoglia<br><em>a mano</em></h2>
+        <p class="ads-hero__testo">Uovo e farina, il gesto del mattarello, il taglio. Una giornata al tagliere con i maestri dell'Accademia. Nessuna macchina.</p>
+        <div class="ads-hero__azioni">
+          <a class="ads-hero__cta" href="#corsi">Scopri i corsi</a>
+          <a class="ads-hero__cta ads-hero__cta--fantasma" href="#bottega">La bottega</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ads-hero__slide" aria-roledescription="diapositiva" aria-label="2 di 3"
+             style="--img:radial-gradient(130% 100% at 78% 18%,rgba(232,166,110,.6),transparent 58%),radial-gradient(120% 120% at 12% 84%,rgba(42,31,23,.45),transparent 62%),linear-gradient(200deg,#E9DCC4,#C4A87A)">
+      <div class="ads-hero__media is-segnaposto"></div>
+      <div class="ads-hero__velo"></div>
+      <div class="ads-hero__contenuto">
+        <p class="ads-hero__occhiello">Corso intensivo · [MESE]</p>
+        <h2 class="ads-hero__titolo">Tortellini,<br><em>uno per volta</em></h2>
+        <p class="ads-hero__testo">Sei ore sul tagliere per imparare la chiusura, il ripieno e la giusta consistenza della sfoglia. Massimo [N] partecipanti.</p>
+        <div class="ads-hero__azioni">
+          <a class="ads-hero__cta" href="#prenota">Prenota il posto</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ads-hero__slide" aria-roledescription="diapositiva" aria-label="3 di 3"
+             style="--img:radial-gradient(120% 90% at 50% 12%,rgba(250,245,236,.55),transparent 55%),radial-gradient(120% 120% at 20% 90%,rgba(169,59,39,.55),transparent 60%),linear-gradient(170deg,#E4D3B6,#A97B4A)">
+      <div class="ads-hero__media is-segnaposto"></div>
+      <div class="ads-hero__velo"></div>
+      <div class="ads-hero__contenuto">
+        <p class="ads-hero__occhiello">Dal 2018</p>
+        <h2 class="ads-hero__titolo">Una scuola,<br><em>tre maestri</em></h2>
+        <p class="ads-hero__testo">Rina Poletti, Beppe Govoni e Gian Paolo Chiossi insegnano il mestiere come si è sempre fatto: guardando le mani.</p>
+        <div class="ads-hero__azioni">
+          <a class="ads-hero__cta ads-hero__cta--fantasma" href="#maestri">Conosci i maestri</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="ads-hero__comandi">
+    <div class="ads-hero__punti"></div>
+    <button type="button" class="ads-hero__bottone ads-hero__pausa" aria-label="Metti in pausa lo scorrimento automatico">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1.5" width="3.4" height="11" fill="currentColor"></rect><rect x="8.6" y="1.5" width="3.4" height="11" fill="currentColor"></rect></svg>
+    </button>
+    <div class="ads-hero__frecce">
+      <button type="button" class="ads-hero__bottone ads-hero__prec" aria-label="Diapositiva precedente">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <button type="button" class="ads-hero__bottone ads-hero__succ" aria-label="Diapositiva successiva">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var ICONA_PAUSA = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1.5" width="3.4" height="11" fill="currentColor"></rect><rect x="8.6" y="1.5" width="3.4" height="11" fill="currentColor"></rect></svg>';
+  var ICONA_PLAY  = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5l9 5.5-9 5.5z" fill="currentColor"></path></svg>';
+
+  document.querySelectorAll('.ads-hero').forEach(function (radice) {
+    var slide = Array.prototype.slice.call(radice.querySelectorAll('.ads-hero__slide'));
+    if (!slide.length) return;
+    var viewport = radice.querySelector('.ads-hero__viewport');
+    var contPunti = radice.querySelector('.ads-hero__punti');
+    var btnPausa = radice.querySelector('.ads-hero__pausa');
+    var durata = parseInt(radice.dataset.autoplay, 10) || 6000;
+    var motoRidotto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var indice = 0, timer = null, sospesoDaUtente = false;
+
+    radice.style.setProperty('--ads-hero-durata', durata + 'ms');
+
+    var punti = slide.map(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-hero__punto';
+      b.innerHTML = '<span class="ads-hero__punto-riempimento"></span><span class="ads-hero__sr">Vai alla diapositiva ' + (i + 1) + '</span>';
+      b.addEventListener('click', function () { vaiA(i); riavvia(); });
+      contPunti.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = (n + slide.length) % slide.length;
+      slide.forEach(function (s, i) {
+        var attiva = i === indice;
+        s.classList.toggle('is-active', attiva);
+        if (attiva) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+      });
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+    }
+
+    function avvia() {
+      ferma();
+      if (motoRidotto.matches || sospesoDaUtente) return;
+      radice.classList.remove('is-in-pausa');
+      viewport.setAttribute('aria-live', 'off');
+      timer = window.setInterval(function () { vaiA(indice + 1); }, durata);
+    }
+    function ferma() { if (timer) { window.clearInterval(timer); timer = null; } }
+    function sospendi() { ferma(); radice.classList.add('is-in-pausa'); viewport.setAttribute('aria-live', 'polite'); }
+    function riavvia() { if (!sospesoDaUtente) avvia(); }
+
+    btnPausa.addEventListener('click', function () {
+      sospesoDaUtente = !sospesoDaUtente;
+      if (sospesoDaUtente) { sospendi(); } else { avvia(); }
+      btnPausa.innerHTML = sospesoDaUtente ? ICONA_PLAY : ICONA_PAUSA;
+      btnPausa.setAttribute('aria-label', sospesoDaUtente ? 'Riprendi lo scorrimento automatico' : 'Metti in pausa lo scorrimento automatico');
+    });
+
+    radice.querySelector('.ads-hero__prec').addEventListener('click', function () { vaiA(indice - 1); riavvia(); });
+    radice.querySelector('.ads-hero__succ').addEventListener('click', function () { vaiA(indice + 1); riavvia(); });
+
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); riavvia(); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); riavvia(); }
+    });
+
+    radice.addEventListener('mouseenter', sospendi);
+    radice.addEventListener('mouseleave', riavvia);
+    radice.addEventListener('focusin', sospendi);
+    radice.addEventListener('focusout', function (e) {
+      if (!radice.contains(e.relatedTarget)) riavvia();
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) sospendi(); else riavvia();
+    });
+    motoRidotto.addEventListener('change', function () { motoRidotto.matches ? sospendi() : avvia(); });
+
+    var xIniziale = null;
+    viewport.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    viewport.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale;
+      xIniziale = null;
+      if (Math.abs(delta) < 45) return;
+      vaiA(indice + (delta < 0 ? 1 : -1));
+      riavvia();
+    });
+
+    if (motoRidotto.matches) { sospendi(); btnPausa.hidden = true; }
+    vaiA(0);
+    avvia();
+  });
+})();
+</script>
+```
+
+---
+
+## 02 · Corsi in programma
+
+**Dove va:** Pagina corsi, home
+**File di origine:** `caroselli/02-corsi-schede.html`
+
+Schede scorrevoli con filtri per tipo, posti liberi in evidenza, vista a griglia e scheda di dettaglio con il programma di ogni corso. Il carrello usa lo scroll nativo: anche a JavaScript spento resta scorrevole.
+
+```html
+<!-- ============================================================
+     CAROSELLO 2 · Corsi in programma
+     Trascinamento, rotellina e scorrimento nativo: il carrello usa
+     scroll-snap, quindi funziona anche senza JavaScript.
+
+     PER AGGIUNGERE O AGGIORNARE UN CORSO si duplica un
+     <article class="ads-corsi__scheda"> e si compilano i suoi attributi:
+       data-corso  nome del corso (finisce nel titolo della scheda di dettaglio
+                   e nell'oggetto della mail di prenotazione)
+       data-tipo   una o più parole fra base, intensivo, ripieni, sumisura
+                   (separate da spazio) — servono ai filtri
+       data-posti  posti ancora liberi. 0 = esaurito. Se manca, la scheda
+                   non mostra la disponibilità (corsi su richiesta)
+       data-totale posti totali
+     Il cartellino "Ultimi posti" / "Esaurito" e la riga della disponibilità
+     li scrive il JavaScript da questi numeri: si aggiorna un attributo solo.
+     ============================================================ -->
+<style>
+.ads-corsi{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
+  --ads-testo:#4A3B30; --ads-linea:#C9B79C; --ads-verde:#5C6B4A;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-bordo:clamp(20px,6vw,86px);
+  background:var(--ads-crema); color:var(--ads-inchiostro);
+  font-family:var(--ads-sans); padding:clamp(48px,7vw,86px) 0; box-sizing:border-box;
+}
+.ads-corsi *,.ads-corsi *::before,.ads-corsi *::after{box-sizing:border-box}
+.ads-corsi__testata{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  flex-wrap:wrap; padding:0 var(--ads-bordo) clamp(22px,2.6vw,30px);
+}
+.ads-corsi__occhiello{
+  margin:0 0 10px; font-size:13px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ads-rosso);
+}
+.ads-corsi__titolo{
+  margin:0; font-family:var(--ads-serif); font-weight:400;
+  font-size:clamp(34px,4.6vw,54px); line-height:1.02; letter-spacing:-.01em;
+}
+.ads-corsi__frecce{display:flex; gap:10px}
+.ads-corsi__bottone{
+  width:48px; height:48px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--ads-inchiostro); background:transparent;
+  color:var(--ads-inchiostro); border-radius:50%;
+  transition:background .2s ease,color .2s ease,opacity .2s ease;
+}
+.ads-corsi__bottone:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__bottone[disabled]{opacity:.28; cursor:default}
+.ads-corsi__bottone[disabled]:hover{background:transparent; color:var(--ads-inchiostro)}
+
+/* --- filtri ------------------------------------------------------------- */
+.ads-corsi__comandi{
+  display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap;
+  padding:0 var(--ads-bordo) clamp(20px,2.4vw,28px);
+}
+.ads-corsi__filtri{display:flex; gap:8px; flex-wrap:wrap}
+.ads-corsi__filtro{
+  display:inline-flex; align-items:baseline; gap:8px; padding:9px 16px; cursor:pointer;
+  border:1px solid var(--ads-linea); background:transparent; color:var(--ads-inchiostro);
+  font-family:inherit; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.ads-corsi__filtro:hover{border-color:var(--ads-inchiostro)}
+.ads-corsi__filtro.is-active{background:var(--ads-inchiostro); border-color:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__conto{font-size:11px; opacity:.6; font-variant-numeric:tabular-nums}
+.ads-corsi__interruttore{
+  display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+  font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ads-grigio);
+}
+.ads-corsi__interruttore input{
+  appearance:none; -webkit-appearance:none; margin:0; width:34px; height:18px; cursor:pointer;
+  border:1px solid var(--ads-linea); border-radius:999px; background:var(--ads-carta);
+  position:relative; transition:background .2s ease, border-color .2s ease;
+}
+.ads-corsi__interruttore input::after{
+  content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
+  border-radius:50%; background:var(--ads-grigio); transition:transform .2s ease, background .2s ease;
+}
+.ads-corsi__interruttore input:checked{background:var(--ads-inchiostro); border-color:var(--ads-inchiostro)}
+.ads-corsi__interruttore input:checked::after{transform:translateX(16px); background:var(--ads-crema)}
+.ads-corsi__vista{
+  margin-left:auto; padding:9px 16px; cursor:pointer; background:transparent;
+  border:1px solid var(--ads-inchiostro); color:var(--ads-inchiostro); font-family:inherit;
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease,color .2s ease;
+}
+.ads-corsi__vista:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+
+/* --- carrello e schede -------------------------------------------------- */
+.ads-corsi__carrello{
+  display:flex; gap:clamp(16px,2vw,26px);
+  padding:4px var(--ads-bordo) 6px;
+  scroll-padding-inline:var(--ads-bordo);
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none; -ms-overflow-style:none;
+  overscroll-behavior-x:contain;
+}
+.ads-corsi__carrello::-webkit-scrollbar{display:none}
+.ads-corsi__scheda{
+  flex:0 0 clamp(258px,26vw,340px); scroll-snap-align:start;
+  display:flex; flex-direction:column; background:var(--ads-carta);
+  border:1px solid var(--ads-linea); color:inherit;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.ads-corsi__scheda:hover{
+  transform:translateY(-4px); border-color:var(--ads-inchiostro);
+  box-shadow:0 14px 34px -22px rgba(42,31,23,.65);
+}
+.ads-corsi__scheda[hidden]{display:none}
+.ads-corsi__figura{
+  position:relative; aspect-ratio:4/3;
+  background-image:var(--img); background-size:cover; background-position:center;
+}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-corsi__figura.is-segnaposto::after{
+  content:""; position:absolute; inset:0; opacity:.45;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.14) 0 1px,transparent 1px 13px);
+}
+.ads-corsi__cartellini{position:absolute; top:14px; left:14px; right:14px; z-index:1; display:flex; gap:8px; flex-wrap:wrap}
+.ads-corsi__etichetta{
+  padding:6px 12px; background:var(--ads-crema); color:var(--ads-rosso);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+}
+.ads-corsi__stato{padding:6px 12px; font-size:11px; letter-spacing:.18em; text-transform:uppercase}
+.ads-corsi__stato--ultimi{background:var(--ads-oro); color:var(--ads-inchiostro)}
+.ads-corsi__stato--esaurito{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__corpo{display:flex; flex-direction:column; gap:10px; padding:22px 22px 24px; flex:1}
+.ads-corsi__data{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ads-grigio)}
+.ads-corsi__nome{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:26px; line-height:1.14}
+.ads-corsi__descrizione{margin:0; font-size:15px; line-height:1.55; color:var(--ads-testo); text-wrap:pretty}
+.ads-corsi__piede{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin-top:auto; padding-top:16px; border-top:1px solid var(--ads-linea);
+}
+.ads-corsi__prezzo{font-family:var(--ads-serif); font-size:22px}
+.ads-corsi__durata{font-size:13px; color:var(--ads-grigio)}
+.ads-corsi__posti{display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--ads-grigio)}
+.ads-corsi__posti-barra{height:3px; background:var(--ads-linea); overflow:hidden}
+.ads-corsi__posti-quota{display:block; height:100%; width:var(--quota,0%); background:var(--ads-verde)}
+.ads-corsi__posti.is-poco .ads-corsi__posti-quota{background:var(--ads-oro)}
+.ads-corsi__posti.is-esaurito .ads-corsi__posti-quota{background:var(--ads-rosso)}
+.ads-corsi__azioni{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; row-gap:10px; flex-wrap:wrap; margin-top:6px;
+}
+.ads-corsi__link{
+  position:relative; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ads-rosso); text-decoration:none; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.ads-corsi__scheda:hover .ads-corsi__link{gap:13px}
+.ads-corsi__dettagli{
+  padding:0; border:0; background:transparent; cursor:pointer; font-family:inherit; white-space:nowrap;
+  font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ads-grigio);
+  border-bottom:1px solid var(--ads-linea); transition:color .2s ease,border-color .2s ease;
+}
+.ads-corsi__dettagli:hover{color:var(--ads-inchiostro); border-color:var(--ads-inchiostro)}
+.ads-corsi__vuoto{
+  margin:0; padding:40px var(--ads-bordo); text-align:center;
+  font-family:var(--ads-serif); font-size:22px; color:var(--ads-grigio);
+}
+.ads-corsi__vuoto[hidden]{display:none}
+.ads-corsi__azzera{
+  padding:0; border:0; border-bottom:1px solid var(--ads-linea); background:transparent;
+  cursor:pointer; font-family:var(--ads-sans); font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ads-rosso); transition:border-color .2s ease;
+}
+.ads-corsi__azzera:hover{border-color:var(--ads-rosso)}
+.ads-corsi__barra{
+  display:flex; align-items:center; gap:8px; justify-content:center;
+  padding:clamp(22px,3vw,32px) var(--ads-bordo) 0;
+}
+.ads-corsi__punto{
+  position:relative; width:26px; height:2px; padding:0; border:0; cursor:pointer;
+  background:var(--ads-linea); transition:background .2s ease,width .2s ease;
+}
+.ads-corsi__punto.is-active{background:var(--ads-rosso); width:44px}
+
+/* --- vista a griglia ---------------------------------------------------- */
+.ads-corsi.is-griglia .ads-corsi__carrello{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+  overflow:visible; scroll-snap-type:none; padding-top:4px;
+}
+.ads-corsi.is-griglia .ads-corsi__scheda{flex:initial}
+.ads-corsi.is-griglia .ads-corsi__barra,
+.ads-corsi.is-griglia .ads-corsi__frecce{display:none}
+
+/* --- scheda di dettaglio ------------------------------------------------ */
+.ads-corsi__finestra{
+  width:min(560px,92vw); padding:0; border:1px solid var(--ads-inchiostro);
+  background:var(--ads-crema); color:var(--ads-inchiostro); font-family:var(--ads-sans);
+}
+.ads-corsi__finestra::backdrop{background:rgba(28,19,13,.62)}
+.ads-corsi__finestra-testata{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:18px;
+  padding:26px 26px 0;
+}
+.ads-corsi__finestra-titolo{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:30px; line-height:1.1}
+.ads-corsi__finestra-occhiello{margin:0 0 8px; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ads-rosso)}
+.ads-corsi__chiudi{
+  flex:none; width:38px; height:38px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--ads-linea); background:transparent; color:var(--ads-inchiostro); border-radius:50%;
+  transition:background .2s ease,border-color .2s ease;
+}
+.ads-corsi__chiudi:hover{background:var(--ads-carta); border-color:var(--ads-inchiostro)}
+.ads-corsi__finestra-corpo{padding:20px 26px 4px; max-height:min(56vh,460px); overflow-y:auto}
+.ads-corsi__finestra-dati{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(104px,1fr)); gap:14px 18px;
+  padding:16px 0; margin-bottom:18px; border-top:1px solid var(--ads-linea); border-bottom:1px solid var(--ads-linea);
+}
+.ads-corsi__dato{display:flex; flex-direction:column; gap:4px}
+.ads-corsi__dato dt{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--ads-grigio)}
+.ads-corsi__dato dd{margin:0; font-family:var(--ads-serif); font-size:19px; line-height:1.25}
+.ads-corsi__dato--largo{grid-column:span 2}
+.ads-corsi__finestra h4{
+  margin:22px 0 10px; font-size:12px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ads-rosso);
+}
+.ads-corsi__finestra h4:first-child{margin-top:0}
+.ads-corsi__finestra p{margin:0; font-size:15px; line-height:1.6; color:var(--ads-testo); text-wrap:pretty}
+.ads-corsi__programma{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px}
+.ads-corsi__programma li{display:flex; gap:14px; font-size:15px; line-height:1.45; color:var(--ads-testo)}
+.ads-corsi__programma b{
+  flex:none; width:62px; font-weight:400; color:var(--ads-inchiostro);
+  font-variant-numeric:tabular-nums; font-family:var(--ads-serif); font-size:16px;
+}
+.ads-corsi__incluso{margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px}
+.ads-corsi__incluso li{
+  padding:6px 12px; background:var(--ads-carta); border:1px solid var(--ads-linea);
+  font-size:13px; color:var(--ads-testo);
+}
+.ads-corsi__finestra-piede{
+  display:flex; gap:12px; flex-wrap:wrap; padding:20px 26px 26px;
+  border-top:1px solid var(--ads-linea); margin-top:22px;
+}
+.ads-corsi__cta{
+  display:inline-flex; align-items:center; gap:9px; padding:13px 22px; text-decoration:none;
+  border:1px solid var(--ads-inchiostro); color:var(--ads-inchiostro);
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease,color .2s ease;
+}
+.ads-corsi__cta:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__cta--pieno{background:var(--ads-rosso); border-color:var(--ads-rosso); color:var(--ads-crema)}
+.ads-corsi__cta--pieno:hover{background:#8A2F1F; border-color:#8A2F1F; color:var(--ads-crema)}
+
+.ads-corsi :focus-visible,.ads-corsi__finestra :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-corsi__sr,.ads-corsi__finestra .ads-corsi__sr{display:inline-block; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;}
+@media (max-width:640px){
+  .ads-corsi__scheda{flex-basis:78vw}
+  .ads-corsi__frecce{display:none}
+  .ads-corsi__vista{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-corsi__carrello{scroll-behavior:auto}
+  .ads-corsi__scheda:hover{transform:none}
+}
+</style>
+
+<section class="ads-corsi" aria-roledescription="carosello" aria-label="Corsi in programma">
+  <div class="ads-corsi__testata">
+    <div>
+      <p class="ads-corsi__occhiello">Calendario [ANNO]</p>
+      <h2 class="ads-corsi__titolo">I corsi in programma</h2>
+    </div>
+    <div class="ads-corsi__frecce">
+      <button type="button" class="ads-corsi__bottone ads-corsi__prec" aria-label="Corsi precedenti">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <button type="button" class="ads-corsi__bottone ads-corsi__succ" aria-label="Corsi successivi">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- I filtri li accende il JavaScript: senza, restano nascosti e si vedono tutti i corsi. -->
+  <div class="ads-corsi__comandi" hidden>
+    <div class="ads-corsi__filtri" role="group" aria-label="Filtra i corsi per tipo">
+      <button type="button" class="ads-corsi__filtro is-active" data-filtro="tutti">Tutti <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="base">Base <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="intensivo">Intensivi <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="ripieni">Ripieni <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="sumisura">Su misura <span class="ads-corsi__conto"></span></button>
+    </div>
+    <label class="ads-corsi__interruttore">
+      <input type="checkbox" class="ads-corsi__solo-liberi">
+      Solo con posti liberi
+    </label>
+    <button type="button" class="ads-corsi__vista" aria-pressed="false">Vedi tutti</button>
+    <p class="ads-corsi__sr" role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="ads-corsi__carrello" tabindex="0" role="group" aria-label="Elenco corsi, scorri orizzontalmente">
+
+    <article class="ads-corsi__scheda" data-corso="La sfoglia al mattarello" data-tipo="base" data-posti="4" data-totale="8">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 90% at 25% 20%,rgba(217,162,39,.55),transparent 62%),linear-gradient(160deg,#F2E9DA,#D8BE93)" aria-hidden="true">
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Base</span></div>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">La sfoglia al mattarello</h3>
+        <p class="ads-corsi__descrizione">Uovo e farina, l'impasto, la tirata. Si esce sapendo fare le tagliatelle da soli.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">4 ore</span>
+        </div>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso La sfoglia al mattarello</span></a>
+        </div>
+      </div>
+      <template class="ads-corsi__dettaglio">
+        <p>Il corso da cui partono tutti: si impara a fare la sfoglia con il mattarello, senza macchina, e a tagliarla a mano. Si lavora uno per tagliere, con un maestro ogni quattro partecipanti.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> Accoglienza, grembiule e fontana di farina</li>
+          <li><b>[ORA]</b> L'impasto a mano e il riposo</li>
+          <li><b>[ORA]</b> La tirata al mattarello, uno per uno</li>
+          <li><b>[ORA]</b> Taglio delle tagliatelle e nidi</li>
+          <li><b>[ORA]</b> Degustazione di quel che si è fatto</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Mattarello in prestito</li>
+          <li>Degustazione finale</li><li>Ricettario dell'Accademia</li>
+        </ul>
+      </template>
+    </article>
+
+    <article class="ads-corsi__scheda" data-corso="Tortellini di Bologna" data-tipo="intensivo ripieni" data-posti="2" data-totale="8">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 100% at 75% 25%,rgba(232,166,110,.6),transparent 60%),linear-gradient(190deg,#E9DCC4,#C4A87A)" aria-hidden="true">
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Intensivo</span></div>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Domenica] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">Tortellini di Bologna</h3>
+        <p class="ads-corsi__descrizione">Ripieno, quadrello, chiusura sul dito. Sei ore per il formato più difficile che c'è.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">6 ore</span>
+        </div>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Tortellini di Bologna</span></a>
+        </div>
+      </div>
+      <template class="ads-corsi__dettaglio">
+        <p>Sei ore sul tagliere per il formato che mette d'accordo tutta l'Emilia e divide tutte le famiglie. Sfoglia sottile, quadrelli piccoli, chiusura sul dito: si va avanti finché non viene.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> Il ripieno: lombo, mortadella, prosciutto, parmigiano</li>
+          <li><b>[ORA]</b> Sfoglia sottile al mattarello</li>
+          <li><b>[ORA]</b> Quadrelli e chiusura, uno per volta</li>
+          <li><b>[ORA]</b> Il brodo di terza</li>
+          <li><b>[ORA]</b> Tortellini in brodo, a tavola</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Pranzo con quel che si è fatto</li>
+          <li>Ricettario dell'Accademia</li><li>Una porzione da portare a casa</li>
+        </ul>
+      </template>
+    </article>
+
+    <article class="ads-corsi__scheda" data-corso="Cappelletti e tortelloni" data-tipo="ripieni" data-posti="6" data-totale="8">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 90% at 40% 80%,rgba(169,59,39,.5),transparent 62%),linear-gradient(150deg,#EFE2C9,#B9945F)" aria-hidden="true">
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Formati ripieni</span></div>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">Cappelletti e tortelloni</h3>
+        <p class="ads-corsi__descrizione">Due formati, due ripieni, una sfoglia sola. Con degustazione finale al tagliere.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">5 ore</span>
+        </div>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Cappelletti e tortelloni</span></a>
+        </div>
+      </div>
+      <template class="ads-corsi__dettaglio">
+        <p>Due formati ripieni nella stessa giornata: il cappelletto, piccolo e da brodo, e il tortellone di ricotta e prezzemolo, che vuole burro e salvia e nient'altro.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> I due ripieni, uno per volta</li>
+          <li><b>[ORA]</b> La sfoglia, tirata in due spessori</li>
+          <li><b>[ORA]</b> Cappelletti: taglio e chiusura</li>
+          <li><b>[ORA]</b> Tortelloni: la piegatura</li>
+          <li><b>[ORA]</b> Degustazione al tagliere</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Degustazione finale</li>
+          <li>Ricettario dell'Accademia</li>
+        </ul>
+      </template>
+    </article>
+
+    <article class="ads-corsi__scheda" data-corso="Lasagne verdi" data-tipo="base" data-posti="0" data-totale="8">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(100% 100% at 20% 30%,rgba(250,245,236,.6),transparent 55%),linear-gradient(170deg,#E4D3B6,#A97B4A)" aria-hidden="true">
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Base</span></div>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">Lasagne verdi</h3>
+        <p class="ads-corsi__descrizione">Spinaci nell'impasto, ragù e besciamella. Il piatto della domenica, fatto per bene.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">5 ore</span>
+        </div>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#lista-attesa">Lista d'attesa <span aria-hidden="true">→</span><span class="ads-corsi__sr">per il corso Lasagne verdi</span></a>
+        </div>
+      </div>
+      <template class="ads-corsi__dettaglio">
+        <p>La sfoglia verde con gli spinaci, il ragù che sobbolle dalla mattina e la besciamella fatta al momento. Si monta la teglia strato per strato e si porta a casa da infornare.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> Il ragù: soffritto e cottura lenta</li>
+          <li><b>[ORA]</b> La sfoglia verde al mattarello</li>
+          <li><b>[ORA]</b> Sbianchitura dei rettangoli</li>
+          <li><b>[ORA]</b> Besciamella e montaggio della teglia</li>
+          <li><b>[ORA]</b> Assaggio, e la teglia da portare via</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Una teglia da portare a casa</li>
+          <li>Ricettario dell'Accademia</li>
+        </ul>
+      </template>
+    </article>
+
+    <article class="ads-corsi__scheda" data-corso="Corso privato in bottega" data-tipo="sumisura">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 110% at 80% 70%,rgba(217,162,39,.6),transparent 60%),linear-gradient(200deg,#F2E9DA,#CBB287)" aria-hidden="true">
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Su misura</span></div>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">Su richiesta · tutto l'anno</p>
+        <h3 class="ads-corsi__nome">Corso privato in bottega</h3>
+        <p class="ads-corsi__descrizione">Per gruppi, aziende o regali: il programma si costruisce insieme a voi.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">Su preventivo</span>
+          <span class="ads-corsi__durata">da 3 ore</span>
+        </div>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#contatti">Chiedi info <span aria-hidden="true">→</span><span class="ads-corsi__sr">sul corso privato in bottega</span></a>
+        </div>
+      </div>
+      <template class="ads-corsi__dettaglio">
+        <p>La bottega chiusa solo per voi: si sceglie il formato, la durata e l'orario. Va bene per una squadra di lavoro, per una festa o come regalo a chi la sfoglia la vuole imparare davvero.</p>
+        <h4>Come funziona</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>1</b> Ci dite quante persone siete e quanto tempo avete</li>
+          <li><b>2</b> Proponiamo un programma e un preventivo</li>
+          <li><b>3</b> Si fissa la data, anche infrasettimanale</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Programma su misura</li>
+          <li>Degustazione</li><li>Fatturazione per le aziende</li>
+        </ul>
+      </template>
+    </article>
+
+  </div>
+
+  <p class="ads-corsi__vuoto" hidden>Nessun corso con questi filtri. <button type="button" class="ads-corsi__azzera">Mostra tutti</button></p>
+
+  <div class="ads-corsi__barra" role="group" aria-label="Pagine del carosello"></div>
+
+  <dialog class="ads-corsi__finestra">
+    <div class="ads-corsi__finestra-testata">
+      <div>
+        <p class="ads-corsi__finestra-occhiello"></p>
+        <h3 class="ads-corsi__finestra-titolo"></h3>
+      </div>
+      <button type="button" class="ads-corsi__chiudi" aria-label="Chiudi la scheda del corso">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+    <div class="ads-corsi__finestra-corpo">
+      <dl class="ads-corsi__finestra-dati"></dl>
+      <div class="ads-corsi__finestra-testo"></div>
+    </div>
+    <div class="ads-corsi__finestra-piede">
+      <a class="ads-corsi__cta ads-corsi__cta--pieno ads-corsi__cta-mail" href="#">Scrivi per prenotare</a>
+      <a class="ads-corsi__cta" href="tel:+393335901748">333 5901748</a>
+    </div>
+  </dialog>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-corsi').forEach(function (radice) {
+    var carrello = radice.querySelector('.ads-corsi__carrello');
+    var schede = Array.prototype.slice.call(carrello.querySelectorAll('.ads-corsi__scheda'));
+    if (!schede.length) return;
+
+    var prec = radice.querySelector('.ads-corsi__prec');
+    var succ = radice.querySelector('.ads-corsi__succ');
+    var barra = radice.querySelector('.ads-corsi__barra');
+    var comandi = radice.querySelector('.ads-corsi__comandi');
+    var filtri = Array.prototype.slice.call(radice.querySelectorAll('.ads-corsi__filtro'));
+    var soloLiberi = radice.querySelector('.ads-corsi__solo-liberi');
+    var vista = radice.querySelector('.ads-corsi__vista');
+    var vuoto = radice.querySelector('.ads-corsi__vuoto');
+    var azzera = radice.querySelector('.ads-corsi__azzera');
+    var annuncio = radice.querySelector('[role="status"]');
+    var finestra = radice.querySelector('.ads-corsi__finestra');
+
+    var MAIL = 'info@accademiadellasfoglia.it';
+    var filtroAttivo = 'tutti';
+
+    // --- disponibilità: cartellino e barretta dai data-posti -------------
+    schede.forEach(function (scheda) {
+      var posti = scheda.dataset.posti;
+      if (posti === undefined) return;
+      posti = parseInt(posti, 10);
+      var totale = parseInt(scheda.dataset.totale, 10) || 0;
+      var cartellini = scheda.querySelector('.ads-corsi__cartellini');
+      var piede = scheda.querySelector('.ads-corsi__piede');
+
+      if (cartellini && (posti === 0 || posti <= 2)) {
+        var stato = document.createElement('span');
+        stato.className = 'ads-corsi__stato ' + (posti === 0 ? 'ads-corsi__stato--esaurito' : 'ads-corsi__stato--ultimi');
+        stato.textContent = posti === 0 ? 'Esaurito' : 'Ultimi posti';
+        cartellini.appendChild(stato);
+      }
+
+      if (!piede || !totale) return;
+      var quota = Math.round(((totale - posti) / totale) * 100);
+      var blocco = document.createElement('div');
+      blocco.className = 'ads-corsi__posti' + (posti === 0 ? ' is-esaurito' : (posti <= 2 ? ' is-poco' : ''));
+      blocco.innerHTML =
+        '<span>' + (posti === 0 ? 'Nessun posto libero' : posti + ' posti liberi su ' + totale) + '</span>' +
+        '<span class="ads-corsi__posti-barra"><span class="ads-corsi__posti-quota" style="--quota:' + quota + '%"></span></span>';
+      piede.insertAdjacentElement('afterend', blocco);
+    });
+
+    // --- carosello --------------------------------------------------------
+    function visibili() {
+      return schede.filter(function (s) { return !s.hidden; });
+    }
+    function passo() {
+      var v = visibili();
+      if (v.length < 2) return carrello.clientWidth;
+      return v[1].getBoundingClientRect().left - v[0].getBoundingClientRect().left;
+    }
+    function pagine() {
+      return Math.max(1, Math.ceil((carrello.scrollWidth - carrello.clientWidth) / Math.max(1, passo())) + 1);
+    }
+
+    var punti = [];
+    function costruisciPunti() {
+      var n = radice.classList.contains('is-griglia') ? 0 : pagine();
+      barra.innerHTML = '';
+      punti = [];
+      if (n < 2) return;
+      for (var i = 0; i < n; i++) {
+        (function (i) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'ads-corsi__punto';
+          b.innerHTML = '<span class="ads-corsi__sr">Vai alla scheda ' + (i + 1) + '</span>';
+          b.addEventListener('click', function () { carrello.scrollTo({ left: i * passo(), behavior: 'smooth' }); });
+          barra.appendChild(b);
+          punti.push(b);
+        })(i);
+      }
+    }
+
+    function aggiorna() {
+      var x = carrello.scrollLeft;
+      var massimo = carrello.scrollWidth - carrello.clientWidth - 2;
+      var griglia = radice.classList.contains('is-griglia');
+      prec.disabled = griglia || x <= 2;
+      succ.disabled = griglia || x >= massimo;
+      var attivo = Math.round(x / Math.max(1, passo()));
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === attivo);
+        p.setAttribute('aria-current', i === attivo ? 'true' : 'false');
+      });
+    }
+
+    prec.addEventListener('click', function () { carrello.scrollBy({ left: -passo(), behavior: 'smooth' }); });
+    succ.addEventListener('click', function () { carrello.scrollBy({ left: passo(), behavior: 'smooth' }); });
+
+    var attesa = null;
+    carrello.addEventListener('scroll', function () {
+      if (attesa) return;
+      attesa = window.requestAnimationFrame(function () { attesa = null; aggiorna(); });
+    }, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(function () { costruisciPunti(); aggiorna(); }).observe(carrello);
+    } else {
+      window.addEventListener('resize', function () { costruisciPunti(); aggiorna(); });
+    }
+
+    // --- filtri -----------------------------------------------------------
+    function corrisponde(scheda) {
+      var tipi = (scheda.dataset.tipo || '').split(/\s+/);
+      var perTipo = filtroAttivo === 'tutti' || tipi.indexOf(filtroAttivo) !== -1;
+      if (!perTipo) return false;
+      if (!soloLiberi || !soloLiberi.checked) return true;
+      var posti = scheda.dataset.posti;
+      return posti === undefined || parseInt(posti, 10) > 0;
+    }
+
+    function conta(filtro) {
+      return schede.filter(function (s) {
+        if (filtro !== 'tutti' && (s.dataset.tipo || '').split(/\s+/).indexOf(filtro) === -1) return false;
+        if (soloLiberi && soloLiberi.checked) {
+          var p = s.dataset.posti;
+          if (p !== undefined && parseInt(p, 10) === 0) return false;
+        }
+        return true;
+      }).length;
+    }
+
+    function applica() {
+      schede.forEach(function (s) { s.hidden = !corrisponde(s); });
+      filtri.forEach(function (f) {
+        var n = conta(f.dataset.filtro);
+        var contatore = f.querySelector('.ads-corsi__conto');
+        if (contatore) contatore.textContent = n;
+        f.disabled = n === 0 && f.dataset.filtro !== 'tutti';
+        f.classList.toggle('is-active', f.dataset.filtro === filtroAttivo);
+        f.setAttribute('aria-pressed', f.dataset.filtro === filtroAttivo ? 'true' : 'false');
+      });
+      var quanti = visibili().length;
+      if (vuoto) vuoto.hidden = quanti > 0;
+      carrello.hidden = quanti === 0;
+      if (annuncio) annuncio.textContent = quanti === 0
+        ? 'Nessun corso con questi filtri'
+        : (quanti === 1 ? 'Un corso in elenco' : quanti + ' corsi in elenco');
+      carrello.scrollTo({ left: 0, behavior: 'auto' });
+      costruisciPunti();
+      aggiorna();
+    }
+
+    filtri.forEach(function (f) {
+      f.addEventListener('click', function () { filtroAttivo = f.dataset.filtro; applica(); });
+    });
+    if (soloLiberi) soloLiberi.addEventListener('change', applica);
+    if (azzera) azzera.addEventListener('click', function () {
+      filtroAttivo = 'tutti';
+      if (soloLiberi) soloLiberi.checked = false;
+      applica();
+    });
+
+    // --- vista a griglia --------------------------------------------------
+    if (vista) vista.addEventListener('click', function () {
+      var griglia = radice.classList.toggle('is-griglia');
+      vista.textContent = griglia ? 'Vedi a carosello' : 'Vedi tutti';
+      vista.setAttribute('aria-pressed', griglia ? 'true' : 'false');
+      carrello.setAttribute('aria-label', griglia ? 'Elenco corsi' : 'Elenco corsi, scorri orizzontalmente');
+      costruisciPunti();
+      aggiorna();
+    });
+
+    // --- scheda di dettaglio ---------------------------------------------
+    if (finestra && typeof finestra.showModal === 'function') {
+      var titolo = finestra.querySelector('.ads-corsi__finestra-titolo');
+      // id unico: così due caroselli nella stessa pagina non si pestano i piedi
+      titolo.id = 'ads-corsi-titolo-' + Math.random().toString(36).slice(2, 8);
+      finestra.setAttribute('aria-labelledby', titolo.id);
+      var occhiello = finestra.querySelector('.ads-corsi__finestra-occhiello');
+      var dati = finestra.querySelector('.ads-corsi__finestra-dati');
+      var testo = finestra.querySelector('.ads-corsi__finestra-testo');
+      var mail = finestra.querySelector('.ads-corsi__cta-mail');
+
+      function dato(etichetta, valore, largo) {
+        if (!valore) return '';
+        return '<div class="ads-corsi__dato' + (largo ? ' ads-corsi__dato--largo' : '') + '">' +
+               '<dt>' + etichetta + '</dt><dd>' + valore + '</dd></div>';
+      }
+
+      function apri(scheda) {
+        var modello = scheda.querySelector('.ads-corsi__dettaglio');
+        var posti = scheda.dataset.posti;
+        titolo.textContent = scheda.dataset.corso || scheda.querySelector('.ads-corsi__nome').textContent;
+        occhiello.textContent = scheda.querySelector('.ads-corsi__etichetta').textContent;
+        dati.innerHTML =
+          dato('Quando', scheda.querySelector('.ads-corsi__data').textContent, true) +
+          dato('Durata', scheda.querySelector('.ads-corsi__durata').textContent) +
+          dato('Quota', scheda.querySelector('.ads-corsi__prezzo').textContent) +
+          dato('Posti', posti === undefined ? 'Su richiesta' : (parseInt(posti, 10) === 0 ? 'Esauriti' : posti + ' liberi'));
+        testo.innerHTML = '';
+        if (modello) testo.appendChild(modello.content.cloneNode(true));
+        mail.href = 'mailto:' + MAIL +
+          '?subject=' + encodeURIComponent('Prenotazione · ' + titolo.textContent) +
+          '&body=' + encodeURIComponent('Buongiorno,\nvorrei prenotare un posto per il corso "' + titolo.textContent + '".\n\nNome:\nTelefono:\nNumero di partecipanti:\n');
+        mail.textContent = (posti !== undefined && parseInt(posti, 10) === 0)
+          ? 'Scrivi per la lista d’attesa'
+          : 'Scrivi per prenotare';
+        finestra.showModal();
+      }
+
+      schede.forEach(function (scheda) {
+        if (!scheda.querySelector('.ads-corsi__dettaglio')) return;
+        var azioni = scheda.querySelector('.ads-corsi__azioni');
+        var bottone = document.createElement('button');
+        bottone.type = 'button';
+        bottone.className = 'ads-corsi__dettagli';
+        bottone.setAttribute('aria-haspopup', 'dialog');
+        bottone.innerHTML = 'Programma<span class="ads-corsi__sr"> del corso ' + (scheda.dataset.corso || '') + '</span>';
+        bottone.addEventListener('click', function () { apri(scheda); });
+        azioni.insertBefore(bottone, azioni.firstChild);
+      });
+
+      finestra.querySelector('.ads-corsi__chiudi').addEventListener('click', function () { finestra.close(); });
+      // clic sullo sfondo: chiude
+      finestra.addEventListener('click', function (e) {
+        if (e.target === finestra) finestra.close();
+      });
+    }
+
+    if (comandi) comandi.hidden = false;
+    applica();
+  });
+})();
+</script>
+```
+
+---
+
+## 03 · Le voci della bottega
+
+**Dove va:** Sotto i corsi, prima del modulo di contatto
+**File di origine:** `caroselli/03-testimonianze.html`
+
+Una testimonianza alla volta, in corsivo Bodoni. I testi qui sono fac-simile: vanno sostituiti con recensioni reali.
+
+```html
+<!-- ============================================================
+     CAROSELLO 3 · Le voci di chi è passato in bottega
+     ATTENZIONE: i testi qui sotto sono FAC-SIMILE, servono solo a
+     mostrare l'impaginazione. Vanno sostituiti con recensioni reali
+     e con il nome di chi le ha davvero scritte.
+     ============================================================ -->
+<style>
+.ads-voci{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-testo:#4A3B30;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-voci-durata:8000ms;
+  position:relative; background:var(--ads-carta); color:var(--ads-inchiostro);
+  font-family:var(--ads-sans); padding:clamp(52px,7vw,92px) clamp(20px,6vw,86px);
+  box-sizing:border-box; overflow:hidden;
+}
+.ads-voci *,.ads-voci *::before,.ads-voci *::after{box-sizing:border-box}
+.ads-voci::before{
+  content:"“"; position:absolute; top:0; left:1.5vw;
+  font-family:var(--ads-serif); font-size:clamp(220px,30vw,420px);
+  line-height:1; color:var(--ads-oro); opacity:.16; pointer-events:none;
+}
+.ads-voci__intestazione{
+  position:relative; text-align:center; font-size:13px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ads-rosso); margin:0 0 clamp(28px,4vw,44px);
+}
+.ads-voci__pista{position:relative; display:grid; max-width:900px; margin:0 auto}
+.ads-voci__voce{
+  grid-area:1/1; display:flex; flex-direction:column; align-items:center; gap:26px;
+  margin:0; text-align:center; opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .6s ease, transform .6s ease, visibility 0s linear .6s;
+}
+.ads-voci__voce.is-active{
+  opacity:1; visibility:visible; transform:none;
+  transition:opacity .6s ease, transform .6s ease;
+}
+.ads-voci__stelle{display:flex; gap:5px; color:var(--ads-oro)}
+.ads-voci__citazione{
+  margin:0; font-family:var(--ads-serif); font-style:italic; font-weight:400;
+  font-size:clamp(23px,3vw,36px); line-height:1.36; letter-spacing:-.01em;
+  text-wrap:pretty;
+}
+.ads-voci__firma{display:flex; align-items:center; gap:14px}
+.ads-voci__sigla{
+  width:46px; height:46px; display:grid; place-items:center; border-radius:50%;
+  background:var(--ads-rosso); color:var(--ads-crema);
+  font-family:var(--ads-serif); font-size:17px; letter-spacing:.04em;
+}
+.ads-voci__chi{text-align:left}
+.ads-voci__nome{display:block; font-size:16px; font-weight:500}
+.ads-voci__corso{display:block; font-size:13px; color:var(--ads-grigio); margin-top:3px}
+.ads-voci__comandi{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  gap:16px; margin-top:clamp(32px,4vw,48px);
+}
+.ads-voci__bottone{
+  width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid rgba(42,31,23,.28); background:transparent; color:var(--ads-inchiostro);
+  border-radius:50%; transition:background .2s ease,border-color .2s ease;
+}
+.ads-voci__bottone:hover{background:rgba(42,31,23,.08); border-color:var(--ads-inchiostro)}
+.ads-voci__punti{display:flex; gap:9px}
+.ads-voci__punto{
+  position:relative; width:9px; height:9px; padding:0; border:1px solid var(--ads-inchiostro);
+  border-radius:50%; background:transparent; cursor:pointer; transition:background .2s ease;
+}
+.ads-voci__punto.is-active{background:var(--ads-inchiostro)}
+.ads-voci :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-voci__sr{display:inline-block; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;}
+@media (prefers-reduced-motion:reduce){
+  .ads-voci__voce{transition:none; transform:none}
+}
+</style>
+
+<section class="ads-voci" data-autoplay="8000" aria-roledescription="carosello" aria-label="Testimonianze dei partecipanti">
+  <p class="ads-voci__intestazione">Chi è passato in bottega</p>
+
+  <div class="ads-voci__pista">
+
+    <!-- FAC-SIMILE — sostituire con una recensione reale -->
+    <figure class="ads-voci__voce is-active" aria-roledescription="diapositiva" aria-label="1 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Sono arrivata convinta che il mattarello fosse una questione di forza. È una questione di pazienza, e in mezza giornata l'ho capito.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso La sfoglia al mattarello · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="2 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Regalato a mio padre per il compleanno. Siamo tornati a casa con due chili di tortellini e una ricetta che adesso è di famiglia.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso Tortellini di Bologna · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="3 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Nessuna macchina, nessuna fretta. Solo un tagliere, un mattarello e qualcuno che ti guarda le mani e ti dice dove sbagli.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso Cappelletti e tortelloni · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="4 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Abbiamo portato tutto l'ufficio: otto persone, otto sfoglie diverse e la sensazione di aver imparato un mestiere vero.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso privato in bottega · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+  </div>
+
+  <div class="ads-voci__comandi">
+    <button type="button" class="ads-voci__bottone ads-voci__prec" aria-label="Testimonianza precedente">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div class="ads-voci__punti"></div>
+    <button type="button" class="ads-voci__bottone ads-voci__succ" aria-label="Testimonianza successiva">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </button>
+  </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-voci').forEach(function (radice) {
+    var voci = Array.prototype.slice.call(radice.querySelectorAll('.ads-voci__voce'));
+    if (!voci.length) return;
+    var pista = radice.querySelector('.ads-voci__pista');
+    var contPunti = radice.querySelector('.ads-voci__punti');
+    var durata = parseInt(radice.dataset.autoplay, 10) || 8000;
+    var motoRidotto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var indice = 0, timer = null;
+
+    pista.setAttribute('aria-live', 'polite');
+
+    var punti = voci.map(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-voci__punto';
+      b.innerHTML = '<span class="ads-voci__sr">Vai alla testimonianza ' + (i + 1) + '</span>';
+      b.addEventListener('click', function () { vaiA(i); riavvia(); });
+      contPunti.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = (n + voci.length) % voci.length;
+      voci.forEach(function (v, i) {
+        var attiva = i === indice;
+        v.classList.toggle('is-active', attiva);
+        if (attiva) v.removeAttribute('inert'); else v.setAttribute('inert', '');
+      });
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+    }
+
+    function avvia() { ferma(); if (motoRidotto.matches) return; timer = window.setInterval(function () { vaiA(indice + 1); }, durata); }
+    function ferma() { if (timer) { window.clearInterval(timer); timer = null; } }
+    function riavvia() { avvia(); }
+
+    radice.querySelector('.ads-voci__prec').addEventListener('click', function () { vaiA(indice - 1); riavvia(); });
+    radice.querySelector('.ads-voci__succ').addEventListener('click', function () { vaiA(indice + 1); riavvia(); });
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); riavvia(); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); riavvia(); }
+    });
+    radice.addEventListener('mouseenter', ferma);
+    radice.addEventListener('mouseleave', riavvia);
+    radice.addEventListener('focusin', ferma);
+    radice.addEventListener('focusout', function (e) { if (!radice.contains(e.relatedTarget)) riavvia(); });
+    document.addEventListener('visibilitychange', function () { document.hidden ? ferma() : riavvia(); });
+
+    var xIniziale = null;
+    pista.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    pista.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) < 45) return;
+      vaiA(indice + (delta < 0 ? 1 : -1)); riavvia();
+    });
+
+    vaiA(0);
+    avvia();
+  });
+})();
+</script>
+```
+
+---
+
+## 04 · Dentro la bottega
+
+**Dove va:** Pagina "chi siamo" o "la bottega"
+**File di origine:** `caroselli/04-galleria-bottega.html`
+
+Immagine grande più provini in basso, contatore e didascalia. Lo scatto grande viene generato dai provini: la lista da aggiornare è una sola.
+
+```html
+<!-- ============================================================
+     CAROSELLO 4 · Galleria della bottega (immagine grande + provini)
+     Ogni scatto è un <button class="ads-galleria__provino"> con
+     --img (miniatura) e data-grande (immagine a piena misura).
+     Con le foto vere: --img:url('/immagini/bottega-01-thumb.jpg')
+     e data-grande="url('/immagini/bottega-01.jpg')" — poi togliere
+     la classe "is-segnaposto".
+     ============================================================ -->
+<style>
+.ads-galleria{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-linea:#C9B79C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  background:var(--ads-crema); color:var(--ads-inchiostro); font-family:var(--ads-sans);
+  padding:clamp(48px,7vw,86px) clamp(20px,6vw,86px); box-sizing:border-box;
+}
+.ads-galleria *,.ads-galleria *::before,.ads-galleria *::after{box-sizing:border-box}
+.ads-galleria__testata{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:20px; flex-wrap:wrap; margin-bottom:clamp(24px,3vw,34px);
+}
+.ads-galleria__occhiello{margin:0 0 10px; font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--ads-rosso)}
+.ads-galleria__titolo{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:clamp(34px,4.6vw,54px); line-height:1.02}
+.ads-galleria__contatore{font-family:var(--ads-serif); font-size:20px; color:var(--ads-grigio); font-variant-numeric:tabular-nums}
+.ads-galleria__contatore strong{color:var(--ads-inchiostro); font-weight:400; font-size:28px}
+.ads-galleria__palco{
+  position:relative; display:grid; aspect-ratio:16/9; min-height:260px;
+  border:1px solid var(--ads-linea); overflow:hidden; background:var(--ads-carta);
+}
+.ads-galleria__scatto{
+  grid-area:1/1; background-image:var(--img); background-size:cover; background-position:center;
+  opacity:0; transition:opacity .5s ease;
+}
+.ads-galleria__scatto.is-active{opacity:1}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-galleria__scatto.is-segnaposto::after{
+  content:""; position:absolute; inset:0; opacity:.4;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.13) 0 1px,transparent 1px 15px);
+}
+.ads-galleria__didascalia{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  padding:44px clamp(18px,3vw,30px) clamp(16px,2.4vw,24px);
+  background:linear-gradient(to top,rgba(28,19,13,.85),rgba(28,19,13,0));
+  color:var(--ads-crema); font-size:15px; line-height:1.5;
+}
+.ads-galleria__navigazione{
+  position:absolute; inset:0; z-index:3; display:flex; align-items:center;
+  justify-content:space-between; padding:0 clamp(10px,1.6vw,18px); pointer-events:none;
+}
+.ads-galleria__bottone{
+  pointer-events:auto; width:46px; height:46px; display:grid; place-items:center;
+  cursor:pointer; border:0; border-radius:50%;
+  background:rgba(250,245,236,.9); color:var(--ads-inchiostro);
+  transition:background .2s ease, transform .2s ease;
+}
+.ads-galleria__bottone:hover{background:var(--ads-crema); transform:scale(1.06)}
+.ads-galleria__provini{
+  display:flex; gap:10px; margin-top:12px; padding-bottom:4px;
+  overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none; -ms-overflow-style:none;
+}
+.ads-galleria__provini::-webkit-scrollbar{display:none}
+.ads-galleria__provino{
+  position:relative; flex:0 0 clamp(88px,11vw,132px); aspect-ratio:4/3; padding:0; cursor:pointer;
+  border:1px solid var(--ads-linea); background-image:var(--img);
+  background-size:cover; background-position:center; opacity:.55;
+  transition:opacity .2s ease, border-color .2s ease, transform .2s ease;
+}
+.ads-galleria__provino:hover{opacity:.85}
+.ads-galleria__provino.is-active{opacity:1; border-color:var(--ads-rosso); border-width:2px}
+.ads-galleria :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-galleria__sr{display:inline-block; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;}
+@media (max-width:640px){
+  .ads-galleria__palco{aspect-ratio:4/3}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-galleria__scatto{transition:none}
+  .ads-galleria__provini{scroll-behavior:auto}
+}
+</style>
+
+<section class="ads-galleria" aria-roledescription="carosello" aria-label="Galleria fotografica della bottega">
+  <div class="ads-galleria__testata">
+    <div>
+      <p class="ads-galleria__occhiello">Via della Moscova · Milano</p>
+      <h2 class="ads-galleria__titolo">Dentro la bottega</h2>
+    </div>
+    <p class="ads-galleria__contatore"><strong class="ads-galleria__corrente">01</strong> / <span class="ads-galleria__totale">06</span></p>
+  </div>
+
+  <div class="ads-galleria__palco" tabindex="0" role="group" aria-label="Fotografia in evidenza">
+    <div class="ads-galleria__didascalia" aria-live="polite"></div>
+    <div class="ads-galleria__navigazione">
+      <button type="button" class="ads-galleria__bottone ads-galleria__prec" aria-label="Foto precedente">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <button type="button" class="ads-galleria__bottone ads-galleria__succ" aria-label="Foto successiva">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="ads-galleria__provini" role="group" aria-label="Scegli la fotografia">
+    <button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="Il tagliere di legno, prima che arrivi la farina."
+      style="--img:radial-gradient(110% 90% at 25% 25%,rgba(217,162,39,.6),transparent 62%),linear-gradient(155deg,#F2E9DA,#D8BE93)"><span class="ads-galleria__sr">Foto 1: il tagliere di legno</span></button>
+    <button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La fontana di farina e le uova, il punto di partenza di tutto."
+      style="--img:radial-gradient(110% 100% at 75% 30%,rgba(232,166,110,.6),transparent 60%),linear-gradient(195deg,#E9DCC4,#C4A87A)"><span class="ads-galleria__sr">Foto 2: la fontana di farina</span></button>
+    <button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La tirata: il mattarello lungo un metro, come si è sempre fatto."
+      style="--img:radial-gradient(120% 90% at 45% 75%,rgba(169,59,39,.5),transparent 62%),linear-gradient(150deg,#EFE2C9,#B9945F)"><span class="ads-galleria__sr">Foto 3: la tirata al mattarello</span></button>
+    <button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La sfoglia velata sul tagliere, pronta per il taglio."
+      style="--img:radial-gradient(100% 100% at 20% 30%,rgba(250,245,236,.65),transparent 55%),linear-gradient(170deg,#E4D3B6,#A97B4A)"><span class="ads-galleria__sr">Foto 4: la sfoglia velata</span></button>
+    <button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="Tagliatelle a nido, larghe come vuole la tradizione."
+      style="--img:radial-gradient(120% 110% at 80% 65%,rgba(217,162,39,.65),transparent 60%),linear-gradient(205deg,#F2E9DA,#CBB287)"><span class="ads-galleria__sr">Foto 5: tagliatelle a nido</span></button>
+    <button type="button" class="ads-galleria__provino is-segnaposto" data-didascalia="La degustazione finale, con i piatti fatti dai partecipanti."
+      style="--img:radial-gradient(130% 100% at 35% 20%,rgba(169,59,39,.45),transparent 58%),linear-gradient(160deg,#EDE0C6,#B08050)"><span class="ads-galleria__sr">Foto 6: la degustazione finale</span></button>
+  </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-galleria').forEach(function (radice) {
+    var provini = Array.prototype.slice.call(radice.querySelectorAll('.ads-galleria__provino'));
+    if (!provini.length) return;
+    var palco = radice.querySelector('.ads-galleria__palco');
+    var didascalia = radice.querySelector('.ads-galleria__didascalia');
+    var corrente = radice.querySelector('.ads-galleria__corrente');
+    var totale = radice.querySelector('.ads-galleria__totale');
+    var indice = 0;
+
+    // Lo scatto grande viene generato dai provini: una sola lista da mantenere.
+    var scatti = provini.map(function (p, i) {
+      var d = document.createElement('div');
+      d.className = 'ads-galleria__scatto' + (p.classList.contains('is-segnaposto') ? ' is-segnaposto' : '');
+      d.style.setProperty('--img', p.dataset.grande || getComputedStyle(p).getPropertyValue('--img'));
+      d.setAttribute('role', 'img');
+      var testo = p.querySelector('.ads-galleria__sr');
+      d.setAttribute('aria-label', testo ? testo.textContent : 'Fotografia ' + (i + 1));
+      palco.insertBefore(d, palco.firstChild);
+      p.addEventListener('click', function () { vaiA(i, true); });
+      return d;
+    });
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function vaiA(n, seguiProvino) {
+      indice = (n + scatti.length) % scatti.length;
+      scatti.forEach(function (s, i) { s.classList.toggle('is-active', i === indice); });
+      provini.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+      didascalia.textContent = provini[indice].dataset.didascalia || '';
+      if (corrente) corrente.textContent = pad(indice + 1);
+      // Solo dopo un gesto: all'avvio farebbe saltare la pagina fin qui.
+      if (seguiProvino) provini[indice].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    radice.querySelector('.ads-galleria__prec').addEventListener('click', function () { vaiA(indice - 1, true); });
+    radice.querySelector('.ads-galleria__succ').addEventListener('click', function () { vaiA(indice + 1, true); });
+    palco.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); vaiA(indice - 1, true); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); vaiA(indice + 1, true); }
+    });
+
+    var xIniziale = null;
+    palco.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    palco.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) < 45) return;
+      vaiA(indice + (delta < 0 ? 1 : -1), true);
+    });
+
+    if (totale) totale.textContent = pad(scatti.length);
+    vaiA(0);
+  });
+})();
+</script>
+```
+
+---
+
+## 05 · Come nasce una sfoglia
+
+**Dove va:** Pagina "il metodo"
+**File di origine:** `caroselli/05-passo-passo.html`
+
+Quattro passi illustrati a tratto, con rotaia di avanzamento in alto. Racconta il metodo senza bisogno di fotografie.
+
+```html
+<!-- ============================================================
+     CAROSELLO 5 · Come nasce una sfoglia (passo per passo)
+     Le illustrazioni sono SVG a tratto, si ricolorano da sole con
+     le variabili del blocco. Per aggiungere un passo basta duplicare
+     un <article class="ads-passi__passo">: la barra si aggiorna da sola.
+     ============================================================ -->
+<style>
+.ads-passi{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-testo:#4A3B30; --ads-linea:#C9B79C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  background:var(--ads-inchiostro); color:var(--ads-crema); font-family:var(--ads-sans);
+  padding:clamp(48px,7vw,90px) clamp(20px,6vw,86px); box-sizing:border-box;
+}
+.ads-passi *,.ads-passi *::before,.ads-passi *::after{box-sizing:border-box}
+.ads-passi__occhiello{margin:0 0 10px; font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--ads-oro)}
+.ads-passi__titolo{margin:0 0 clamp(30px,4vw,44px); font-family:var(--ads-serif); font-weight:400; font-size:clamp(34px,4.6vw,54px); line-height:1.02}
+.ads-passi__rotaia{position:relative; display:flex; justify-content:space-between; gap:8px; margin-bottom:clamp(30px,4vw,46px)}
+.ads-passi__rotaia::before{
+  content:""; position:absolute; left:0; right:0; top:19px; height:1px;
+  background:rgba(250,245,236,.22);
+}
+.ads-passi__avanzamento{
+  position:absolute; left:0; top:19px; height:1px; width:0;
+  background:var(--ads-oro); transition:width .45s ease;
+}
+.ads-passi__tappa{
+  position:relative; z-index:1; display:flex; flex-direction:column;
+  align-items:center; gap:9px; flex:1; padding:0; border:0; background:transparent;
+  color:rgba(250,245,236,.55); cursor:pointer; transition:color .25s ease;
+}
+.ads-passi__tappa:hover{color:var(--ads-crema)}
+.ads-passi__numero{
+  width:38px; height:38px; display:grid; place-items:center; border-radius:50%;
+  background:var(--ads-inchiostro); border:1px solid rgba(250,245,236,.35);
+  font-family:var(--ads-serif); font-size:16px; transition:all .25s ease;
+}
+.ads-passi__tappa.is-active .ads-passi__numero{background:var(--ads-oro); border-color:var(--ads-oro); color:var(--ads-inchiostro)}
+.ads-passi__tappa.is-fatto .ads-passi__numero{border-color:var(--ads-oro); color:var(--ads-oro)}
+.ads-passi__tappa.is-active{color:var(--ads-crema)}
+.ads-passi__etichetta{font-size:12px; letter-spacing:.14em; text-transform:uppercase; text-align:center}
+.ads-passi__pista{display:grid}
+.ads-passi__passo{
+  grid-area:1/1; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
+  gap:clamp(26px,4vw,58px); align-items:center;
+  opacity:0; visibility:hidden; transform:translateX(14px);
+  transition:opacity .45s ease, transform .45s ease, visibility 0s linear .45s;
+}
+.ads-passi__passo.is-active{opacity:1; visibility:visible; transform:none; transition:opacity .45s ease, transform .45s ease}
+.ads-passi__disegno{
+  display:grid; place-items:center; padding:clamp(18px,3vw,32px);
+  background:rgba(250,245,236,.05); border:1px solid rgba(250,245,236,.14);
+}
+.ads-passi__disegno svg{width:100%; height:auto; max-width:340px}
+.ads-passi__testo{display:flex; flex-direction:column; gap:16px}
+.ads-passi__nome{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:clamp(28px,3.4vw,40px); line-height:1.1}
+.ads-passi__nome em{font-style:italic; color:var(--ads-oro)}
+.ads-passi__descrizione{margin:0; font-size:17px; line-height:1.6; color:rgba(250,245,236,.8); max-width:46ch; text-wrap:pretty}
+.ads-passi__nota{
+  margin:0; padding-left:16px; border-left:2px solid var(--ads-rosso);
+  font-size:14px; line-height:1.55; color:rgba(250,245,236,.62);
+}
+.ads-passi__comandi{display:flex; align-items:center; gap:12px; margin-top:clamp(28px,3.5vw,40px)}
+.ads-passi__bottone{
+  position:relative; display:inline-flex; align-items:center; gap:10px; padding:13px 22px; cursor:pointer;
+  border:1px solid rgba(250,245,236,.4); background:transparent; color:var(--ads-crema);
+  font-family:inherit; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease, opacity .2s ease, border-color .2s ease;
+}
+.ads-passi__bottone:hover{background:rgba(250,245,236,.12); border-color:var(--ads-crema)}
+.ads-passi__bottone[disabled]{opacity:.3; cursor:default}
+.ads-passi__bottone[disabled]:hover{background:transparent; border-color:rgba(250,245,236,.4)}
+.ads-passi__bottone--pieno{background:var(--ads-rosso); border-color:var(--ads-rosso)}
+.ads-passi__bottone--pieno:hover{background:#8A2F1F; border-color:#8A2F1F}
+.ads-passi :focus-visible{outline:2px solid var(--ads-oro); outline-offset:3px}
+.ads-passi__sr{display:inline-block; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;}
+@media (max-width:820px){
+  .ads-passi__passo{grid-template-columns:minmax(0,1fr)}
+  .ads-passi__etichetta{display:none}
+  .ads-passi__rotaia{justify-content:space-between}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-passi__passo{transition:none; transform:none}
+  .ads-passi__avanzamento{transition:none}
+}
+</style>
+
+<section class="ads-passi" aria-roledescription="carosello" aria-label="Come nasce una sfoglia, passo per passo">
+  <p class="ads-passi__occhiello">Il metodo dell'Accademia</p>
+  <h2 class="ads-passi__titolo">Come nasce una sfoglia</h2>
+
+  <div class="ads-passi__rotaia" role="group" aria-label="Passaggi">
+    <span class="ads-passi__avanzamento" aria-hidden="true"></span>
+  </div>
+
+  <div class="ads-passi__pista">
+
+    <article class="ads-passi__passo is-active" data-etichetta="La fontana" aria-roledescription="diapositiva" aria-label="Passo 1 di 4">
+      <div class="ads-passi__disegno">
+        <svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: la fontana di farina con le uova e la forchetta">
+          <ellipse cx="146" cy="142" rx="104" ry="30" fill="rgba(250,245,236,.05)" stroke="#D9A227" stroke-width="1.6"></ellipse>
+          <path d="M42 142c6-36 42-58 104-58s98 22 104 58" stroke="#FAF5EC" stroke-width="1.4" stroke-linecap="round"></path>
+          <ellipse cx="146" cy="116" rx="46" ry="17" stroke="#FAF5EC" stroke-width="1.3"></ellipse>
+          <ellipse cx="134" cy="116" rx="12" ry="9" fill="rgba(217,162,39,.3)" stroke="#D9A227" stroke-width="1.5"></ellipse>
+          <ellipse cx="159" cy="120" rx="12" ry="9" fill="rgba(217,162,39,.3)" stroke="#D9A227" stroke-width="1.5"></ellipse>
+          <g stroke="#A93B27" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M242 44v24c0 7 5 12 11 12s11-5 11-12V44"></path>
+            <path d="M248 44v22M258 44v22"></path>
+            <path d="M253 80v46"></path>
+          </g>
+          <path d="M74 106c5-7 11-12 18-15M214 96c7 5 13 11 17 18" stroke="#D9A227" stroke-width="1.2" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div class="ads-passi__testo">
+        <h3 class="ads-passi__nome">Uovo e farina, <em>niente altro</em></h3>
+        <p class="ads-passi__descrizione">Un uovo ogni cento grammi di farina, la fontana aperta sul tagliere e la forchetta che raccoglie piano dai bordi. Nessuna bilancia digitale: si impara a leggere l'impasto con le dita.</p>
+        <p class="ads-passi__nota">In bottega usiamo farina di grano tenero macinata a pietra e uova del giorno.</p>
+      </div>
+    </article>
+
+    <article class="ads-passi__passo" data-etichetta="L'impasto" aria-roledescription="diapositiva" aria-label="Passo 2 di 4">
+      <div class="ads-passi__disegno">
+        <svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: la palla d'impasto e la ciotola per il riposo">
+          <path d="M28 132h214v20H28z" fill="rgba(250,245,236,.05)" stroke="#D9A227" stroke-width="1.6" stroke-linejoin="round"></path>
+          <path d="M242 136h26v12h-26" stroke="#D9A227" stroke-width="1.6" stroke-linejoin="round"></path>
+          <circle cx="98" cy="102" r="30" fill="rgba(250,245,236,.06)" stroke="#FAF5EC" stroke-width="1.6"></circle>
+          <path d="M166 132c0-25 19-45 42-45s42 20 42 45" fill="rgba(250,245,236,.04)" stroke="#FAF5EC" stroke-width="1.6"></path>
+          <path d="M182 116c6-9 15-15 25-16" stroke="#D9A227" stroke-width="1.2" stroke-linecap="round"></path>
+          <g stroke="#D9A227" stroke-width="1.2" stroke-linecap="round">
+            <path d="M52 84v-8M64 96l-6-6M138 88v-8M150 100l-6-6"></path>
+          </g>
+        </svg>
+      </div>
+      <div class="ads-passi__testo">
+        <h3 class="ads-passi__nome">Dieci minuti <em>di braccia</em></h3>
+        <p class="ads-passi__descrizione">Si impasta finché la pasta non diventa liscia e tiepida, poi riposa sotto una ciotola. È il passaggio in cui quasi tutti hanno fretta, ed è quello che non si può accorciare.</p>
+        <p class="ads-passi__nota">Riposo: almeno trenta minuti, coperto, lontano dalle correnti d'aria.</p>
+      </div>
+    </article>
+
+    <article class="ads-passi__passo" data-etichetta="La tirata" aria-roledescription="diapositiva" aria-label="Passo 3 di 4">
+      <div class="ads-passi__disegno">
+        <svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: la sfoglia tirata con il mattarello">
+          <ellipse cx="150" cy="130" rx="112" ry="42" fill="rgba(250,245,236,.07)" stroke="#D9A227" stroke-width="1.6"></ellipse>
+          <path d="M52 122c30-12 62-18 98-18s68 6 98 18" stroke="#FAF5EC" stroke-width="1.2" stroke-linecap="round"></path>
+          <g transform="rotate(-6 150 92)">
+            <rect x="34" y="84" width="232" height="16" rx="8" fill="#2A1F17" stroke="#FAF5EC" stroke-width="1.6"></rect>
+            <rect x="16" y="87" width="20" height="10" rx="5" fill="#2A1F17" stroke="#FAF5EC" stroke-width="1.6"></rect>
+            <rect x="264" y="87" width="20" height="10" rx="5" fill="#2A1F17" stroke="#FAF5EC" stroke-width="1.6"></rect>
+          </g>
+        </svg>
+      </div>
+      <div class="ads-passi__testo">
+        <h3 class="ads-passi__nome">Il mattarello, <em>mai la macchina</em></h3>
+        <p class="ads-passi__descrizione">La sfoglia si tira dal centro verso l'esterno, girandola di un quarto ogni volta. Deve restare ruvida e porosa: è così che tiene il condimento, cosa che la pasta laminata non fa.</p>
+        <p class="ads-passi__nota">Pronta quando, sollevandola, si vede la mano in trasparenza attraverso la pasta.</p>
+      </div>
+    </article>
+
+    <article class="ads-passi__passo" data-etichetta="Il taglio" aria-roledescription="diapositiva" aria-label="Passo 4 di 4">
+      <div class="ads-passi__disegno">
+        <svg viewBox="0 0 300 200" fill="none" role="img" aria-label="Illustrazione: il taglio delle tagliatelle">
+          <rect x="52" y="66" width="196" height="76" rx="4" fill="rgba(250,245,236,.07)" stroke="#D9A227" stroke-width="1.6"></rect>
+          <g stroke="#FAF5EC" stroke-width="1.3">
+            <path d="M52 80h196M52 94h196M52 108h196M52 122h196"></path>
+          </g>
+          <g transform="rotate(-24 206 60)">
+            <path d="M186 52h54l14 8-14 8h-54z" fill="rgba(250,245,236,.06)" stroke="#FAF5EC" stroke-width="1.6" stroke-linejoin="round"></path>
+            <rect x="150" y="53" width="36" height="14" rx="4" fill="#A93B27" stroke="#A93B27" stroke-width="1.4"></rect>
+          </g>
+          <g stroke="#D9A227" stroke-width="1.3">
+            <ellipse cx="96" cy="166" rx="27" ry="10"></ellipse>
+            <ellipse cx="96" cy="166" rx="14" ry="5"></ellipse>
+            <ellipse cx="164" cy="170" rx="27" ry="10"></ellipse>
+            <ellipse cx="164" cy="170" rx="14" ry="5"></ellipse>
+          </g>
+        </svg>
+      </div>
+      <div class="ads-passi__testo">
+        <h3 class="ads-passi__nome">Otto millimetri, <em>non uno di più</em></h3>
+        <p class="ads-passi__descrizione">Si arrotola la sfoglia e si taglia con il coltello, a occhio. Tagliatelle, tagliolini, maltagliati: cambia solo la larghezza, il gesto è sempre lo stesso.</p>
+        <p class="ads-passi__nota">Poi si aprono subito a nido, infarinate, ad asciugare sul tagliere.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="ads-passi__comandi">
+    <button type="button" class="ads-passi__bottone ads-passi__prec">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      Indietro
+    </button>
+    <button type="button" class="ads-passi__bottone ads-passi__bottone--pieno ads-passi__succ">
+      <span class="ads-passi__prossimo">Passo successivo</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </button>
+  </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-passi').forEach(function (radice) {
+    var passi = Array.prototype.slice.call(radice.querySelectorAll('.ads-passi__passo'));
+    if (!passi.length) return;
+    var rotaia = radice.querySelector('.ads-passi__rotaia');
+    var avanzamento = radice.querySelector('.ads-passi__avanzamento');
+    var pista = radice.querySelector('.ads-passi__pista');
+    var prec = radice.querySelector('.ads-passi__prec');
+    var succ = radice.querySelector('.ads-passi__succ');
+    var etichettaSucc = succ.querySelector('.ads-passi__prossimo');
+    var indice = 0;
+
+    pista.setAttribute('aria-live', 'polite');
+
+    var tappe = passi.map(function (p, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-passi__tappa';
+      b.innerHTML =
+        '<span class="ads-passi__numero" aria-hidden="true">' + (i + 1) + '</span>' +
+        '<span class="ads-passi__etichetta">' + (p.dataset.etichetta || ('Passo ' + (i + 1))) + '</span>' +
+        '<span class="ads-passi__sr">Vai al passo ' + (i + 1) + '</span>';
+      b.addEventListener('click', function () { vaiA(i); });
+      rotaia.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = Math.max(0, Math.min(n, passi.length - 1));
+      passi.forEach(function (p, i) {
+        var attivo = i === indice;
+        p.classList.toggle('is-active', attivo);
+        if (attivo) p.removeAttribute('inert'); else p.setAttribute('inert', '');
+      });
+      tappe.forEach(function (t, i) {
+        t.classList.toggle('is-active', i === indice);
+        t.classList.toggle('is-fatto', i < indice);
+        t.setAttribute('aria-current', i === indice ? 'step' : 'false');
+      });
+      var quota = passi.length > 1 ? (indice / (passi.length - 1)) * 100 : 100;
+      avanzamento.style.width = quota + '%';
+      prec.disabled = indice === 0;
+      succ.disabled = indice === passi.length - 1;
+      etichettaSucc.textContent = indice === passi.length - 2 ? 'Ultimo passo' : 'Passo successivo';
+    }
+
+    prec.addEventListener('click', function () { vaiA(indice - 1); });
+    succ.addEventListener('click', function () { vaiA(indice + 1); });
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); }
+    });
+
+    var xIniziale = null;
+    pista.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    pista.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) < 45) return;
+      vaiA(indice + (delta < 0 ? 1 : -1));
+    });
+
+    vaiA(0);
+  });
+})();
+</script>
+```
+
+---
+
+## 06 · Nastro scorrevole
+
+**Dove va:** Divisorio fra due sezioni
+**File di origine:** `caroselli/06-nastro-scorrevole.html`
+
+Marquee infinito su due righe in direzioni opposte, in pausa al passaggio del mouse. Con i loghi al posto delle parole diventa la fascia dei partner.
+
+```html
+<!-- ============================================================
+     CAROSELLO 6 · Nastro scorrevole (marquee infinito)
+     Divisorio fra due sezioni: scorre da solo, si ferma al passaggio
+     del mouse. La copia del nastro la fa il JavaScript, quindi la
+     lista va scritta una volta sola.
+     Per usarlo con i loghi dei partner: al posto del testo dentro
+     <li class="ads-nastro__voce"> mettere <img src="..." alt="Nome">
+     e portare .ads-nastro__voce a font-size normale.
+     ============================================================ -->
+<style>
+.ads-nastro{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-nastro-velocita:46s;
+  position:relative; overflow:hidden; box-sizing:border-box;
+  background:var(--ads-rosso); color:var(--ads-crema);
+  font-family:var(--ads-sans); padding:clamp(22px,3vw,34px) 0;
+  border-top:1px solid rgba(250,245,236,.2); border-bottom:1px solid rgba(250,245,236,.2);
+}
+.ads-nastro *,.ads-nastro *::before,.ads-nastro *::after{box-sizing:border-box}
+.ads-nastro__riga{display:flex; width:max-content; will-change:transform}
+.ads-nastro.is-pronto .ads-nastro__riga{animation:ads-nastro-avanti var(--ads-nastro-velocita) linear infinite}
+.ads-nastro.is-pronto .ads-nastro__riga--indietro{animation-name:ads-nastro-indietro}
+.ads-nastro:hover .ads-nastro__riga,
+.ads-nastro:focus-within .ads-nastro__riga{animation-play-state:paused}
+@keyframes ads-nastro-avanti{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ads-nastro-indietro{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.ads-nastro__gruppo{
+  display:flex; align-items:center; gap:clamp(22px,3vw,44px);
+  margin:0; padding:0 clamp(11px,1.5vw,22px); list-style:none;
+}
+.ads-nastro__voce{
+  display:flex; align-items:center; gap:clamp(22px,3vw,44px);
+  font-family:var(--ads-serif); font-size:clamp(24px,3.4vw,42px);
+  line-height:1.1; white-space:nowrap;
+}
+.ads-nastro__voce::after{
+  content:""; flex:none; width:8px; height:8px; transform:rotate(45deg);
+  background:var(--ads-oro);
+}
+.ads-nastro__voce--corsivo{font-style:italic; color:#F6D9A8}
+.ads-nastro__riga--seconda{margin-top:clamp(10px,1.4vw,18px)}
+.ads-nastro__riga--seconda .ads-nastro__voce{
+  font-family:var(--ads-sans); font-size:clamp(12px,1.3vw,15px);
+  letter-spacing:.24em; text-transform:uppercase; color:rgba(250,245,236,.78);
+}
+.ads-nastro__riga--seconda .ads-nastro__voce::after{width:5px; height:5px; background:rgba(250,245,236,.5)}
+/* sfumature laterali, perché il nastro entri ed esca senza tagliare */
+.ads-nastro::before,.ads-nastro::after{
+  content:""; position:absolute; top:0; bottom:0; width:clamp(40px,7vw,120px);
+  z-index:1; pointer-events:none;
+}
+.ads-nastro::before{left:0; background:linear-gradient(90deg,var(--ads-rosso),transparent)}
+.ads-nastro::after{right:0; background:linear-gradient(270deg,var(--ads-rosso),transparent)}
+@media (prefers-reduced-motion:reduce){
+  .ads-nastro.is-pronto .ads-nastro__riga{animation:none}
+  .ads-nastro__riga{width:100%; overflow-x:auto; scrollbar-width:none}
+  .ads-nastro__riga::-webkit-scrollbar{display:none}
+}
+</style>
+
+<section class="ads-nastro" aria-label="Cosa si impara in Accademia">
+  <div class="ads-nastro__riga">
+    <ul class="ads-nastro__gruppo">
+      <li class="ads-nastro__voce">Tagliatelle</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Tortellini</li>
+      <li class="ads-nastro__voce">Cappelletti</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Garganelli</li>
+      <li class="ads-nastro__voce">Tortelloni</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Maltagliati</li>
+      <li class="ads-nastro__voce">Lasagne verdi</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Strichetti</li>
+    </ul>
+  </div>
+
+  <div class="ads-nastro__riga ads-nastro__riga--seconda ads-nastro__riga--indietro">
+    <ul class="ads-nastro__gruppo">
+      <li class="ads-nastro__voce">Solo mattarello</li>
+      <li class="ads-nastro__voce">Farina macinata a pietra</li>
+      <li class="ads-nastro__voce">Uova del giorno</li>
+      <li class="ads-nastro__voce">Massimo [N] partecipanti</li>
+      <li class="ads-nastro__voce">Grembiule incluso</li>
+      <li class="ads-nastro__voce">Degustazione finale</li>
+      <li class="ads-nastro__voce">Dal 2018</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-nastro').forEach(function (radice) {
+    radice.querySelectorAll('.ads-nastro__riga').forEach(function (riga) {
+      var gruppo = riga.querySelector('.ads-nastro__gruppo');
+      if (!gruppo) return;
+      // La copia serve solo all'occhio: per chi legge con lo schermo è invisibile.
+      var copia = gruppo.cloneNode(true);
+      copia.setAttribute('aria-hidden', 'true');
+      riga.appendChild(copia);
+    });
+    radice.classList.add('is-pronto');
+  });
+})();
+</script>
+```
