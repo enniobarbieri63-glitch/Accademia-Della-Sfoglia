@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>03 · Testimonianze — Accademia della Sfoglia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap">
+<style>body{margin:0;background:#FAF5EC}</style>
+</head>
+<body>
+<!-- ▼ COPIA DA QUI ▼ -->
+<!-- ============================================================
+     CAROSELLO 3 · Le voci di chi è passato in bottega
+     ATTENZIONE: i testi qui sotto sono FAC-SIMILE, servono solo a
+     mostrare l'impaginazione. Vanno sostituiti con recensioni reali
+     e con il nome di chi le ha davvero scritte.
+     ============================================================ -->
+<style>
+.ads-voci{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C; --ads-testo:#4A3B30;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-voci-durata:8000ms;
+  position:relative; background:var(--ads-carta); color:var(--ads-inchiostro);
+  font-family:var(--ads-sans); padding:clamp(52px,7vw,92px) clamp(20px,6vw,86px);
+  box-sizing:border-box; overflow:hidden;
+}
+.ads-voci *,.ads-voci *::before,.ads-voci *::after{box-sizing:border-box}
+.ads-voci::before{
+  content:"“"; position:absolute; top:0; left:1.5vw;
+  font-family:var(--ads-serif); font-size:clamp(220px,30vw,420px);
+  line-height:1; color:var(--ads-oro); opacity:.16; pointer-events:none;
+}
+.ads-voci__intestazione{
+  position:relative; text-align:center; font-size:13px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ads-rosso); margin:0 0 clamp(28px,4vw,44px);
+}
+.ads-voci__pista{position:relative; display:grid; max-width:900px; margin:0 auto}
+.ads-voci__voce{
+  grid-area:1/1; display:flex; flex-direction:column; align-items:center; gap:26px;
+  margin:0; text-align:center; opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .6s ease, transform .6s ease, visibility 0s linear .6s;
+}
+.ads-voci__voce.is-active{
+  opacity:1; visibility:visible; transform:none;
+  transition:opacity .6s ease, transform .6s ease;
+}
+.ads-voci__stelle{display:flex; gap:5px; color:var(--ads-oro)}
+.ads-voci__citazione{
+  margin:0; font-family:var(--ads-serif); font-style:italic; font-weight:400;
+  font-size:clamp(23px,3vw,36px); line-height:1.36; letter-spacing:-.01em;
+  text-wrap:pretty;
+}
+.ads-voci__firma{display:flex; align-items:center; gap:14px}
+.ads-voci__sigla{
+  width:46px; height:46px; display:grid; place-items:center; border-radius:50%;
+  background:var(--ads-rosso); color:var(--ads-crema);
+  font-family:var(--ads-serif); font-size:17px; letter-spacing:.04em;
+}
+.ads-voci__chi{text-align:left}
+.ads-voci__nome{display:block; font-size:16px; font-weight:500}
+.ads-voci__corso{display:block; font-size:13px; color:var(--ads-grigio); margin-top:3px}
+.ads-voci__comandi{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  gap:16px; margin-top:clamp(32px,4vw,48px);
+}
+.ads-voci__bottone{
+  width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid rgba(42,31,23,.28); background:transparent; color:var(--ads-inchiostro);
+  border-radius:50%; transition:background .2s ease,border-color .2s ease;
+}
+.ads-voci__bottone:hover{background:rgba(42,31,23,.08); border-color:var(--ads-inchiostro)}
+.ads-voci__punti{display:flex; gap:9px}
+.ads-voci__punto{
+  position:relative; width:9px; height:9px; padding:0; border:1px solid var(--ads-inchiostro);
+  border-radius:50%; background:transparent; cursor:pointer; transition:background .2s ease;
+}
+.ads-voci__punto.is-active{background:var(--ads-inchiostro)}
+.ads-voci :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-voci__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){
+  .ads-voci__voce{transition:none; transform:none}
+}
+</style>
+
+<section class="ads-voci" data-autoplay="8000" aria-roledescription="carosello" aria-label="Testimonianze dei partecipanti">
+  <p class="ads-voci__intestazione">Chi è passato in bottega</p>
+
+  <div class="ads-voci__pista">
+
+    <!-- FAC-SIMILE — sostituire con una recensione reale -->
+    <figure class="ads-voci__voce is-active" aria-roledescription="diapositiva" aria-label="1 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Sono arrivata convinta che il mattarello fosse una questione di forza. È una questione di pazienza, e in mezza giornata l'ho capito.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso La sfoglia al mattarello · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="2 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Regalato a mio padre per il compleanno. Siamo tornati a casa con due chili di tortellini e una ricetta che adesso è di famiglia.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso Tortellini di Bologna · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="3 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Nessuna macchina, nessuna fretta. Solo un tagliere, un mattarello e qualcuno che ti guarda le mani e ti dice dove sbagli.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso Cappelletti e tortelloni · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <figure class="ads-voci__voce" aria-roledescription="diapositiva" aria-label="4 di 4">
+      <div class="ads-voci__stelle" role="img" aria-label="Cinque stelle su cinque">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.6.8-4 4 1 5.7-5.1-2.8L4.9 17.4l1-5.7-4-4 5.6-.8z"></path></svg>
+      </div>
+      <blockquote class="ads-voci__citazione">Abbiamo portato tutto l'ufficio: otto persone, otto sfoglie diverse e la sensazione di aver imparato un mestiere vero.</blockquote>
+      <figcaption class="ads-voci__firma">
+        <span class="ads-voci__sigla" aria-hidden="true">NC</span>
+        <span class="ads-voci__chi">
+          <span class="ads-voci__nome">[Nome Cognome]</span>
+          <span class="ads-voci__corso">Corso privato in bottega · [mese anno]</span>
+        </span>
+      </figcaption>
+    </figure>
+
+  </div>
+
+  <div class="ads-voci__comandi">
+    <button type="button" class="ads-voci__bottone ads-voci__prec" aria-label="Testimonianza precedente">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+    </button>
+    <div class="ads-voci__punti"></div>
+    <button type="button" class="ads-voci__bottone ads-voci__succ" aria-label="Testimonianza successiva">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+    </button>
+  </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-voci').forEach(function (radice) {
+    var voci = Array.prototype.slice.call(radice.querySelectorAll('.ads-voci__voce'));
+    if (!voci.length) return;
+    var pista = radice.querySelector('.ads-voci__pista');
+    var contPunti = radice.querySelector('.ads-voci__punti');
+    var durata = parseInt(radice.dataset.autoplay, 10) || 8000;
+    var motoRidotto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var indice = 0, timer = null;
+
+    pista.setAttribute('aria-live', 'polite');
+
+    var punti = voci.map(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-voci__punto';
+      b.innerHTML = '<span class="ads-voci__sr">Vai alla testimonianza ' + (i + 1) + '</span>';
+      b.addEventListener('click', function () { vaiA(i); riavvia(); });
+      contPunti.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = (n + voci.length) % voci.length;
+      voci.forEach(function (v, i) {
+        var attiva = i === indice;
+        v.classList.toggle('is-active', attiva);
+        if (attiva) v.removeAttribute('inert'); else v.setAttribute('inert', '');
+      });
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+    }
+
+    function avvia() { ferma(); if (motoRidotto.matches) return; timer = window.setInterval(function () { vaiA(indice + 1); }, durata); }
+    function ferma() { if (timer) { window.clearInterval(timer); timer = null; } }
+    function riavvia() { avvia(); }
+
+    radice.querySelector('.ads-voci__prec').addEventListener('click', function () { vaiA(indice - 1); riavvia(); });
+    radice.querySelector('.ads-voci__succ').addEventListener('click', function () { vaiA(indice + 1); riavvia(); });
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); riavvia(); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); riavvia(); }
+    });
+    radice.addEventListener('mouseenter', ferma);
+    radice.addEventListener('mouseleave', riavvia);
+    radice.addEventListener('focusin', ferma);
+    radice.addEventListener('focusout', function (e) { if (!radice.contains(e.relatedTarget)) riavvia(); });
+    document.addEventListener('visibilitychange', function () { document.hidden ? ferma() : riavvia(); });
+
+    var xIniziale = null;
+    pista.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    pista.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale; xIniziale = null;
+      if (Math.abs(delta) < 45) return;
+      vaiA(indice + (delta < 0 ? 1 : -1)); riavvia();
+    });
+
+    vaiA(0);
+    avvia();
+  });
+})();
+</script>
+<!-- ▲ FINO A QUI ▲ -->
+</body>
+</html>

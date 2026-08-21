@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>06 · Nastro scorrevole — Accademia della Sfoglia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap">
+<style>body{margin:0;background:#FAF5EC}</style>
+</head>
+<body>
+<!-- ▼ COPIA DA QUI ▼ -->
+<!-- ============================================================
+     CAROSELLO 6 · Nastro scorrevole (marquee infinito)
+     Divisorio fra due sezioni: scorre da solo, si ferma al passaggio
+     del mouse. La copia del nastro la fa il JavaScript, quindi la
+     lista va scritta una volta sola.
+     Per usarlo con i loghi dei partner: al posto del testo dentro
+     <li class="ads-nastro__voce"> mettere <img src="..." alt="Nome">
+     e portare .ads-nastro__voce a font-size normale.
+     ============================================================ -->
+<style>
+.ads-nastro{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-nastro-velocita:46s;
+  position:relative; overflow:hidden; box-sizing:border-box;
+  background:var(--ads-rosso); color:var(--ads-crema);
+  font-family:var(--ads-sans); padding:clamp(22px,3vw,34px) 0;
+  border-top:1px solid rgba(250,245,236,.2); border-bottom:1px solid rgba(250,245,236,.2);
+}
+.ads-nastro *,.ads-nastro *::before,.ads-nastro *::after{box-sizing:border-box}
+.ads-nastro__riga{display:flex; width:max-content; will-change:transform}
+.ads-nastro.is-pronto .ads-nastro__riga{animation:ads-nastro-avanti var(--ads-nastro-velocita) linear infinite}
+.ads-nastro.is-pronto .ads-nastro__riga--indietro{animation-name:ads-nastro-indietro}
+.ads-nastro:hover .ads-nastro__riga,
+.ads-nastro:focus-within .ads-nastro__riga{animation-play-state:paused}
+@keyframes ads-nastro-avanti{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes ads-nastro-indietro{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.ads-nastro__gruppo{
+  display:flex; align-items:center; gap:clamp(22px,3vw,44px);
+  margin:0; padding:0 clamp(11px,1.5vw,22px); list-style:none;
+}
+.ads-nastro__voce{
+  display:flex; align-items:center; gap:clamp(22px,3vw,44px);
+  font-family:var(--ads-serif); font-size:clamp(24px,3.4vw,42px);
+  line-height:1.1; white-space:nowrap;
+}
+.ads-nastro__voce::after{
+  content:""; flex:none; width:8px; height:8px; transform:rotate(45deg);
+  background:var(--ads-oro);
+}
+.ads-nastro__voce--corsivo{font-style:italic; color:#F6D9A8}
+.ads-nastro__riga--seconda{margin-top:clamp(10px,1.4vw,18px)}
+.ads-nastro__riga--seconda .ads-nastro__voce{
+  font-family:var(--ads-sans); font-size:clamp(12px,1.3vw,15px);
+  letter-spacing:.24em; text-transform:uppercase; color:rgba(250,245,236,.78);
+}
+.ads-nastro__riga--seconda .ads-nastro__voce::after{width:5px; height:5px; background:rgba(250,245,236,.5)}
+/* sfumature laterali, perché il nastro entri ed esca senza tagliare */
+.ads-nastro::before,.ads-nastro::after{
+  content:""; position:absolute; top:0; bottom:0; width:clamp(40px,7vw,120px);
+  z-index:1; pointer-events:none;
+}
+.ads-nastro::before{left:0; background:linear-gradient(90deg,var(--ads-rosso),transparent)}
+.ads-nastro::after{right:0; background:linear-gradient(270deg,var(--ads-rosso),transparent)}
+@media (prefers-reduced-motion:reduce){
+  .ads-nastro.is-pronto .ads-nastro__riga{animation:none}
+  .ads-nastro__riga{width:100%; overflow-x:auto; scrollbar-width:none}
+  .ads-nastro__riga::-webkit-scrollbar{display:none}
+}
+</style>
+
+<section class="ads-nastro" aria-label="Cosa si impara in Accademia">
+  <div class="ads-nastro__riga">
+    <ul class="ads-nastro__gruppo">
+      <li class="ads-nastro__voce">Tagliatelle</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Tortellini</li>
+      <li class="ads-nastro__voce">Cappelletti</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Garganelli</li>
+      <li class="ads-nastro__voce">Tortelloni</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Maltagliati</li>
+      <li class="ads-nastro__voce">Lasagne verdi</li>
+      <li class="ads-nastro__voce ads-nastro__voce--corsivo">Strichetti</li>
+    </ul>
+  </div>
+
+  <div class="ads-nastro__riga ads-nastro__riga--seconda ads-nastro__riga--indietro">
+    <ul class="ads-nastro__gruppo">
+      <li class="ads-nastro__voce">Solo mattarello</li>
+      <li class="ads-nastro__voce">Farina macinata a pietra</li>
+      <li class="ads-nastro__voce">Uova del giorno</li>
+      <li class="ads-nastro__voce">Massimo [N] partecipanti</li>
+      <li class="ads-nastro__voce">Grembiule incluso</li>
+      <li class="ads-nastro__voce">Degustazione finale</li>
+      <li class="ads-nastro__voce">Dal 2018</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-nastro').forEach(function (radice) {
+    radice.querySelectorAll('.ads-nastro__riga').forEach(function (riga) {
+      var gruppo = riga.querySelector('.ads-nastro__gruppo');
+      if (!gruppo) return;
+      // La copia serve solo all'occhio: per chi legge con lo schermo è invisibile.
+      var copia = gruppo.cloneNode(true);
+      copia.setAttribute('aria-hidden', 'true');
+      riga.appendChild(copia);
+    });
+    radice.classList.add('is-pronto');
+  });
+})();
+</script>
+<!-- ▲ FINO A QUI ▲ -->
+</body>
+</html>

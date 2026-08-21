@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>02 · Carosello dei corsi — Accademia della Sfoglia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap">
+<style>body{margin:0;background:#FAF5EC}</style>
+</head>
+<body>
+<!-- ▼ COPIA DA QUI ▼ -->
+<!-- ============================================================
+     CAROSELLO 2 · Corsi in programma (schede scorrevoli)
+     Trascinamento, rotellina e scorrimento nativo: il carrello usa
+     scroll-snap, quindi funziona anche senza JavaScript.
+     Per aggiungere un corso basta duplicare un <article class="ads-corsi__scheda">.
+     ============================================================ -->
+<style>
+.ads-corsi{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
+  --ads-testo:#4A3B30; --ads-linea:#C9B79C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-bordo:clamp(20px,6vw,86px);
+  background:var(--ads-crema); color:var(--ads-inchiostro);
+  font-family:var(--ads-sans); padding:clamp(48px,7vw,86px) 0; box-sizing:border-box;
+}
+.ads-corsi *,.ads-corsi *::before,.ads-corsi *::after{box-sizing:border-box}
+.ads-corsi__testata{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  flex-wrap:wrap; padding:0 var(--ads-bordo) clamp(26px,3vw,38px);
+}
+.ads-corsi__occhiello{
+  margin:0 0 10px; font-size:13px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ads-rosso);
+}
+.ads-corsi__titolo{
+  margin:0; font-family:var(--ads-serif); font-weight:400;
+  font-size:clamp(34px,4.6vw,54px); line-height:1.02; letter-spacing:-.01em;
+}
+.ads-corsi__frecce{display:flex; gap:10px}
+.ads-corsi__bottone{
+  width:48px; height:48px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--ads-inchiostro); background:transparent;
+  color:var(--ads-inchiostro); border-radius:50%;
+  transition:background .2s ease,color .2s ease,opacity .2s ease;
+}
+.ads-corsi__bottone:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__bottone[disabled]{opacity:.28; cursor:default}
+.ads-corsi__bottone[disabled]:hover{background:transparent; color:var(--ads-inchiostro)}
+.ads-corsi__carrello{
+  display:flex; gap:clamp(16px,2vw,26px);
+  padding:4px var(--ads-bordo) 6px;
+  scroll-padding-inline:var(--ads-bordo);
+  overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none; -ms-overflow-style:none;
+  overscroll-behavior-x:contain;
+}
+.ads-corsi__carrello::-webkit-scrollbar{display:none}
+.ads-corsi__scheda{
+  flex:0 0 clamp(258px,26vw,340px); scroll-snap-align:start;
+  display:flex; flex-direction:column; background:var(--ads-carta);
+  border:1px solid var(--ads-linea); text-decoration:none; color:inherit;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.ads-corsi__scheda:hover{
+  transform:translateY(-4px); border-color:var(--ads-inchiostro);
+  box-shadow:0 14px 34px -22px rgba(42,31,23,.65);
+}
+.ads-corsi__figura{
+  position:relative; aspect-ratio:4/3;
+  background-image:var(--img); background-size:cover; background-position:center;
+}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-corsi__figura.is-segnaposto::after{
+  content:""; position:absolute; inset:0; opacity:.45;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.14) 0 1px,transparent 1px 13px);
+}
+.ads-corsi__etichetta{
+  position:absolute; top:14px; left:14px; z-index:1;
+  padding:6px 12px; background:var(--ads-crema); color:var(--ads-rosso);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+}
+.ads-corsi__etichetta--esaurito{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__corpo{display:flex; flex-direction:column; gap:10px; padding:22px 22px 24px; flex:1}
+.ads-corsi__data{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ads-grigio)}
+.ads-corsi__nome{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:26px; line-height:1.14}
+.ads-corsi__descrizione{margin:0; font-size:15px; line-height:1.55; color:var(--ads-testo); text-wrap:pretty}
+.ads-corsi__piede{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin-top:auto; padding-top:16px; border-top:1px solid var(--ads-linea);
+}
+.ads-corsi__prezzo{font-family:var(--ads-serif); font-size:22px}
+.ads-corsi__durata{font-size:13px; color:var(--ads-grigio)}
+.ads-corsi__link{
+  position:relative; /* aggancia gli span per i lettori di schermo */
+  margin-top:4px; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ads-rosso); text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+}
+.ads-corsi__scheda:hover .ads-corsi__link{gap:13px}
+.ads-corsi__link span{transition:transform .2s ease}
+.ads-corsi__barra{
+  display:flex; align-items:center; gap:8px; justify-content:center;
+  padding:clamp(22px,3vw,32px) var(--ads-bordo) 0;
+}
+.ads-corsi__punto{
+  position:relative; width:26px; height:2px; padding:0; border:0; cursor:pointer;
+  background:var(--ads-linea); transition:background .2s ease,width .2s ease;
+}
+.ads-corsi__punto.is-active{background:var(--ads-rosso); width:44px}
+.ads-corsi :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-corsi__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media (max-width:640px){
+  .ads-corsi__scheda{flex-basis:78vw}
+  .ads-corsi__frecce{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-corsi__carrello{scroll-behavior:auto}
+  .ads-corsi__scheda:hover{transform:none}
+}
+</style>
+
+<section class="ads-corsi" aria-roledescription="carosello" aria-label="Corsi in programma">
+  <div class="ads-corsi__testata">
+    <div>
+      <p class="ads-corsi__occhiello">Calendario [ANNO]</p>
+      <h2 class="ads-corsi__titolo">I corsi in programma</h2>
+    </div>
+    <div class="ads-corsi__frecce">
+      <button type="button" class="ads-corsi__bottone ads-corsi__prec" aria-label="Corsi precedenti">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <button type="button" class="ads-corsi__bottone ads-corsi__succ" aria-label="Corsi successivi">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="ads-corsi__carrello" tabindex="0" role="group" aria-label="Elenco corsi, scorri orizzontalmente">
+
+    <article class="ads-corsi__scheda">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 90% at 25% 20%,rgba(217,162,39,.55),transparent 62%),linear-gradient(160deg,#F2E9DA,#D8BE93)" aria-hidden="true">
+        <span class="ads-corsi__etichetta">Base</span>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">La sfoglia al mattarello</h3>
+        <p class="ads-corsi__descrizione">Uovo e farina, l'impasto, la tirata. Si esce sapendo fare le tagliatelle da soli.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">4 ore</span>
+        </div>
+        <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso La sfoglia al mattarello</span></a>
+      </div>
+    </article>
+
+    <article class="ads-corsi__scheda">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 100% at 75% 25%,rgba(232,166,110,.6),transparent 60%),linear-gradient(190deg,#E9DCC4,#C4A87A)" aria-hidden="true">
+        <span class="ads-corsi__etichetta">Intensivo</span>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Domenica] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">Tortellini di Bologna</h3>
+        <p class="ads-corsi__descrizione">Ripieno, quadrello, chiusura sul dito. Sei ore per il formato più difficile che c'è.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">6 ore</span>
+        </div>
+        <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Tortellini di Bologna</span></a>
+      </div>
+    </article>
+
+    <article class="ads-corsi__scheda">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 90% at 40% 80%,rgba(169,59,39,.5),transparent 62%),linear-gradient(150deg,#EFE2C9,#B9945F)" aria-hidden="true">
+        <span class="ads-corsi__etichetta">Formati ripieni</span>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">Cappelletti e tortelloni</h3>
+        <p class="ads-corsi__descrizione">Due formati, due ripieni, una sfoglia sola. Con degustazione finale al tagliere.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">5 ore</span>
+        </div>
+        <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Cappelletti e tortelloni</span></a>
+      </div>
+    </article>
+
+    <article class="ads-corsi__scheda">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(100% 100% at 20% 30%,rgba(250,245,236,.6),transparent 55%),linear-gradient(170deg,#E4D3B6,#A97B4A)" aria-hidden="true">
+        <span class="ads-corsi__etichetta ads-corsi__etichetta--esaurito">Esaurito</span>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
+        <h3 class="ads-corsi__nome">Lasagne verdi</h3>
+        <p class="ads-corsi__descrizione">Spinaci nell'impasto, ragù e besciamella. Il piatto della domenica, fatto per bene.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">[PREZZO] €</span>
+          <span class="ads-corsi__durata">5 ore</span>
+        </div>
+        <a class="ads-corsi__link" href="#lista-attesa">Lista d'attesa <span aria-hidden="true">→</span></a>
+      </div>
+    </article>
+
+    <article class="ads-corsi__scheda">
+      <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 110% at 80% 70%,rgba(217,162,39,.6),transparent 60%),linear-gradient(200deg,#F2E9DA,#CBB287)" aria-hidden="true">
+        <span class="ads-corsi__etichetta">Su misura</span>
+      </div>
+      <div class="ads-corsi__corpo">
+        <p class="ads-corsi__data">Su richiesta · tutto l'anno</p>
+        <h3 class="ads-corsi__nome">Corso privato in bottega</h3>
+        <p class="ads-corsi__descrizione">Per gruppi, aziende o regali: il programma si costruisce insieme a voi.</p>
+        <div class="ads-corsi__piede">
+          <span class="ads-corsi__prezzo">Su preventivo</span>
+          <span class="ads-corsi__durata">a partire da 3 ore</span>
+        </div>
+        <a class="ads-corsi__link" href="#contatti">Chiedi info <span aria-hidden="true">→</span></a>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="ads-corsi__barra" role="group" aria-label="Pagine del carosello"></div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.ads-corsi').forEach(function (radice) {
+    var carrello = radice.querySelector('.ads-corsi__carrello');
+    var schede = Array.prototype.slice.call(carrello.querySelectorAll('.ads-corsi__scheda'));
+    var prec = radice.querySelector('.ads-corsi__prec');
+    var succ = radice.querySelector('.ads-corsi__succ');
+    var barra = radice.querySelector('.ads-corsi__barra');
+    if (!schede.length) return;
+
+    function passo() {
+      if (schede.length < 2) return carrello.clientWidth;
+      return schede[1].getBoundingClientRect().left - schede[0].getBoundingClientRect().left;
+    }
+    function pagine() {
+      return Math.max(1, Math.ceil((carrello.scrollWidth - carrello.clientWidth) / Math.max(1, passo())) + 1);
+    }
+
+    var punti = [];
+    function costruisciPunti() {
+      var n = pagine();
+      barra.innerHTML = '';
+      punti = [];
+      if (n < 2) return;
+      for (var i = 0; i < n; i++) {
+        (function (i) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'ads-corsi__punto';
+          b.innerHTML = '<span class="ads-corsi__sr">Vai alla scheda ' + (i + 1) + '</span>';
+          b.addEventListener('click', function () { carrello.scrollTo({ left: i * passo(), behavior: 'smooth' }); });
+          barra.appendChild(b);
+          punti.push(b);
+        })(i);
+      }
+    }
+
+    function aggiorna() {
+      var x = carrello.scrollLeft;
+      var massimo = carrello.scrollWidth - carrello.clientWidth - 2;
+      prec.disabled = x <= 2;
+      succ.disabled = x >= massimo;
+      var attivo = Math.round(x / Math.max(1, passo()));
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === attivo);
+        p.setAttribute('aria-current', i === attivo ? 'true' : 'false');
+      });
+    }
+
+    prec.addEventListener('click', function () { carrello.scrollBy({ left: -passo(), behavior: 'smooth' }); });
+    succ.addEventListener('click', function () { carrello.scrollBy({ left: passo(), behavior: 'smooth' }); });
+
+    var attesa = null;
+    carrello.addEventListener('scroll', function () {
+      if (attesa) return;
+      attesa = window.requestAnimationFrame(function () { attesa = null; aggiorna(); });
+    }, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function () { costruisciPunti(); aggiorna(); });
+      ro.observe(carrello);
+    } else {
+      window.addEventListener('resize', function () { costruisciPunti(); aggiorna(); });
+    }
+
+    costruisciPunti();
+    aggiorna();
+  });
+})();
+</script>
+<!-- ▲ FINO A QUI ▲ -->
+</body>
+</html>

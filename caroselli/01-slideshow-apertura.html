@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01 · Slideshow d'apertura — Accademia della Sfoglia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400;1,6..96,500&family=Archivo:wght@400;500;600&display=swap">
+<style>body{margin:0;background:#FAF5EC}</style>
+</head>
+<body>
+<!-- ▼ COPIA DA QUI ▼ -->
+<!-- ============================================================
+     CAROSELLO 1 · Slideshow d'apertura (hero)
+     Immagini: sostituire il valore di --img su ogni .ads-hero__slide
+     con url('/immagini/nome-file.jpg') e togliere la classe
+     "is-segnaposto" dal div .ads-hero__media.
+     ============================================================ -->
+<style>
+.ads-hero{
+  --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
+  --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
+  --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
+  --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ads-hero-durata:6000ms;
+  position:relative; overflow:hidden; background:var(--ads-inchiostro);
+  font-family:var(--ads-sans); color:var(--ads-crema);
+  box-sizing:border-box;
+}
+.ads-hero *,.ads-hero *::before,.ads-hero *::after{box-sizing:border-box}
+.ads-hero__viewport{position:relative; height:clamp(440px,68vh,680px)}
+.ads-hero__slide{
+  position:absolute; inset:0; margin:0; opacity:0; visibility:hidden;
+  transition:opacity .9s ease, visibility 0s linear .9s;
+}
+.ads-hero__slide.is-active{opacity:1; visibility:visible; transition:opacity .9s ease}
+.ads-hero__media{
+  position:absolute; inset:0;
+  background-image:var(--img); background-size:cover; background-position:center;
+  transform:scale(1.02);
+}
+.ads-hero__slide.is-active .ads-hero__media{animation:ads-hero-zoom 12s ease-out both}
+@keyframes ads-hero-zoom{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+/* texture decorativa dei segnaposto: eliminare insieme alla classe */
+.ads-hero__media.is-segnaposto::before{
+  content:""; position:absolute; inset:0; opacity:.5;
+  background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.13) 0 1px,transparent 1px 14px);
+}
+.ads-hero__velo{
+  position:absolute; inset:0;
+  background:linear-gradient(92deg,rgba(28,19,13,.86) 0%,rgba(28,19,13,.58) 42%,rgba(28,19,13,.12) 100%);
+}
+.ads-hero__contenuto{
+  position:relative; height:100%; display:flex; flex-direction:column;
+  justify-content:center; gap:20px; max-width:660px;
+  padding:0 clamp(24px,6vw,86px);
+}
+.ads-hero__occhiello{
+  margin:0; font-size:13px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ads-oro);
+}
+.ads-hero__titolo{
+  margin:0; font-family:var(--ads-serif); font-weight:400;
+  font-size:clamp(46px,7.4vw,86px); line-height:.96; letter-spacing:-.02em;
+}
+.ads-hero__titolo em{font-style:italic; color:#E8A66E}
+.ads-hero__testo{
+  margin:0; max-width:46ch; font-size:clamp(16px,1.35vw,19px); line-height:1.55;
+  color:rgba(250,245,236,.86); text-wrap:pretty;
+}
+.ads-hero__azioni{display:flex; flex-wrap:wrap; gap:14px; margin-top:6px}
+.ads-hero__cta{
+  display:inline-flex; align-items:center; gap:10px; padding:14px 26px;
+  background:var(--ads-rosso); color:var(--ads-crema); text-decoration:none;
+  font-size:14px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease, transform .2s ease;
+}
+.ads-hero__cta:hover{background:#8A2F1F; transform:translateY(-1px)}
+.ads-hero__cta--fantasma{background:transparent; border:1px solid rgba(250,245,236,.45)}
+.ads-hero__cta--fantasma:hover{background:rgba(250,245,236,.1)}
+.ads-hero__comandi{
+  position:absolute; left:0; right:0; bottom:0;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  padding:0 clamp(24px,6vw,86px) clamp(22px,4vw,34px);
+}
+.ads-hero__punti{display:flex; align-items:center; gap:10px}
+.ads-hero__punto{
+  position:relative; width:52px; height:3px; padding:0; border:0; cursor:pointer;
+  background:rgba(250,245,236,.3); overflow:hidden;
+}
+.ads-hero__punto-riempimento{position:absolute; inset:0; width:0; background:var(--ads-crema)}
+.ads-hero__punto.is-active .ads-hero__punto-riempimento{
+  animation:ads-hero-barra var(--ads-hero-durata) linear forwards;
+}
+.ads-hero.is-in-pausa .ads-hero__punto.is-active .ads-hero__punto-riempimento{animation-play-state:paused}
+@keyframes ads-hero-barra{from{width:0}to{width:100%}}
+.ads-hero__frecce{display:flex; gap:8px; margin-left:auto}
+.ads-hero__bottone{
+  width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid rgba(250,245,236,.4); background:transparent; color:var(--ads-crema);
+  border-radius:50%; transition:background .2s ease, border-color .2s ease;
+}
+.ads-hero__bottone:hover{background:rgba(250,245,236,.14); border-color:var(--ads-crema)}
+.ads-hero :focus-visible{outline:2px solid var(--ads-oro); outline-offset:3px}
+.ads-hero__sr{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+@media (max-width:640px){
+  .ads-hero__comandi{gap:12px}
+  .ads-hero__punto{width:34px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ads-hero__slide{transition:none}
+  .ads-hero__slide.is-active .ads-hero__media{animation:none}
+  .ads-hero__punto.is-active .ads-hero__punto-riempimento{animation:none; width:100%}
+}
+</style>
+
+<section class="ads-hero" data-autoplay="6000" aria-roledescription="carosello" aria-label="Accademia della Sfoglia in breve">
+  <div class="ads-hero__viewport">
+
+    <article class="ads-hero__slide is-active" aria-roledescription="diapositiva" aria-label="1 di 3"
+             style="--img:radial-gradient(120% 95% at 18% 22%,rgba(217,162,39,.62),transparent 62%),radial-gradient(110% 110% at 88% 78%,rgba(169,59,39,.5),transparent 60%),linear-gradient(155deg,#F2E9DA,#D8BE93)">
+      <div class="ads-hero__media is-segnaposto"></div>
+      <div class="ads-hero__velo"></div>
+      <div class="ads-hero__contenuto">
+        <p class="ads-hero__occhiello">Bottega Via Emilia · Milano</p>
+        <h2 class="ads-hero__titolo">La sfoglia<br><em>a mano</em></h2>
+        <p class="ads-hero__testo">Uovo e farina, il gesto del mattarello, il taglio. Una giornata al tagliere con i maestri dell'Accademia. Nessuna macchina.</p>
+        <div class="ads-hero__azioni">
+          <a class="ads-hero__cta" href="#corsi">Scopri i corsi</a>
+          <a class="ads-hero__cta ads-hero__cta--fantasma" href="#bottega">La bottega</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ads-hero__slide" aria-roledescription="diapositiva" aria-label="2 di 3"
+             style="--img:radial-gradient(130% 100% at 78% 18%,rgba(232,166,110,.6),transparent 58%),radial-gradient(120% 120% at 12% 84%,rgba(42,31,23,.45),transparent 62%),linear-gradient(200deg,#E9DCC4,#C4A87A)">
+      <div class="ads-hero__media is-segnaposto"></div>
+      <div class="ads-hero__velo"></div>
+      <div class="ads-hero__contenuto">
+        <p class="ads-hero__occhiello">Corso intensivo · [MESE]</p>
+        <h2 class="ads-hero__titolo">Tortellini,<br><em>uno per volta</em></h2>
+        <p class="ads-hero__testo">Sei ore sul tagliere per imparare la chiusura, il ripieno e la giusta consistenza della sfoglia. Massimo [N] partecipanti.</p>
+        <div class="ads-hero__azioni">
+          <a class="ads-hero__cta" href="#prenota">Prenota il posto</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="ads-hero__slide" aria-roledescription="diapositiva" aria-label="3 di 3"
+             style="--img:radial-gradient(120% 90% at 50% 12%,rgba(250,245,236,.55),transparent 55%),radial-gradient(120% 120% at 20% 90%,rgba(169,59,39,.55),transparent 60%),linear-gradient(170deg,#E4D3B6,#A97B4A)">
+      <div class="ads-hero__media is-segnaposto"></div>
+      <div class="ads-hero__velo"></div>
+      <div class="ads-hero__contenuto">
+        <p class="ads-hero__occhiello">Dal 2018</p>
+        <h2 class="ads-hero__titolo">Una scuola,<br><em>tre maestri</em></h2>
+        <p class="ads-hero__testo">Rina Poletti, Beppe Govoni e Gian Paolo Chiossi insegnano il mestiere come si è sempre fatto: guardando le mani.</p>
+        <div class="ads-hero__azioni">
+          <a class="ads-hero__cta ads-hero__cta--fantasma" href="#maestri">Conosci i maestri</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="ads-hero__comandi">
+    <div class="ads-hero__punti"></div>
+    <button type="button" class="ads-hero__bottone ads-hero__pausa" aria-label="Metti in pausa lo scorrimento automatico">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1.5" width="3.4" height="11" fill="currentColor"></rect><rect x="8.6" y="1.5" width="3.4" height="11" fill="currentColor"></rect></svg>
+    </button>
+    <div class="ads-hero__frecce">
+      <button type="button" class="ads-hero__bottone ads-hero__prec" aria-label="Diapositiva precedente">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      </button>
+      <button type="button" class="ads-hero__bottone ads-hero__succ" aria-label="Diapositiva successiva">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var ICONA_PAUSA = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1.5" width="3.4" height="11" fill="currentColor"></rect><rect x="8.6" y="1.5" width="3.4" height="11" fill="currentColor"></rect></svg>';
+  var ICONA_PLAY  = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5l9 5.5-9 5.5z" fill="currentColor"></path></svg>';
+
+  document.querySelectorAll('.ads-hero').forEach(function (radice) {
+    var slide = Array.prototype.slice.call(radice.querySelectorAll('.ads-hero__slide'));
+    if (!slide.length) return;
+    var viewport = radice.querySelector('.ads-hero__viewport');
+    var contPunti = radice.querySelector('.ads-hero__punti');
+    var btnPausa = radice.querySelector('.ads-hero__pausa');
+    var durata = parseInt(radice.dataset.autoplay, 10) || 6000;
+    var motoRidotto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var indice = 0, timer = null, sospesoDaUtente = false;
+
+    radice.style.setProperty('--ads-hero-durata', durata + 'ms');
+
+    var punti = slide.map(function (_, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ads-hero__punto';
+      b.innerHTML = '<span class="ads-hero__punto-riempimento"></span><span class="ads-hero__sr">Vai alla diapositiva ' + (i + 1) + '</span>';
+      b.addEventListener('click', function () { vaiA(i); riavvia(); });
+      contPunti.appendChild(b);
+      return b;
+    });
+
+    function vaiA(n) {
+      indice = (n + slide.length) % slide.length;
+      slide.forEach(function (s, i) {
+        var attiva = i === indice;
+        s.classList.toggle('is-active', attiva);
+        if (attiva) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+      });
+      punti.forEach(function (p, i) {
+        p.classList.toggle('is-active', i === indice);
+        p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+      });
+    }
+
+    function avvia() {
+      ferma();
+      if (motoRidotto.matches || sospesoDaUtente) return;
+      radice.classList.remove('is-in-pausa');
+      viewport.setAttribute('aria-live', 'off');
+      timer = window.setInterval(function () { vaiA(indice + 1); }, durata);
+    }
+    function ferma() { if (timer) { window.clearInterval(timer); timer = null; } }
+    function sospendi() { ferma(); radice.classList.add('is-in-pausa'); viewport.setAttribute('aria-live', 'polite'); }
+    function riavvia() { if (!sospesoDaUtente) avvia(); }
+
+    btnPausa.addEventListener('click', function () {
+      sospesoDaUtente = !sospesoDaUtente;
+      if (sospesoDaUtente) { sospendi(); } else { avvia(); }
+      btnPausa.innerHTML = sospesoDaUtente ? ICONA_PLAY : ICONA_PAUSA;
+      btnPausa.setAttribute('aria-label', sospesoDaUtente ? 'Riprendi lo scorrimento automatico' : 'Metti in pausa lo scorrimento automatico');
+    });
+
+    radice.querySelector('.ads-hero__prec').addEventListener('click', function () { vaiA(indice - 1); riavvia(); });
+    radice.querySelector('.ads-hero__succ').addEventListener('click', function () { vaiA(indice + 1); riavvia(); });
+
+    radice.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { vaiA(indice - 1); riavvia(); }
+      else if (e.key === 'ArrowRight') { vaiA(indice + 1); riavvia(); }
+    });
+
+    radice.addEventListener('mouseenter', sospendi);
+    radice.addEventListener('mouseleave', riavvia);
+    radice.addEventListener('focusin', sospendi);
+    radice.addEventListener('focusout', function (e) {
+      if (!radice.contains(e.relatedTarget)) riavvia();
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) sospendi(); else riavvia();
+    });
+    motoRidotto.addEventListener('change', function () { motoRidotto.matches ? sospendi() : avvia(); });
+
+    var xIniziale = null;
+    viewport.addEventListener('pointerdown', function (e) { xIniziale = e.clientX; });
+    viewport.addEventListener('pointerup', function (e) {
+      if (xIniziale === null) return;
+      var delta = e.clientX - xIniziale;
+      xIniziale = null;
+      if (Math.abs(delta) < 45) return;
+      vaiA(indice + (delta < 0 ? 1 : -1));
+      riavvia();
+    });
+
+    if (motoRidotto.matches) { sospendi(); btnPausa.hidden = true; }
+    vaiA(0);
+    avvia();
+  });
+})();
+</script>
+<!-- ▲ FINO A QUI ▲ -->
+</body>
+</html>
