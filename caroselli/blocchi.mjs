@@ -20,7 +20,7 @@ export const CAROSELLI = [
     file: '02-corsi-schede.html',
     nome: 'Corsi in programma',
     dove: 'Pagina corsi, home',
-    testo: 'Schede affiancate che scorrono con scroll-snap: dito, rotellina e frecce. Funziona anche a JavaScript spento, il JS aggiunge solo frecce e puntini.'
+    testo: "Schede scorrevoli con filtri per tipo, posti liberi in evidenza, vista a griglia e scheda di dettaglio con il programma di ogni corso. Il carrello usa lo scroll nativo: anche a JavaScript spento resta scorrevole."
   },
   {
     file: '03-testimonianze.html',

@@ -12,16 +12,27 @@
 <body>
 <!-- ▼ COPIA DA QUI ▼ -->
 <!-- ============================================================
-     CAROSELLO 2 · Corsi in programma (schede scorrevoli)
+     CAROSELLO 2 · Corsi in programma
      Trascinamento, rotellina e scorrimento nativo: il carrello usa
      scroll-snap, quindi funziona anche senza JavaScript.
-     Per aggiungere un corso basta duplicare un <article class="ads-corsi__scheda">.
+
+     PER AGGIUNGERE O AGGIORNARE UN CORSO si duplica un
+     <article class="ads-corsi__scheda"> e si compilano i suoi attributi:
+       data-corso  nome del corso (finisce nel titolo della scheda di dettaglio
+                   e nell'oggetto della mail di prenotazione)
+       data-tipo   una o più parole fra base, intensivo, ripieni, sumisura
+                   (separate da spazio) — servono ai filtri
+       data-posti  posti ancora liberi. 0 = esaurito. Se manca, la scheda
+                   non mostra la disponibilità (corsi su richiesta)
+       data-totale posti totali
+     Il cartellino "Ultimi posti" / "Esaurito" e la riga della disponibilità
+     li scrive il JavaScript da questi numeri: si aggiorna un attributo solo.
      ============================================================ -->
 <style>
 .ads-corsi{
   --ads-crema:#FAF5EC; --ads-carta:#F2E9DA; --ads-inchiostro:#2A1F17;
   --ads-rosso:#A93B27; --ads-oro:#D9A227; --ads-grigio:#6B5A4C;
-  --ads-testo:#4A3B30; --ads-linea:#C9B79C;
+  --ads-testo:#4A3B30; --ads-linea:#C9B79C; --ads-verde:#5C6B4A;
   --ads-serif:'Bodoni Moda','Bodoni MT',Didot,Georgia,serif;
   --ads-sans:Archivo,'Helvetica Neue',Helvetica,Arial,sans-serif;
   --ads-bordo:clamp(20px,6vw,86px);
@@ -31,7 +42,7 @@
 .ads-corsi *,.ads-corsi *::before,.ads-corsi *::after{box-sizing:border-box}
 .ads-corsi__testata{
   display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
-  flex-wrap:wrap; padding:0 var(--ads-bordo) clamp(26px,3vw,38px);
+  flex-wrap:wrap; padding:0 var(--ads-bordo) clamp(22px,2.6vw,30px);
 }
 .ads-corsi__occhiello{
   margin:0 0 10px; font-size:13px; letter-spacing:.24em;
@@ -51,6 +62,46 @@
 .ads-corsi__bottone:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
 .ads-corsi__bottone[disabled]{opacity:.28; cursor:default}
 .ads-corsi__bottone[disabled]:hover{background:transparent; color:var(--ads-inchiostro)}
+
+/* --- filtri ------------------------------------------------------------- */
+.ads-corsi__comandi{
+  display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap;
+  padding:0 var(--ads-bordo) clamp(20px,2.4vw,28px);
+}
+.ads-corsi__filtri{display:flex; gap:8px; flex-wrap:wrap}
+.ads-corsi__filtro{
+  display:inline-flex; align-items:baseline; gap:8px; padding:9px 16px; cursor:pointer;
+  border:1px solid var(--ads-linea); background:transparent; color:var(--ads-inchiostro);
+  font-family:inherit; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.ads-corsi__filtro:hover{border-color:var(--ads-inchiostro)}
+.ads-corsi__filtro.is-active{background:var(--ads-inchiostro); border-color:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__conto{font-size:11px; opacity:.6; font-variant-numeric:tabular-nums}
+.ads-corsi__interruttore{
+  display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+  font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ads-grigio);
+}
+.ads-corsi__interruttore input{
+  appearance:none; -webkit-appearance:none; margin:0; width:34px; height:18px; cursor:pointer;
+  border:1px solid var(--ads-linea); border-radius:999px; background:var(--ads-carta);
+  position:relative; transition:background .2s ease, border-color .2s ease;
+}
+.ads-corsi__interruttore input::after{
+  content:""; position:absolute; top:2px; left:2px; width:12px; height:12px;
+  border-radius:50%; background:var(--ads-grigio); transition:transform .2s ease, background .2s ease;
+}
+.ads-corsi__interruttore input:checked{background:var(--ads-inchiostro); border-color:var(--ads-inchiostro)}
+.ads-corsi__interruttore input:checked::after{transform:translateX(16px); background:var(--ads-crema)}
+.ads-corsi__vista{
+  margin-left:auto; padding:9px 16px; cursor:pointer; background:transparent;
+  border:1px solid var(--ads-inchiostro); color:var(--ads-inchiostro); font-family:inherit;
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease,color .2s ease;
+}
+.ads-corsi__vista:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+
+/* --- carrello e schede -------------------------------------------------- */
 .ads-corsi__carrello{
   display:flex; gap:clamp(16px,2vw,26px);
   padding:4px var(--ads-bordo) 6px;
@@ -63,13 +114,14 @@
 .ads-corsi__scheda{
   flex:0 0 clamp(258px,26vw,340px); scroll-snap-align:start;
   display:flex; flex-direction:column; background:var(--ads-carta);
-  border:1px solid var(--ads-linea); text-decoration:none; color:inherit;
+  border:1px solid var(--ads-linea); color:inherit;
   transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 .ads-corsi__scheda:hover{
   transform:translateY(-4px); border-color:var(--ads-inchiostro);
   box-shadow:0 14px 34px -22px rgba(42,31,23,.65);
 }
+.ads-corsi__scheda[hidden]{display:none}
 .ads-corsi__figura{
   position:relative; aspect-ratio:4/3;
   background-image:var(--img); background-size:cover; background-position:center;
@@ -79,12 +131,14 @@
   content:""; position:absolute; inset:0; opacity:.45;
   background-image:repeating-linear-gradient(115deg,rgba(42,31,23,.14) 0 1px,transparent 1px 13px);
 }
+.ads-corsi__cartellini{position:absolute; top:14px; left:14px; right:14px; z-index:1; display:flex; gap:8px; flex-wrap:wrap}
 .ads-corsi__etichetta{
-  position:absolute; top:14px; left:14px; z-index:1;
   padding:6px 12px; background:var(--ads-crema); color:var(--ads-rosso);
   font-size:11px; letter-spacing:.18em; text-transform:uppercase;
 }
-.ads-corsi__etichetta--esaurito{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__stato{padding:6px 12px; font-size:11px; letter-spacing:.18em; text-transform:uppercase}
+.ads-corsi__stato--ultimi{background:var(--ads-oro); color:var(--ads-inchiostro)}
+.ads-corsi__stato--esaurito{background:var(--ads-inchiostro); color:var(--ads-crema)}
 .ads-corsi__corpo{display:flex; flex-direction:column; gap:10px; padding:22px 22px 24px; flex:1}
 .ads-corsi__data{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ads-grigio)}
 .ads-corsi__nome{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:26px; line-height:1.14}
@@ -95,13 +149,38 @@
 }
 .ads-corsi__prezzo{font-family:var(--ads-serif); font-size:22px}
 .ads-corsi__durata{font-size:13px; color:var(--ads-grigio)}
+.ads-corsi__posti{display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--ads-grigio)}
+.ads-corsi__posti-barra{height:3px; background:var(--ads-linea); overflow:hidden}
+.ads-corsi__posti-quota{display:block; height:100%; width:var(--quota,0%); background:var(--ads-verde)}
+.ads-corsi__posti.is-poco .ads-corsi__posti-quota{background:var(--ads-oro)}
+.ads-corsi__posti.is-esaurito .ads-corsi__posti-quota{background:var(--ads-rosso)}
+.ads-corsi__azioni{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; row-gap:10px; flex-wrap:wrap; margin-top:6px;
+}
 .ads-corsi__link{
-  position:relative; /* aggancia gli span per i lettori di schermo */
-  margin-top:4px; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--ads-rosso); text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+  position:relative; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ads-rosso); text-decoration:none; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:8px;
 }
 .ads-corsi__scheda:hover .ads-corsi__link{gap:13px}
-.ads-corsi__link span{transition:transform .2s ease}
+.ads-corsi__dettagli{
+  padding:0; border:0; background:transparent; cursor:pointer; font-family:inherit; white-space:nowrap;
+  font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--ads-grigio);
+  border-bottom:1px solid var(--ads-linea); transition:color .2s ease,border-color .2s ease;
+}
+.ads-corsi__dettagli:hover{color:var(--ads-inchiostro); border-color:var(--ads-inchiostro)}
+.ads-corsi__vuoto{
+  margin:0; padding:40px var(--ads-bordo); text-align:center;
+  font-family:var(--ads-serif); font-size:22px; color:var(--ads-grigio);
+}
+.ads-corsi__vuoto[hidden]{display:none}
+.ads-corsi__azzera{
+  padding:0; border:0; border-bottom:1px solid var(--ads-linea); background:transparent;
+  cursor:pointer; font-family:var(--ads-sans); font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ads-rosso); transition:border-color .2s ease;
+}
+.ads-corsi__azzera:hover{border-color:var(--ads-rosso)}
 .ads-corsi__barra{
   display:flex; align-items:center; gap:8px; justify-content:center;
   padding:clamp(22px,3vw,32px) var(--ads-bordo) 0;
@@ -111,11 +190,80 @@
   background:var(--ads-linea); transition:background .2s ease,width .2s ease;
 }
 .ads-corsi__punto.is-active{background:var(--ads-rosso); width:44px}
-.ads-corsi :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
-.ads-corsi__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* --- vista a griglia ---------------------------------------------------- */
+.ads-corsi.is-griglia .ads-corsi__carrello{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+  overflow:visible; scroll-snap-type:none; padding-top:4px;
+}
+.ads-corsi.is-griglia .ads-corsi__scheda{flex:initial}
+.ads-corsi.is-griglia .ads-corsi__barra,
+.ads-corsi.is-griglia .ads-corsi__frecce{display:none}
+
+/* --- scheda di dettaglio ------------------------------------------------ */
+.ads-corsi__finestra{
+  width:min(560px,92vw); padding:0; border:1px solid var(--ads-inchiostro);
+  background:var(--ads-crema); color:var(--ads-inchiostro); font-family:var(--ads-sans);
+}
+.ads-corsi__finestra::backdrop{background:rgba(28,19,13,.62)}
+.ads-corsi__finestra-testata{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:18px;
+  padding:26px 26px 0;
+}
+.ads-corsi__finestra-titolo{margin:0; font-family:var(--ads-serif); font-weight:400; font-size:30px; line-height:1.1}
+.ads-corsi__finestra-occhiello{margin:0 0 8px; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ads-rosso)}
+.ads-corsi__chiudi{
+  flex:none; width:38px; height:38px; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--ads-linea); background:transparent; color:var(--ads-inchiostro); border-radius:50%;
+  transition:background .2s ease,border-color .2s ease;
+}
+.ads-corsi__chiudi:hover{background:var(--ads-carta); border-color:var(--ads-inchiostro)}
+.ads-corsi__finestra-corpo{padding:20px 26px 4px; max-height:min(56vh,460px); overflow-y:auto}
+.ads-corsi__finestra-dati{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(104px,1fr)); gap:14px 18px;
+  padding:16px 0; margin-bottom:18px; border-top:1px solid var(--ads-linea); border-bottom:1px solid var(--ads-linea);
+}
+.ads-corsi__dato{display:flex; flex-direction:column; gap:4px}
+.ads-corsi__dato dt{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--ads-grigio)}
+.ads-corsi__dato dd{margin:0; font-family:var(--ads-serif); font-size:19px; line-height:1.25}
+.ads-corsi__dato--largo{grid-column:span 2}
+.ads-corsi__finestra h4{
+  margin:22px 0 10px; font-size:12px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ads-rosso);
+}
+.ads-corsi__finestra h4:first-child{margin-top:0}
+.ads-corsi__finestra p{margin:0; font-size:15px; line-height:1.6; color:var(--ads-testo); text-wrap:pretty}
+.ads-corsi__programma{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px}
+.ads-corsi__programma li{display:flex; gap:14px; font-size:15px; line-height:1.45; color:var(--ads-testo)}
+.ads-corsi__programma b{
+  flex:none; width:62px; font-weight:400; color:var(--ads-inchiostro);
+  font-variant-numeric:tabular-nums; font-family:var(--ads-serif); font-size:16px;
+}
+.ads-corsi__incluso{margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px}
+.ads-corsi__incluso li{
+  padding:6px 12px; background:var(--ads-carta); border:1px solid var(--ads-linea);
+  font-size:13px; color:var(--ads-testo);
+}
+.ads-corsi__finestra-piede{
+  display:flex; gap:12px; flex-wrap:wrap; padding:20px 26px 26px;
+  border-top:1px solid var(--ads-linea); margin-top:22px;
+}
+.ads-corsi__cta{
+  display:inline-flex; align-items:center; gap:9px; padding:13px 22px; text-decoration:none;
+  border:1px solid var(--ads-inchiostro); color:var(--ads-inchiostro);
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .2s ease,color .2s ease;
+}
+.ads-corsi__cta:hover{background:var(--ads-inchiostro); color:var(--ads-crema)}
+.ads-corsi__cta--pieno{background:var(--ads-rosso); border-color:var(--ads-rosso); color:var(--ads-crema)}
+.ads-corsi__cta--pieno:hover{background:#8A2F1F; border-color:#8A2F1F; color:var(--ads-crema)}
+
+.ads-corsi :focus-visible,.ads-corsi__finestra :focus-visible{outline:2px solid var(--ads-rosso); outline-offset:3px}
+.ads-corsi__sr,.ads-corsi__finestra .ads-corsi__sr{display:inline-block; width:1px; height:1px; padding:0; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;}
 @media (max-width:640px){
   .ads-corsi__scheda{flex-basis:78vw}
   .ads-corsi__frecce{display:none}
+  .ads-corsi__vista{margin-left:0}
 }
 @media (prefers-reduced-motion:reduce){
   .ads-corsi__carrello{scroll-behavior:auto}
@@ -139,11 +287,28 @@
     </div>
   </div>
 
+  <!-- I filtri li accende il JavaScript: senza, restano nascosti e si vedono tutti i corsi. -->
+  <div class="ads-corsi__comandi" hidden>
+    <div class="ads-corsi__filtri" role="group" aria-label="Filtra i corsi per tipo">
+      <button type="button" class="ads-corsi__filtro is-active" data-filtro="tutti">Tutti <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="base">Base <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="intensivo">Intensivi <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="ripieni">Ripieni <span class="ads-corsi__conto"></span></button>
+      <button type="button" class="ads-corsi__filtro" data-filtro="sumisura">Su misura <span class="ads-corsi__conto"></span></button>
+    </div>
+    <label class="ads-corsi__interruttore">
+      <input type="checkbox" class="ads-corsi__solo-liberi">
+      Solo con posti liberi
+    </label>
+    <button type="button" class="ads-corsi__vista" aria-pressed="false">Vedi tutti</button>
+    <p class="ads-corsi__sr" role="status" aria-live="polite"></p>
+  </div>
+
   <div class="ads-corsi__carrello" tabindex="0" role="group" aria-label="Elenco corsi, scorri orizzontalmente">
 
-    <article class="ads-corsi__scheda">
+    <article class="ads-corsi__scheda" data-corso="La sfoglia al mattarello" data-tipo="base" data-posti="4" data-totale="8">
       <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 90% at 25% 20%,rgba(217,162,39,.55),transparent 62%),linear-gradient(160deg,#F2E9DA,#D8BE93)" aria-hidden="true">
-        <span class="ads-corsi__etichetta">Base</span>
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Base</span></div>
       </div>
       <div class="ads-corsi__corpo">
         <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
@@ -153,13 +318,31 @@
           <span class="ads-corsi__prezzo">[PREZZO] €</span>
           <span class="ads-corsi__durata">4 ore</span>
         </div>
-        <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso La sfoglia al mattarello</span></a>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso La sfoglia al mattarello</span></a>
+        </div>
       </div>
+      <template class="ads-corsi__dettaglio">
+        <p>Il corso da cui partono tutti: si impara a fare la sfoglia con il mattarello, senza macchina, e a tagliarla a mano. Si lavora uno per tagliere, con un maestro ogni quattro partecipanti.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> Accoglienza, grembiule e fontana di farina</li>
+          <li><b>[ORA]</b> L'impasto a mano e il riposo</li>
+          <li><b>[ORA]</b> La tirata al mattarello, uno per uno</li>
+          <li><b>[ORA]</b> Taglio delle tagliatelle e nidi</li>
+          <li><b>[ORA]</b> Degustazione di quel che si è fatto</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Mattarello in prestito</li>
+          <li>Degustazione finale</li><li>Ricettario dell'Accademia</li>
+        </ul>
+      </template>
     </article>
 
-    <article class="ads-corsi__scheda">
+    <article class="ads-corsi__scheda" data-corso="Tortellini di Bologna" data-tipo="intensivo ripieni" data-posti="2" data-totale="8">
       <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(110% 100% at 75% 25%,rgba(232,166,110,.6),transparent 60%),linear-gradient(190deg,#E9DCC4,#C4A87A)" aria-hidden="true">
-        <span class="ads-corsi__etichetta">Intensivo</span>
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Intensivo</span></div>
       </div>
       <div class="ads-corsi__corpo">
         <p class="ads-corsi__data">[Domenica] [GG] [mese] · [ORA]</p>
@@ -169,13 +352,31 @@
           <span class="ads-corsi__prezzo">[PREZZO] €</span>
           <span class="ads-corsi__durata">6 ore</span>
         </div>
-        <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Tortellini di Bologna</span></a>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Tortellini di Bologna</span></a>
+        </div>
       </div>
+      <template class="ads-corsi__dettaglio">
+        <p>Sei ore sul tagliere per il formato che mette d'accordo tutta l'Emilia e divide tutte le famiglie. Sfoglia sottile, quadrelli piccoli, chiusura sul dito: si va avanti finché non viene.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> Il ripieno: lombo, mortadella, prosciutto, parmigiano</li>
+          <li><b>[ORA]</b> Sfoglia sottile al mattarello</li>
+          <li><b>[ORA]</b> Quadrelli e chiusura, uno per volta</li>
+          <li><b>[ORA]</b> Il brodo di terza</li>
+          <li><b>[ORA]</b> Tortellini in brodo, a tavola</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Pranzo con quel che si è fatto</li>
+          <li>Ricettario dell'Accademia</li><li>Una porzione da portare a casa</li>
+        </ul>
+      </template>
     </article>
 
-    <article class="ads-corsi__scheda">
+    <article class="ads-corsi__scheda" data-corso="Cappelletti e tortelloni" data-tipo="ripieni" data-posti="6" data-totale="8">
       <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 90% at 40% 80%,rgba(169,59,39,.5),transparent 62%),linear-gradient(150deg,#EFE2C9,#B9945F)" aria-hidden="true">
-        <span class="ads-corsi__etichetta">Formati ripieni</span>
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Formati ripieni</span></div>
       </div>
       <div class="ads-corsi__corpo">
         <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
@@ -185,13 +386,31 @@
           <span class="ads-corsi__prezzo">[PREZZO] €</span>
           <span class="ads-corsi__durata">5 ore</span>
         </div>
-        <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Cappelletti e tortelloni</span></a>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#prenota">Prenota <span aria-hidden="true">→</span><span class="ads-corsi__sr">il corso Cappelletti e tortelloni</span></a>
+        </div>
       </div>
+      <template class="ads-corsi__dettaglio">
+        <p>Due formati ripieni nella stessa giornata: il cappelletto, piccolo e da brodo, e il tortellone di ricotta e prezzemolo, che vuole burro e salvia e nient'altro.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> I due ripieni, uno per volta</li>
+          <li><b>[ORA]</b> La sfoglia, tirata in due spessori</li>
+          <li><b>[ORA]</b> Cappelletti: taglio e chiusura</li>
+          <li><b>[ORA]</b> Tortelloni: la piegatura</li>
+          <li><b>[ORA]</b> Degustazione al tagliere</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Degustazione finale</li>
+          <li>Ricettario dell'Accademia</li>
+        </ul>
+      </template>
     </article>
 
-    <article class="ads-corsi__scheda">
+    <article class="ads-corsi__scheda" data-corso="Lasagne verdi" data-tipo="base" data-posti="0" data-totale="8">
       <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(100% 100% at 20% 30%,rgba(250,245,236,.6),transparent 55%),linear-gradient(170deg,#E4D3B6,#A97B4A)" aria-hidden="true">
-        <span class="ads-corsi__etichetta ads-corsi__etichetta--esaurito">Esaurito</span>
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Base</span></div>
       </div>
       <div class="ads-corsi__corpo">
         <p class="ads-corsi__data">[Sabato] [GG] [mese] · [ORA]</p>
@@ -201,13 +420,31 @@
           <span class="ads-corsi__prezzo">[PREZZO] €</span>
           <span class="ads-corsi__durata">5 ore</span>
         </div>
-        <a class="ads-corsi__link" href="#lista-attesa">Lista d'attesa <span aria-hidden="true">→</span></a>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#lista-attesa">Lista d'attesa <span aria-hidden="true">→</span><span class="ads-corsi__sr">per il corso Lasagne verdi</span></a>
+        </div>
       </div>
+      <template class="ads-corsi__dettaglio">
+        <p>La sfoglia verde con gli spinaci, il ragù che sobbolle dalla mattina e la besciamella fatta al momento. Si monta la teglia strato per strato e si porta a casa da infornare.</p>
+        <h4>Il programma</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>[ORA]</b> Il ragù: soffritto e cottura lenta</li>
+          <li><b>[ORA]</b> La sfoglia verde al mattarello</li>
+          <li><b>[ORA]</b> Sbianchitura dei rettangoli</li>
+          <li><b>[ORA]</b> Besciamella e montaggio della teglia</li>
+          <li><b>[ORA]</b> Assaggio, e la teglia da portare via</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Una teglia da portare a casa</li>
+          <li>Ricettario dell'Accademia</li>
+        </ul>
+      </template>
     </article>
 
-    <article class="ads-corsi__scheda">
+    <article class="ads-corsi__scheda" data-corso="Corso privato in bottega" data-tipo="sumisura">
       <div class="ads-corsi__figura is-segnaposto" style="--img:radial-gradient(120% 110% at 80% 70%,rgba(217,162,39,.6),transparent 60%),linear-gradient(200deg,#F2E9DA,#CBB287)" aria-hidden="true">
-        <span class="ads-corsi__etichetta">Su misura</span>
+        <div class="ads-corsi__cartellini"><span class="ads-corsi__etichetta">Su misura</span></div>
       </div>
       <div class="ads-corsi__corpo">
         <p class="ads-corsi__data">Su richiesta · tutto l'anno</p>
@@ -215,15 +452,53 @@
         <p class="ads-corsi__descrizione">Per gruppi, aziende o regali: il programma si costruisce insieme a voi.</p>
         <div class="ads-corsi__piede">
           <span class="ads-corsi__prezzo">Su preventivo</span>
-          <span class="ads-corsi__durata">a partire da 3 ore</span>
+          <span class="ads-corsi__durata">da 3 ore</span>
         </div>
-        <a class="ads-corsi__link" href="#contatti">Chiedi info <span aria-hidden="true">→</span></a>
+        <div class="ads-corsi__azioni">
+          <a class="ads-corsi__link" href="#contatti">Chiedi info <span aria-hidden="true">→</span><span class="ads-corsi__sr">sul corso privato in bottega</span></a>
+        </div>
       </div>
+      <template class="ads-corsi__dettaglio">
+        <p>La bottega chiusa solo per voi: si sceglie il formato, la durata e l'orario. Va bene per una squadra di lavoro, per una festa o come regalo a chi la sfoglia la vuole imparare davvero.</p>
+        <h4>Come funziona</h4>
+        <ol class="ads-corsi__programma">
+          <li><b>1</b> Ci dite quante persone siete e quanto tempo avete</li>
+          <li><b>2</b> Proponiamo un programma e un preventivo</li>
+          <li><b>3</b> Si fissa la data, anche infrasettimanale</li>
+        </ol>
+        <h4>Cosa è compreso</h4>
+        <ul class="ads-corsi__incluso">
+          <li>Grembiule</li><li>Materie prime</li><li>Programma su misura</li>
+          <li>Degustazione</li><li>Fatturazione per le aziende</li>
+        </ul>
+      </template>
     </article>
 
   </div>
 
+  <p class="ads-corsi__vuoto" hidden>Nessun corso con questi filtri. <button type="button" class="ads-corsi__azzera">Mostra tutti</button></p>
+
   <div class="ads-corsi__barra" role="group" aria-label="Pagine del carosello"></div>
+
+  <dialog class="ads-corsi__finestra">
+    <div class="ads-corsi__finestra-testata">
+      <div>
+        <p class="ads-corsi__finestra-occhiello"></p>
+        <h3 class="ads-corsi__finestra-titolo"></h3>
+      </div>
+      <button type="button" class="ads-corsi__chiudi" aria-label="Chiudi la scheda del corso">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+    <div class="ads-corsi__finestra-corpo">
+      <dl class="ads-corsi__finestra-dati"></dl>
+      <div class="ads-corsi__finestra-testo"></div>
+    </div>
+    <div class="ads-corsi__finestra-piede">
+      <a class="ads-corsi__cta ads-corsi__cta--pieno ads-corsi__cta-mail" href="#">Scrivi per prenotare</a>
+      <a class="ads-corsi__cta" href="tel:+393335901748">333 5901748</a>
+    </div>
+  </dialog>
 </section>
 
 <script>
@@ -231,14 +506,57 @@
   document.querySelectorAll('.ads-corsi').forEach(function (radice) {
     var carrello = radice.querySelector('.ads-corsi__carrello');
     var schede = Array.prototype.slice.call(carrello.querySelectorAll('.ads-corsi__scheda'));
+    if (!schede.length) return;
+
     var prec = radice.querySelector('.ads-corsi__prec');
     var succ = radice.querySelector('.ads-corsi__succ');
     var barra = radice.querySelector('.ads-corsi__barra');
-    if (!schede.length) return;
+    var comandi = radice.querySelector('.ads-corsi__comandi');
+    var filtri = Array.prototype.slice.call(radice.querySelectorAll('.ads-corsi__filtro'));
+    var soloLiberi = radice.querySelector('.ads-corsi__solo-liberi');
+    var vista = radice.querySelector('.ads-corsi__vista');
+    var vuoto = radice.querySelector('.ads-corsi__vuoto');
+    var azzera = radice.querySelector('.ads-corsi__azzera');
+    var annuncio = radice.querySelector('[role="status"]');
+    var finestra = radice.querySelector('.ads-corsi__finestra');
 
+    var MAIL = 'info@accademiadellasfoglia.it';
+    var filtroAttivo = 'tutti';
+
+    // --- disponibilità: cartellino e barretta dai data-posti -------------
+    schede.forEach(function (scheda) {
+      var posti = scheda.dataset.posti;
+      if (posti === undefined) return;
+      posti = parseInt(posti, 10);
+      var totale = parseInt(scheda.dataset.totale, 10) || 0;
+      var cartellini = scheda.querySelector('.ads-corsi__cartellini');
+      var piede = scheda.querySelector('.ads-corsi__piede');
+
+      if (cartellini && (posti === 0 || posti <= 2)) {
+        var stato = document.createElement('span');
+        stato.className = 'ads-corsi__stato ' + (posti === 0 ? 'ads-corsi__stato--esaurito' : 'ads-corsi__stato--ultimi');
+        stato.textContent = posti === 0 ? 'Esaurito' : 'Ultimi posti';
+        cartellini.appendChild(stato);
+      }
+
+      if (!piede || !totale) return;
+      var quota = Math.round(((totale - posti) / totale) * 100);
+      var blocco = document.createElement('div');
+      blocco.className = 'ads-corsi__posti' + (posti === 0 ? ' is-esaurito' : (posti <= 2 ? ' is-poco' : ''));
+      blocco.innerHTML =
+        '<span>' + (posti === 0 ? 'Nessun posto libero' : posti + ' posti liberi su ' + totale) + '</span>' +
+        '<span class="ads-corsi__posti-barra"><span class="ads-corsi__posti-quota" style="--quota:' + quota + '%"></span></span>';
+      piede.insertAdjacentElement('afterend', blocco);
+    });
+
+    // --- carosello --------------------------------------------------------
+    function visibili() {
+      return schede.filter(function (s) { return !s.hidden; });
+    }
     function passo() {
-      if (schede.length < 2) return carrello.clientWidth;
-      return schede[1].getBoundingClientRect().left - schede[0].getBoundingClientRect().left;
+      var v = visibili();
+      if (v.length < 2) return carrello.clientWidth;
+      return v[1].getBoundingClientRect().left - v[0].getBoundingClientRect().left;
     }
     function pagine() {
       return Math.max(1, Math.ceil((carrello.scrollWidth - carrello.clientWidth) / Math.max(1, passo())) + 1);
@@ -246,7 +564,7 @@
 
     var punti = [];
     function costruisciPunti() {
-      var n = pagine();
+      var n = radice.classList.contains('is-griglia') ? 0 : pagine();
       barra.innerHTML = '';
       punti = [];
       if (n < 2) return;
@@ -266,8 +584,9 @@
     function aggiorna() {
       var x = carrello.scrollLeft;
       var massimo = carrello.scrollWidth - carrello.clientWidth - 2;
-      prec.disabled = x <= 2;
-      succ.disabled = x >= massimo;
+      var griglia = radice.classList.contains('is-griglia');
+      prec.disabled = griglia || x <= 2;
+      succ.disabled = griglia || x >= massimo;
       var attivo = Math.round(x / Math.max(1, passo()));
       punti.forEach(function (p, i) {
         p.classList.toggle('is-active', i === attivo);
@@ -285,14 +604,132 @@
     }, { passive: true });
 
     if ('ResizeObserver' in window) {
-      var ro = new ResizeObserver(function () { costruisciPunti(); aggiorna(); });
-      ro.observe(carrello);
+      new ResizeObserver(function () { costruisciPunti(); aggiorna(); }).observe(carrello);
     } else {
       window.addEventListener('resize', function () { costruisciPunti(); aggiorna(); });
     }
 
-    costruisciPunti();
-    aggiorna();
+    // --- filtri -----------------------------------------------------------
+    function corrisponde(scheda) {
+      var tipi = (scheda.dataset.tipo || '').split(/\s+/);
+      var perTipo = filtroAttivo === 'tutti' || tipi.indexOf(filtroAttivo) !== -1;
+      if (!perTipo) return false;
+      if (!soloLiberi || !soloLiberi.checked) return true;
+      var posti = scheda.dataset.posti;
+      return posti === undefined || parseInt(posti, 10) > 0;
+    }
+
+    function conta(filtro) {
+      return schede.filter(function (s) {
+        if (filtro !== 'tutti' && (s.dataset.tipo || '').split(/\s+/).indexOf(filtro) === -1) return false;
+        if (soloLiberi && soloLiberi.checked) {
+          var p = s.dataset.posti;
+          if (p !== undefined && parseInt(p, 10) === 0) return false;
+        }
+        return true;
+      }).length;
+    }
+
+    function applica() {
+      schede.forEach(function (s) { s.hidden = !corrisponde(s); });
+      filtri.forEach(function (f) {
+        var n = conta(f.dataset.filtro);
+        var contatore = f.querySelector('.ads-corsi__conto');
+        if (contatore) contatore.textContent = n;
+        f.disabled = n === 0 && f.dataset.filtro !== 'tutti';
+        f.classList.toggle('is-active', f.dataset.filtro === filtroAttivo);
+        f.setAttribute('aria-pressed', f.dataset.filtro === filtroAttivo ? 'true' : 'false');
+      });
+      var quanti = visibili().length;
+      if (vuoto) vuoto.hidden = quanti > 0;
+      carrello.hidden = quanti === 0;
+      if (annuncio) annuncio.textContent = quanti === 0
+        ? 'Nessun corso con questi filtri'
+        : (quanti === 1 ? 'Un corso in elenco' : quanti + ' corsi in elenco');
+      carrello.scrollTo({ left: 0, behavior: 'auto' });
+      costruisciPunti();
+      aggiorna();
+    }
+
+    filtri.forEach(function (f) {
+      f.addEventListener('click', function () { filtroAttivo = f.dataset.filtro; applica(); });
+    });
+    if (soloLiberi) soloLiberi.addEventListener('change', applica);
+    if (azzera) azzera.addEventListener('click', function () {
+      filtroAttivo = 'tutti';
+      if (soloLiberi) soloLiberi.checked = false;
+      applica();
+    });
+
+    // --- vista a griglia --------------------------------------------------
+    if (vista) vista.addEventListener('click', function () {
+      var griglia = radice.classList.toggle('is-griglia');
+      vista.textContent = griglia ? 'Vedi a carosello' : 'Vedi tutti';
+      vista.setAttribute('aria-pressed', griglia ? 'true' : 'false');
+      carrello.setAttribute('aria-label', griglia ? 'Elenco corsi' : 'Elenco corsi, scorri orizzontalmente');
+      costruisciPunti();
+      aggiorna();
+    });
+
+    // --- scheda di dettaglio ---------------------------------------------
+    if (finestra && typeof finestra.showModal === 'function') {
+      var titolo = finestra.querySelector('.ads-corsi__finestra-titolo');
+      // id unico: così due caroselli nella stessa pagina non si pestano i piedi
+      titolo.id = 'ads-corsi-titolo-' + Math.random().toString(36).slice(2, 8);
+      finestra.setAttribute('aria-labelledby', titolo.id);
+      var occhiello = finestra.querySelector('.ads-corsi__finestra-occhiello');
+      var dati = finestra.querySelector('.ads-corsi__finestra-dati');
+      var testo = finestra.querySelector('.ads-corsi__finestra-testo');
+      var mail = finestra.querySelector('.ads-corsi__cta-mail');
+
+      function dato(etichetta, valore, largo) {
+        if (!valore) return '';
+        return '<div class="ads-corsi__dato' + (largo ? ' ads-corsi__dato--largo' : '') + '">' +
+               '<dt>' + etichetta + '</dt><dd>' + valore + '</dd></div>';
+      }
+
+      function apri(scheda) {
+        var modello = scheda.querySelector('.ads-corsi__dettaglio');
+        var posti = scheda.dataset.posti;
+        titolo.textContent = scheda.dataset.corso || scheda.querySelector('.ads-corsi__nome').textContent;
+        occhiello.textContent = scheda.querySelector('.ads-corsi__etichetta').textContent;
+        dati.innerHTML =
+          dato('Quando', scheda.querySelector('.ads-corsi__data').textContent, true) +
+          dato('Durata', scheda.querySelector('.ads-corsi__durata').textContent) +
+          dato('Quota', scheda.querySelector('.ads-corsi__prezzo').textContent) +
+          dato('Posti', posti === undefined ? 'Su richiesta' : (parseInt(posti, 10) === 0 ? 'Esauriti' : posti + ' liberi'));
+        testo.innerHTML = '';
+        if (modello) testo.appendChild(modello.content.cloneNode(true));
+        mail.href = 'mailto:' + MAIL +
+          '?subject=' + encodeURIComponent('Prenotazione · ' + titolo.textContent) +
+          '&body=' + encodeURIComponent('Buongiorno,\nvorrei prenotare un posto per il corso "' + titolo.textContent + '".\n\nNome:\nTelefono:\nNumero di partecipanti:\n');
+        mail.textContent = (posti !== undefined && parseInt(posti, 10) === 0)
+          ? 'Scrivi per la lista d’attesa'
+          : 'Scrivi per prenotare';
+        finestra.showModal();
+      }
+
+      schede.forEach(function (scheda) {
+        if (!scheda.querySelector('.ads-corsi__dettaglio')) return;
+        var azioni = scheda.querySelector('.ads-corsi__azioni');
+        var bottone = document.createElement('button');
+        bottone.type = 'button';
+        bottone.className = 'ads-corsi__dettagli';
+        bottone.setAttribute('aria-haspopup', 'dialog');
+        bottone.innerHTML = 'Programma<span class="ads-corsi__sr"> del corso ' + (scheda.dataset.corso || '') + '</span>';
+        bottone.addEventListener('click', function () { apri(scheda); });
+        azioni.insertBefore(bottone, azioni.firstChild);
+      });
+
+      finestra.querySelector('.ads-corsi__chiudi').addEventListener('click', function () { finestra.close(); });
+      // clic sullo sfondo: chiude
+      finestra.addEventListener('click', function (e) {
+        if (e.target === finestra) finestra.close();
+      });
+    }
+
+    if (comandi) comandi.hidden = false;
+    applica();
   });
 })();
 </script>

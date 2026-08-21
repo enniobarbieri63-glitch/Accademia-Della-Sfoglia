@@ -7,7 +7,7 @@ l'uno. Stessa palette e stessi caratteri del volantino in `design/`.
 | # | File | Cos'è | Dove sta bene |
 |---|------|-------|---------------|
 | 01 | `01-slideshow-apertura.html` | Slideshow a tutta larghezza, tre messaggi in dissolvenza | Testata della home |
-| 02 | `02-corsi-schede.html` | Schede dei corsi che scorrono di lato | Pagina corsi, home |
+| 02 | `02-corsi-schede.html` | Corsi con filtri, posti liberi e scheda di dettaglio | Pagina corsi, home |
 | 03 | `03-testimonianze.html` | Una testimonianza alla volta, in corsivo | Sotto i corsi, prima dei contatti |
 | 04 | `04-galleria-bottega.html` | Foto grande più provini, con didascalie | Pagina "la bottega" |
 | 05 | `05-passo-passo.html` | Quattro passi illustrati, con barra di avanzamento | Pagina "il metodo" |
@@ -67,6 +67,36 @@ classe `is-segnaposto` (è quella che disegna la trama a righine):
 Misure consigliate: 2000×1125 px per lo slideshow e la galleria (16:9),
 1200×900 px per le schede dei corsi (4:3), 400×300 px per i provini.
 
+### Aggiornare il calendario dei corsi (carosello 02)
+
+Ogni corso è un `<article class="ads-corsi__scheda">` con quattro attributi:
+
+```html
+<article class="ads-corsi__scheda"
+         data-corso="Tortellini di Bologna"
+         data-tipo="intensivo ripieni"
+         data-posti="2"
+         data-totale="8">
+```
+
+- `data-corso` — il nome, che finisce nel titolo della scheda di dettaglio e
+  nell'oggetto della mail di prenotazione;
+- `data-tipo` — una o più parole fra `base`, `intensivo`, `ripieni`,
+  `sumisura`, separate da spazio: sono i filtri in alto;
+- `data-posti` — i posti ancora liberi. `0` mostra "Esaurito", da 1 a 2
+  "Ultimi posti". Se l'attributo manca, la disponibilità non compare (è il
+  caso dei corsi su richiesta);
+- `data-totale` — i posti totali, per la barretta della disponibilità.
+
+Il cartellino e la riga "4 posti liberi su 8" li scrive il JavaScript da
+questi numeri: per aggiornare un corso si cambia un attributo solo.
+
+Il programma che compare nella scheda di dettaglio sta nel `<template
+class="ads-corsi__dettaglio">` in fondo a ogni scheda. Il tasto "Scrivi per
+prenotare" apre una mail già compilata a `info@accademiadellasfoglia.it`:
+l'indirizzo è la costante `MAIL` in cima allo script, il numero di telefono
+è nel link `tel:` della finestra.
+
 ### I dati da sostituire
 
 Tutto ciò che è fra parentesi quadre va sostituito con i dati veri:
@@ -102,8 +132,10 @@ di stile del sito e si cancellano dai singoli blocchi.
   passaggio del mouse, con il Tab dentro il componente o a scheda nascosta.
   Il 01 ha anche il tasto di pausa.
 - **Senza JavaScript**: il carosello 02 resta scorrevole (usa lo scroll
-  nativo), il 06 resta leggibile ma fermo, gli altri mostrano la prima
-  diapositiva.
+  nativo) e mostra tutti i corsi, con i filtri nascosti invece che rotti; il
+  06 resta leggibile ma fermo, gli altri mostrano la prima diapositiva.
+- **Finestra di dettaglio**: è un `<dialog>` nativo, quindi si chiude con
+  Esc o cliccando fuori, e il fuoco torna da solo al tasto che l'ha aperta.
 
 ## Rigenerare l'anteprima
 
