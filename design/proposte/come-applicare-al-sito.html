@@ -159,7 +159,7 @@
     <p>Con <code>data-voci="si"</code> ogni tanto un palloncino dice una frase. La voce non viene dal dispositivo: e' costruita qui dentro suono per suono — le regole di pronuncia dell'italiano, poi le formanti che scivolano da un suono all'altro senza scatti, il tono che sale sull'accento e scende alla fine. Quindi suona uguale su ogni telefono e ogni computer. Le vocali ripetute si allungano cantando: scrivi <code>bellooooo</code> e lo canta.</p>
     <div class="blocco"><pre>&lt;div data-palloncini-sfogline
      data-voci="si"
-     data-voci-frasi="guarda come volo|ohhh che bellooooo|vieni anche tuuuuu"&gt;&lt;/div&gt;
+     data-voci-frasi="evviva laccademia della sfoglia|guarda come volo|ohhh che bellooooo"&gt;&lt;/div&gt;
 
 &lt;button onclick="PalloncinISfogline.voci(false)"&gt;Basta vocine&lt;/button&gt;</pre></div>
   </section>
@@ -220,7 +220,7 @@
                          allungano cantando: "bellooooo", "tuuuuu"
                          (default "guarda come volo|ohhh che bellooooo|
                          vieni anche tuuuuu|su dai vieni che ci
-                         divertiamooooo|che bella sfoglia")
+                         divertiamooooo|evviva laccademia della sfoglia|evviva la sfoglia|che bella sfoglia")
      Per dare al visitatore un interruttore, metti un tuo bottone e chiama:
        &lt;button onclick="PalloncinISfogline.suono(true)"&gt;Accendi il suono&lt;/button&gt;
        &lt;button onclick="PalloncinISfogline.suono(false)"&gt;Silenzio&lt;/button&gt;
@@ -680,8 +680,8 @@
       L:{F:[350,2400,3000,3900],t:"liq",d:0.070},
       r:{F:[500,1400,2700,3600],t:"tap",d:0.045},
       v:{F:[350,1200,2400,3400],t:"fri",d:0.070,rumore:0.10,banda:[1400,1.2]},
-      f:{F:[350,1200,2400,3400],t:"fri",d:0.085,rumore:0.16,banda:[1800,1.0],sordo:1},
-      s:{F:[350,1800,2600,3600],t:"fri",d:0.095,rumore:0.22,banda:[5200,2.4],sordo:1},
+      f:{F:[350,1200,2400,3400],t:"fri",d:0.090,rumore:0.19,banda:[1800,1.0],sordo:1},
+      s:{F:[350,1800,2600,3600],t:"fri",d:0.100,rumore:0.26,banda:[5200,2.4],sordo:1},
       z:{F:[350,1800,2600,3600],t:"fri",d:0.080,rumore:0.14,banda:[5000,2.4]},
       S:{F:[350,2000,2700,3600],t:"fri",d:0.100,rumore:0.22,banda:[3000,1.6],sordo:1},
       p:{F:[400,900,2400,3500],t:"occ",d:0.060,scoppio:[800,0.9],sordo:1},
@@ -768,7 +768,7 @@
         } else parola.push(x);
       }
 
-      var segs = [], totale = 0, i, j, k;
+      var segs = [], totale = 0.14, i, j, k;   /* i primi 14 centesimi sono il respiro */
       for (i = 0; i &lt; seq.length; i++) {
         var su = SUONI[seq[i].p], dd = su.d;
         if (seq[i].lunga) dd = 0.16 + 0.12 * Math.min(5, seq[i].lunga);
@@ -780,6 +780,25 @@
       }
       totale += 0.28;
 
+      /* ogni consonante prende un po' del colore della vocale che le sta
+         accanto: e' la coarticolazione, quello che rende il parlato unito */
+      for (k = 0; k &lt; segs.length; k++) {
+        var tk = segs[k].s.t;
+        if (tk === "voc" || tk === "sem" || tk === "pausa") continue;
+        var vicina = null;
+        for (j = k + 1; j &lt; segs.length; j++) {
+          if (segs[j].s.t === "pausa") break;
+          if (segs[j].s.t === "voc") { vicina = segs[j].s; break; }
+        }
+        if (!vicina) {
+          for (j = k - 1; j &gt;= 0; j--) {
+            if (segs[j].s.t === "pausa") break;
+            if (segs[j].s.t === "voc") { vicina = segs[j].s; break; }
+          }
+        }
+        segs[k].vicina = vicina;
+      }
+
       var n = Math.ceil(sr * totale);
       var buf = ctx.createBuffer(1, n, sr);
       var out = buf.getChannelData(0);
@@ -788,19 +807,31 @@
       var rum = new Float32Array(n), scop = new Float32Array(n);
       var bF = new Float32Array(n), bQ = new Float32Array(n), tono = new Float32Array(n);
 
-      for (i = 0; i &lt; n; i++) tono[i] = vc.f0 * (1.04 - 0.2 * (i / n));
+      var esclama = /evviva|ohh/.test(testo.toLowerCase());
+      var partenza = esclama ? 1.09 : 1.04, calo = esclama ? 0.26 : 0.2;
+      for (i = 0; i &lt; n; i++) tono[i] = vc.f0 * (partenza - calo * (i / n));
+
+      /* il fiato prima di parlare */
+      var resp = Math.floor(0.12 * sr);
+      for (i = 0; i &lt; resp &amp;&amp; i &lt; n; i++) {
+        var ur = i / resp;
+        rum[i] = 0.05 * Math.sin(Math.PI * ur);
+        bF[i] = 1500;
+        bQ[i] = 0.9;
+      }
 
       for (k = 0; k &lt; segs.length; k++) {
         var sg = segs[k], i0 = Math.floor(sg.inizio * sr), len = Math.max(1, Math.floor(sg.d * sr));
         var tp = sg.s.t;
         for (i = 0; i &lt; len &amp;&amp; i0 + i &lt; n; i++) {
           var idx = i0 + i, u = i / len;
+          var mix = sg.vicina ? 0.5 : 0;
           F0a[idx] = sg.s.F[0] * vc.tratto;
-          F1a[idx] = sg.s.F[1] * vc.tratto;
-          F2a[idx] = sg.s.F[2] * vc.tratto;
+          F1a[idx] = (sg.s.F[1] * (1 - mix) + (sg.vicina ? sg.vicina.F[1] : 0) * mix) * vc.tratto;
+          F2a[idx] = (sg.s.F[2] * (1 - mix) + (sg.vicina ? sg.vicina.F[2] : 0) * mix) * vc.tratto;
           F3a[idx] = sg.s.F[3] * vc.tratto;
           if (sg.lunga) tono[idx] *= 1 + 0.12 * Math.sin(Math.PI * Math.min(1, u * 1.15)) - 0.14 * u * u;
-          else if (sg.accento) tono[idx] *= 1 + 0.1 * Math.sin(Math.PI * u);
+          else if (sg.accento) tono[idx] *= 1 + (esclama ? 0.17 : 0.1) * Math.sin(Math.PI * u);
           if (tp === "voc") { amp[idx] = sg.accento ? 1 : 0.9; voz[idx] = 1; }
           else if (tp === "sem") { amp[idx] = 0.75; voz[idx] = 1; }
           else if (tp === "nas") { amp[idx] = 0.55; voz[idx] = 1; nas[idx] = 1; }
@@ -856,7 +887,7 @@
         else if (nn &lt; T1 + T2) g = Math.cos(Math.PI * (nn - T1) / (2 * T2));
         nn++; fase--;
 
-        var x = g * voz[i] * amp[i];
+        var x = g * voz[i] * amp[i] + (Math.random() * 2 - 1) * 0.028 * voz[i] * amp[i];
         if (gn &gt; 0) {
           var zz = x - 2 * 0.96 * Math.cos(thz) * zx1 + 0.9216 * zx2;
           zx2 = zx1; zx1 = x;
@@ -885,9 +916,9 @@
     }
 
     var VOCINE = [
-      { f0: 340, tratto: 1.00, ritmo: 1.0 },
-      { f0: 385, tratto: 1.06, ritmo: 0.95 },
-      { f0: 315, tratto: 0.95, ritmo: 1.05 }
+      { f0: 340, tratto: 1.00, ritmo: 1.1 },
+      { f0: 385, tratto: 1.06, ritmo: 1.05 },
+      { f0: 315, tratto: 0.95, ritmo: 1.15 }
     ];
     var fraseFatta = {};
 
@@ -901,12 +932,10 @@
       var src = ctx.createBufferSource();
       src.buffer = b;
       var g = ctx.createGain();
-      g.gain.value = 1;
+      g.gain.value = 0.75;
       src.connect(g);
       g.connect(master);
       src.start();
-      parlaFinoA = performance.now() + b.duration * 1000 + 350;
-      if (prossimaRisata &lt; parlaFinoA) prossimaRisata = parlaFinoA;
     }
 
     return {
@@ -1023,7 +1052,7 @@
     }
 
     var vol = parseFloat(nodo.dataset.suonoVolume);
-    var frasi = (nodo.dataset.vociFrasi || "guarda come volo|ohhh che bellooooo|vieni anche tuuuuu|su dai vieni che ci divertiamooooo|che bella sfoglia")
+    var frasi = (nodo.dataset.vociFrasi || "guarda come volo|ohhh che bellooooo|vieni anche tuuuuu|su dai vieni che ci divertiamooooo|evviva laccademia della sfoglia|evviva la sfoglia|che bella sfoglia")
       .split("|").map(function (f) { return f.trim(); }).filter(Boolean);
     var suono = creaSuono({
       sintetico: nodo.dataset.suono === "si",
@@ -1670,8 +1699,8 @@
       L:{F:[350,2400,3000,3900],t:"liq",d:0.070},
       r:{F:[500,1400,2700,3600],t:"tap",d:0.045},
       v:{F:[350,1200,2400,3400],t:"fri",d:0.070,rumore:0.10,banda:[1400,1.2]},
-      f:{F:[350,1200,2400,3400],t:"fri",d:0.085,rumore:0.16,banda:[1800,1.0],sordo:1},
-      s:{F:[350,1800,2600,3600],t:"fri",d:0.095,rumore:0.22,banda:[5200,2.4],sordo:1},
+      f:{F:[350,1200,2400,3400],t:"fri",d:0.090,rumore:0.19,banda:[1800,1.0],sordo:1},
+      s:{F:[350,1800,2600,3600],t:"fri",d:0.100,rumore:0.26,banda:[5200,2.4],sordo:1},
       z:{F:[350,1800,2600,3600],t:"fri",d:0.080,rumore:0.14,banda:[5000,2.4]},
       S:{F:[350,2000,2700,3600],t:"fri",d:0.100,rumore:0.22,banda:[3000,1.6],sordo:1},
       p:{F:[400,900,2400,3500],t:"occ",d:0.060,scoppio:[800,0.9],sordo:1},
@@ -1758,7 +1787,7 @@
         } else parola.push(x);
       }
 
-      var segs = [], totale = 0, i, j, k;
+      var segs = [], totale = 0.14, i, j, k;   /* i primi 14 centesimi sono il respiro */
       for (i = 0; i < seq.length; i++) {
         var su = SUONI[seq[i].p], dd = su.d;
         if (seq[i].lunga) dd = 0.16 + 0.12 * Math.min(5, seq[i].lunga);
@@ -1770,6 +1799,25 @@
       }
       totale += 0.28;
 
+      /* ogni consonante prende un po' del colore della vocale che le sta
+         accanto: e' la coarticolazione, quello che rende il parlato unito */
+      for (k = 0; k < segs.length; k++) {
+        var tk = segs[k].s.t;
+        if (tk === "voc" || tk === "sem" || tk === "pausa") continue;
+        var vicina = null;
+        for (j = k + 1; j < segs.length; j++) {
+          if (segs[j].s.t === "pausa") break;
+          if (segs[j].s.t === "voc") { vicina = segs[j].s; break; }
+        }
+        if (!vicina) {
+          for (j = k - 1; j >= 0; j--) {
+            if (segs[j].s.t === "pausa") break;
+            if (segs[j].s.t === "voc") { vicina = segs[j].s; break; }
+          }
+        }
+        segs[k].vicina = vicina;
+      }
+
       var n = Math.ceil(sr * totale);
       var buf = ctx.createBuffer(1, n, sr);
       var out = buf.getChannelData(0);
@@ -1778,19 +1826,31 @@
       var rum = new Float32Array(n), scop = new Float32Array(n);
       var bF = new Float32Array(n), bQ = new Float32Array(n), tono = new Float32Array(n);
 
-      for (i = 0; i < n; i++) tono[i] = vc.f0 * (1.04 - 0.2 * (i / n));
+      var esclama = /evviva|ohh/.test(testo.toLowerCase());
+      var partenza = esclama ? 1.09 : 1.04, calo = esclama ? 0.26 : 0.2;
+      for (i = 0; i < n; i++) tono[i] = vc.f0 * (partenza - calo * (i / n));
+
+      /* il fiato prima di parlare */
+      var resp = Math.floor(0.12 * sr);
+      for (i = 0; i < resp && i < n; i++) {
+        var ur = i / resp;
+        rum[i] = 0.05 * Math.sin(Math.PI * ur);
+        bF[i] = 1500;
+        bQ[i] = 0.9;
+      }
 
       for (k = 0; k < segs.length; k++) {
         var sg = segs[k], i0 = Math.floor(sg.inizio * sr), len = Math.max(1, Math.floor(sg.d * sr));
         var tp = sg.s.t;
         for (i = 0; i < len && i0 + i < n; i++) {
           var idx = i0 + i, u = i / len;
+          var mix = sg.vicina ? 0.5 : 0;
           F0a[idx] = sg.s.F[0] * vc.tratto;
-          F1a[idx] = sg.s.F[1] * vc.tratto;
-          F2a[idx] = sg.s.F[2] * vc.tratto;
+          F1a[idx] = (sg.s.F[1] * (1 - mix) + (sg.vicina ? sg.vicina.F[1] : 0) * mix) * vc.tratto;
+          F2a[idx] = (sg.s.F[2] * (1 - mix) + (sg.vicina ? sg.vicina.F[2] : 0) * mix) * vc.tratto;
           F3a[idx] = sg.s.F[3] * vc.tratto;
           if (sg.lunga) tono[idx] *= 1 + 0.12 * Math.sin(Math.PI * Math.min(1, u * 1.15)) - 0.14 * u * u;
-          else if (sg.accento) tono[idx] *= 1 + 0.1 * Math.sin(Math.PI * u);
+          else if (sg.accento) tono[idx] *= 1 + (esclama ? 0.17 : 0.1) * Math.sin(Math.PI * u);
           if (tp === "voc") { amp[idx] = sg.accento ? 1 : 0.9; voz[idx] = 1; }
           else if (tp === "sem") { amp[idx] = 0.75; voz[idx] = 1; }
           else if (tp === "nas") { amp[idx] = 0.55; voz[idx] = 1; nas[idx] = 1; }
@@ -1846,7 +1906,7 @@
         else if (nn < T1 + T2) g = Math.cos(Math.PI * (nn - T1) / (2 * T2));
         nn++; fase--;
 
-        var x = g * voz[i] * amp[i];
+        var x = g * voz[i] * amp[i] + (Math.random() * 2 - 1) * 0.028 * voz[i] * amp[i];
         if (gn > 0) {
           var zz = x - 2 * 0.96 * Math.cos(thz) * zx1 + 0.9216 * zx2;
           zx2 = zx1; zx1 = x;
@@ -1875,9 +1935,9 @@
     }
 
     var VOCINE = [
-      { f0: 340, tratto: 1.00, ritmo: 1.0 },
-      { f0: 385, tratto: 1.06, ritmo: 0.95 },
-      { f0: 315, tratto: 0.95, ritmo: 1.05 }
+      { f0: 340, tratto: 1.00, ritmo: 1.1 },
+      { f0: 385, tratto: 1.06, ritmo: 1.05 },
+      { f0: 315, tratto: 0.95, ritmo: 1.15 }
     ];
     var fraseFatta = {};
 
@@ -1891,12 +1951,10 @@
       var src = ctx.createBufferSource();
       src.buffer = b;
       var g = ctx.createGain();
-      g.gain.value = 1;
+      g.gain.value = 0.75;
       src.connect(g);
       g.connect(master);
       src.start();
-      parlaFinoA = performance.now() + b.duration * 1000 + 350;
-      if (prossimaRisata < parlaFinoA) prossimaRisata = parlaFinoA;
     }
 
     return {
@@ -2013,7 +2071,7 @@
     }
 
     var vol = parseFloat(nodo.dataset.suonoVolume);
-    var frasi = (nodo.dataset.vociFrasi || "guarda come volo|ohhh che bellooooo|vieni anche tuuuuu|su dai vieni che ci divertiamooooo|che bella sfoglia")
+    var frasi = (nodo.dataset.vociFrasi || "guarda come volo|ohhh che bellooooo|vieni anche tuuuuu|su dai vieni che ci divertiamooooo|evviva laccademia della sfoglia|evviva la sfoglia|che bella sfoglia")
       .split("|").map(function (f) { return f.trim(); }).filter(Boolean);
     var suono = creaSuono({
       sintetico: nodo.dataset.suono === "si",
