@@ -320,8 +320,8 @@
     <section class="gruppo">
       <h2>Volo</h2>
       <div class="cursore">
-        <label class="riga" for="n-aerei">Aeroplanini <span class="valore" id="v-aerei">7</span></label>
-        <input type="range" id="n-aerei" min="1" max="16" step="1" value="7">
+        <label class="riga" for="n-aerei">Aeroplanini <span class="valore" id="v-aerei">5</span></label>
+        <input type="range" id="n-aerei" min="1" max="16" step="1" value="5">
       </div>
       <div class="cursore">
         <label class="riga" for="n-velocita">Velocità <span class="valore" id="v-velocita">1,0&times;</span></label>
@@ -707,10 +707,16 @@ Buon compleanno!</textarea>
     return p;
   }
 
+  /* La misura guarda tutto lo schermo, non solo il lato corto: cosi' in un
+     pannello stretto e alto gli aeroplanini restano grandi. Poi il traino
+     viene rimpicciolito quanto basta perche' non sfori troppo di lato. */
   function misura(p) {
-    var minLato = Math.min(L, H);
-    p.lunghezzaPx = Math.max(62, minLato * 0.135 * p.profondita * dimensione);
-    p.scala = p.lunghezzaPx / CORPO;
+    var riferimento = Math.sqrt(L * H);
+    p.scala = Math.max(66, riferimento * 0.135 * p.profondita * dimensione) / CORPO;
+    var unita = (p.BL || 0) + 150;
+    var largMax = 1.15 * L;
+    if (unita * p.scala > largMax) p.scala = largMax / unita;
+    p.lunghezzaPx = p.scala * CORPO;
     p.raggio = p.lunghezzaPx * 0.42;
     ricomponi(p);
   }
@@ -792,7 +798,7 @@ Buon compleanno!</textarea>
     p.medaglieT = [];
     p.linea = null;
     p.nastro = null;
-    if (!BL) { p.gStriscione.innerHTML = ""; ricomponi(p); return; }
+    if (!BL) { p.gStriscione.innerHTML = ""; misura(p); return; }
 
     var idn = ++contatore;
     var s = [];
@@ -831,7 +837,7 @@ Buon compleanno!</textarea>
     p.linea = p.gStriscione.querySelector("#lt" + idn);
     p.medaglie = [].slice.call(p.gStriscione.querySelectorAll(".medaglia"));
     p.campioni = Math.max(10, Math.min(30, Math.round(BL / 22)));
-    ricomponi(p);
+    misura(p);
   }
 
   function aggiornaStriscione(p, dt) {
@@ -1345,6 +1351,7 @@ Buon compleanno!</textarea>
       .concat(memoria.loghi || []);
   } else {
     galleria = nuoviVolti(8);
+    if (window.innerWidth < 720) nAerei.value = 4;
   }
 
   velocita = parseInt(nVelocita.value, 10) / 10;
