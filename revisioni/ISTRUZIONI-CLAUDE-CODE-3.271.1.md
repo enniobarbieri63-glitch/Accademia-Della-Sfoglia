@@ -1026,48 +1026,231 @@ limite è per IP, non per utente: da rete mobile cambia da solo.
 
 Non serve nessuna competenza tecnica: bastano dieci form compilati all'ora.
 
-**Correzione — questa è una decisione di Ennio, non tecnica.** Va posta come domanda
-prima di scrivere codice. Le opzioni, dalla più semplice:
+### Il vero problema non è che qualcuno bari: è che il gioco premia la cosa sbagliata
 
-1. **Tetto giornaliero per fonte** — es. massimo 1 voce di diario e 1 consiglio a punti
-   al giorno; le successive si salvano ma non danno punti. Tre righe per fonte, usando
-   un usermeta `gs_punti_fonte_diario_AAAA-MM-GG`.
-2. **Tetto giornaliero complessivo di punti** — es. massimo 100 punti al giorno da
-   fonti auto-generate. Un solo punto di controllo dentro `gs_add_points()`, ma va
-   distinto dai punti "meritati" (premi di sfida, badge, correzioni manuali), che non
-   devono essere tagliati.
-3. **Alzare la soglia del Buono** da 2.500 a un valore che 350 punti/ora non raggiunga
-   in una giornata. Non risolve, sposta solo il problema.
-4. **Un allarme nel Cruscotto della Verità**: segnalare chi supera N punti al giorno,
-   e lasciare la decisione a un essere umano. È la soluzione più leggera e la più
-   coerente con lo spirito del progetto.
+Confronto verificato sul codice, sorgente per sorgente.
 
-**Raccomandazione: la 1 più la 4.** La 1 chiude la porta, la 4 fa vedere se qualcuno ci
-ha già provato prima che il Buono venga assegnato.
+**Quanto guadagna in un mese chi gioca davvero** (fonti già limitate a una volta al
+giorno o per elemento — nessuna di queste è un problema):
 
-## F2 · DA VERIFICARE — gli allegati "privati" stanno in una cartella pubblica
+| Attività | Punti | Quante volte al mese | Totale |
+|---|---|---|---|
+| Foto al Tavolo di Lavoro | 5 | 1/giorno, bloccato da `gs_tavolo_di_oggi()` | 150 |
+| Indovina la Sfoglia | 5 | 1/giorno, bloccato da `gs_indovina_stato_oggi()` | 150 |
+| Streak del matterello | 10 | 1/settimana | 40 |
+| Sfoglia pubblicata in sfida | 20 | 1 per sfida, ~4 sfide | 80 |
+| Voto dato a una sfoglia | 5 | quante sfoglie ci sono da votare | ~200 |
+| Stelle ricevute | 1 per stella | quanto piace agli altri | 200-800 |
+| Lezione video guardata | 5 | quante ne restano da vedere | ~50 |
+| Podio di una sfida | 100 / 60 / 30 | se vince | 0-400 |
 
-**Stato:** DA VERIFICARE sul sito reale. Non è dimostrato, è strutturale.
+**Totale realistico: 700-900 punti** per una sfoglina attiva che non vince mai;
+**1.800-2.500** per una che vince i podi ed è molto votata. *(Stima: gli ultimi tre
+dipendono da quanto è grande la community, quindi vanno letti come ordine di grandezza.)*
 
-Tutti gli allegati passano da `media_handle_upload()`, che li mette in
-`/wp-content/uploads/AAAA/MM/`. Quella cartella è servita **direttamente dal web server**:
-WordPress non è nemmeno coinvolto, quindi nessun controllo di permesso del plugin la tocca.
+**Quanto guadagna chi scrive e basta** (le uniche due fonti senza nessun limite per
+persona — solo `gs_antispam_rate_ok()`, 10 invii l'ora **per indirizzo IP**):
 
-Riguarda: le foto de Il Tavolo di Lavoro (descritto come *"foto del giorno, privata"*),
-gli audio del Matterello Parlante, i media allegati ai messaggi privati e alle
-conversazioni con gli esperti, le foto del diario.
+| Attività | Punti | Limite reale | All'ora | Al mese, 6 al giorno |
+|---|---|---|---|---|
+| Voce di diario (`forms.php:56`) | 15 | 10/ora per IP | **150** | **2.700** |
+| Consiglio (`forms.php:125`) | 20 | 10/ora per IP | **200** | 3.600 |
 
-**Chi ne ha l'URL — chiunque, anche non collegato — vede il file.** Gli URL non sono
-indovinabili a caso, ma finiscono nella cronologia del browser, nei referrer, nei backup,
-e chiunque abbia legittimamente visto un contenuto una volta può ripassarne il link a
-chiunque, per sempre, anche dopo essere stato rimosso dall'Accademia.
+**Sei voci di diario al giorno per un mese fanno 2.700 punti: il Buono Sfoglia è vinto.**
+E il Diario è `post_status => 'private'`: **nessuno le legge mai**, nemmeno il gestore, a
+meno che non vada a cercarle apposta.
 
-**Da chiedere a Ennio prima di fare qualsiasi cosa:** *quanto è davvero privata la foto
-del Tavolo di Lavoro?* Se la risposta è "privata sul serio", serve un sistema di consegna
-protetta (allegati fuori da `uploads/`, serviti da un endpoint che controlla i permessi) —
-che è un lavoro grosso, non una correzione. Se la risposta è "riservata per buona
-educazione, non per legge", allora va **solo tolta la parola «privata»** dai testi che
-la promettono, e nient'altro. **Non iniziare a costruire nulla prima di questa risposta.**
+**Questa è l'inversione da correggere:** la soglia di 2.500 punti è *difficile* da
+raggiungere cucinando, fotografando e partecipando, ed è *facile* da raggiungere
+scrivendo in un quaderno privato. Non serve nessuna competenza tecnica, e non serve
+nemmeno malafede: una sfoglina che tiene un diario davvero fitto vince il Buono senza
+sapere di aver fatto niente di strano, e scavalca in classifica chi ha impastato.
+
+### Correzione decisa (Ennio ha delegato la scelta, 22/08/2026)
+
+**Una sola regola, la stessa che il plugin applica già a metà delle sue attività:
+«ogni cosa dà punti una volta al giorno».**
+
+È già così per il Tavolo di Lavoro e per l'Indovina. Va estesa alle due fonti scoperte,
+e a nient'altro:
+
+- **Voce di diario** — punti solo per la prima voce di ogni giornata (15 invece di 150/ora).
+- **Consiglio** — punti solo per il primo di ogni giornata (20 invece di 200/ora).
+
+Tutto il resto **non si tocca**: sfide, sondaggi, lezioni, badge, percorsi e streak sono
+già limitati per natura (una volta per sfida, per sondaggio, per lezione).
+
+**Non** si mette un tetto complessivo dentro `gs_add_points()`: taglierebbe anche i punti
+meritati (podi, badge, correzioni manuali del gestore) e renderebbe imprevedibile un
+motore che oggi è semplice. La regola sopra si dice in una frase alle sfogline; un tetto
+globale no.
+
+**Come scriverla** — un solo helper in `points.php`, riusato dalle due chiamate:
+
+```php
+/**
+ * Vero se questa fonte di punti non è ancora stata usata oggi da questa
+ * sfoglina. Segna subito l'uso: chiamarla due volte nello stesso giorno
+ * restituisce false la seconda. Stessa regola già applicata al Tavolo di
+ * Lavoro e all'Indovina, qui resa riusabile.
+ */
+function gs_punti_prima_volta_oggi( $uid, $fonte ) {
+    $uid   = (int) $uid;
+    $oggi  = date( 'Y-m-d', current_time( 'timestamp' ) );
+    $chiave = 'gs_punti_' . sanitize_key( $fonte ) . '_giorno';
+    if ( get_user_meta( $uid, $chiave, true ) === $oggi ) {
+        return false;
+    }
+    update_user_meta( $uid, $chiave, $oggi );
+    return true;
+}
+```
+
+In `forms.php`, sostituire la riga 56:
+
+```php
+if ( gs_punti_prima_volta_oggi( $user_id, 'diario' ) ) {
+    gs_add_points( $user_id, gs_get_points_value( 'voce_diario', 15 ), 'Voce di diario aggiunta' );
+}
+```
+
+e la riga 125 allo stesso modo con `'consiglio'` e `gs_get_points_value( 'consiglio', 20 )`.
+
+**Importante — il messaggio di risposta va cambiato con il codice.** Oggi entrambe le
+funzioni rispondono sempre *"+15 punti!"* anche quando i punti non arriveranno più:
+sarebbe una bugia detta dal sito. Le risposte vanno rese condizionali:
+
+```php
+$msg = $punti_dati
+    ? 'Voce salvata nel tuo diario. +' . gs_get_points_value( 'voce_diario', 15 ) . ' punti!'
+    : 'Voce salvata nel tuo diario. I punti del diario arrivano una volta al giorno: torna domani.';
+```
+
+**Il Diario resta libero:** si può continuare a scrivere quante voci si vuole, si salvano
+tutte. Cambia solo che i punti arrivano una volta al giorno. Questo va detto esplicitamente
+nel testo di aiuto della sezione.
+
+### Conseguenza da tenere d'occhio: la soglia di 2.500 diventa severa
+
+Con la regola applicata, il massimo mensile per una sfoglina che fa **tutto, ogni giorno**
+diventa circa: 150 (Tavolo) + 150 (Indovina) + 450 (diario) + 600 (consigli) + 40 (streak)
++ 80 (sfide) + voti e stelle. **Siamo intorno ai 1.700 punti più le stelle ricevute.**
+
+Cioè: 2.500 resta raggiungibile, ma solo facendo davvero tutto tutti i giorni ed essendo
+apprezzate dalle altre. Per un premio è una soglia difendibile — ma è stretta.
+
+**Non toccare la soglia adesso.** Applicare la regola, poi **guardare il primo mese vero**:
+se non la raggiunge nessuna, abbassare la soglia (2.000 sembra il numero giusto) invece di
+togliere i tetti. Il tetto protegge il senso del gioco; la soglia è solo un numero da
+tarare, e va tarato su dati veri, non su questa stima.
+
+### Da fare insieme: un allarme, non solo un divieto
+
+Aggiungere al **Cruscotto della Verità** una riga che segnali chi ha superato, per
+esempio, 200 punti in un giorno, con la fonte. Costa poco (i dati sono già in
+`gs_log_points()`) e serve a due cose: vedere se qualcuno ci ha già provato **prima** che
+il Buono di questo mese venga assegnato, e accorgersi in fretta se una fonte futura
+riapre lo stesso buco. Il divieto chiude la porta, l'allarme fa vedere se qualcuno ci
+aveva già bussato.
+
+### Leva facoltativa, decisione di gioco e non tecnica
+
+Un **Consiglio** vale 20 punti, quanto **pubblicare una sfoglia in una sfida** — che
+richiede di impastare, tirare, fotografare. Scrivere due righe di consiglio e cucinare
+non dovrebbero valere uguale. Portare il consiglio a 10 punti riequilibrerebbe, ma è una
+scelta di gioco: **non farla senza che Ennio l'abbia chiesta esplicitamente.**
+
+## F2 · Le foto del Tavolo di Lavoro devono restare dentro il gaming — e oggi non è così
+
+> **Ennio ha risposto il 22/08/2026: «le foto delle sfogline nel Tavolo di Lavoro
+> rimangono all'interno del gaming».** Questa è l'intenzione. Il codice non la rispetta.
+
+**Stato:** il meccanismo è VERIFICATO; **quanto sia facile arrivarci da fuori è DA
+VERIFICARE con la prova di trenta secondi qui sotto.**
+
+### Cosa succede oggi
+
+Tutti gli allegati passano da `media_handle_upload()` (`includes/media-msg.php:45`), che
+li deposita in `/wp-content/uploads/AAAA/MM/`. **Quella cartella è servita direttamente
+dal web server: WordPress non viene nemmeno interpellato**, quindi nessun controllo di
+permesso del plugin la tocca. Chi ha l'indirizzo del file lo apre, collegato o no.
+
+Riguarda: le foto del Tavolo di Lavoro, gli audio del Matterello Parlante, i media
+allegati ai messaggi privati e alle conversazioni con gli esperti, le foto del diario.
+
+**Aggravante da verificare:** gli allegati sono creati con `media_handle_upload( $field, 0 )`
+— genitore `0`, cioè "orfani" — e **il plugin non disattiva le pagine allegato di
+WordPress**. Se sono attive, `?attachment_id=N` con N che scorre da 1 in su permette di
+sfogliare *tutti* i media del sito uno dopo l'altro, senza indovinare nessun nome di file.
+La differenza è enorme: «serve avere il link» è un conto, «si scorrono tutti con un
+contatore» è un altro.
+
+### La prova di trenta secondi, da fare prima di scrivere una riga di codice
+
+1. Da collegata, aprire una foto del Tavolo di Lavoro e **copiarne l'indirizzo**
+   (tasto destro → Copia indirizzo immagine).
+2. Aprire una **finestra in incognito** e incollare quell'indirizzo.
+   - Si vede la foto → confermato: gli allegati sono pubblici.
+3. Sempre in incognito, provare `https://accademiadellasfoglia.it/?attachment_id=1000`
+   e poi 1001, 1002…
+   - Si vedono le foto → **le pagine allegato sono attive: i media sono enumerabili.**
+   - Esce 404 → l'enumerazione è chiusa, resta solo il punto 2.
+
+**Riportare l'esito prima di proporre qualsiasi correzione.** Le due risposte portano a
+due lavori di dimensioni molto diverse.
+
+### Correzione, in due tempi
+
+**Tempo 1 — subito, se il punto 3 mostra le foto.** Rimandare le pagine allegato alla
+home invece di mostrarle. Poche righe in `helpers.php`, nessun rischio, chiude
+l'enumerazione:
+
+```php
+add_action( 'template_redirect', 'gs_blocca_pagine_allegato' );
+function gs_blocca_pagine_allegato() {
+    if ( ! is_attachment() ) {
+        return;
+    }
+    // Chi gestisce il portale continua a vederle dal wp-admin.
+    if ( function_exists( 'gs_can_manage' ) && gs_can_manage() ) {
+        return;
+    }
+    wp_safe_redirect( home_url( '/' ), 301 );
+    exit;
+}
+```
+
+Attenzione: **non chiude il punto 2.** Il file resta raggiungibile al suo indirizzo
+diretto. Chiude solo la possibilità di trovarlo scorrendo i numeri.
+
+**Tempo 2 — la consegna protetta, solo se Ennio la vuole davvero.** Per far corrispondere
+il codice all'intenzione («restano dentro il gaming») servirebbe: salvare gli allegati
+delle sezioni riservate **fuori** da `uploads/`, e consegnarli tramite un endpoint del
+plugin che controlla i permessi prima di leggere il file (lo schema c'è già ed è
+collaudato: `gs_ajax_fe_backup_download()` in `media-backup.php:270`, che fa esattamente
+questo per i backup).
+
+**È un lavoro grosso, non una correzione**, e va detto chiaramente prima di iniziare:
+- tocca ogni sezione che accetta media (Tavolo, Matterello, messaggi, conversazioni, diario);
+- **le foto già caricate restano dove sono**: o si migrano, o si convive con due sistemi;
+- si perdono le miniature automatiche di WordPress e la compressione già impostata, che
+  vanno rifatte a mano;
+- se il sito ha una cache o una CDN davanti, va verificato che non memorizzi le risposte
+  protette servendole poi a chi non deve.
+
+**Raccomandazione: fare il Tempo 1 adesso** (è dentro il Blocco E per dimensione: poche
+righe, nessun rischio) **e portare a Ennio il Tempo 2 come proposta separata**, con il
+suo costo scritto, dopo che i blocchi A, B e C sono in produzione. Non iniziarlo dentro
+questa revisione.
+
+### Nel frattempo, una cosa che costa zero
+
+Finché il Tempo 2 non è fatto, **il testo della sezione non deve promettere più di quello
+che il codice mantiene**. Oggi il Tavolo di Lavoro è descritto come *"foto del giorno,
+privata"*. È vero rispetto alle altre sfogline; non è vero rispetto a chi ha il link.
+Basta una frase più esatta nel testo di aiuto — «la vedi solo tu e i maestri» invece di
+«privata» — e la promessa torna a corrispondere alla realtà. **Questa è una correzione di
+parole, da proporre a Ennio, non da applicare da soli.**
 
 ## F3 · DA VERIFICARE — la protezione dei backup funziona solo su Apache
 
@@ -1312,8 +1495,8 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 | E4 | Buono applicato due volte sporca il log | `buono-sfoglia.php:196` | Basso | Verificato |
 | E5 | Nonce scaduto = polling muto | `gaming.js` (6 punti) | Medio | Verificato · nuovo |
 | E6 | CSV senza protezione formule | `export-dati.php:133` | Basso | Verificato · nuovo |
-| F1 | **Punti del mese coltivabili → Buono** | `forms.php:56,125` | **Alto** | Verificato · nuovo |
-| F2 | Allegati "privati" in cartella pubblica | strutturale | ? | **Da verificare** |
+| **F1** | **Punti coltivabili scrivendo → Buono** | `forms.php:56,125` | **Alto** | Verificato · **deciso** |
+| F2 | Foto del Tavolo raggiungibili da fuori | `media-msg.php:45` | Medio | Meccanismo verificato · **prova da fare** |
 | F3 | `.htaccess` inutile su nginx | `media-backup.php:113` | ? | **Da verificare** |
 | F4 | Contatore Aeroplanino gonfiabile | `volo-notifiche.php:821` | Basso | Verificato · nuovo |
 | G1 | 10 funzioni mai chiamate | vari | Basso | Verificato |
@@ -1334,6 +1517,13 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 - **Gli otto nomi inventati si tolgono?** La schermata di `/le-sfogline/` li mostra come la
   cosa più visibile della pagina. → G2 diventa **la prima cosa da fare in assoluto**, prima
   ancora di A3: è una cancellazione di sei righe che non può rompere niente.
+- **Che tetto mettere ai punti giornalieri?** Ennio ha confermato che oggi non c'è nessun
+  tetto e **ha delegato la scelta**. → Decisa e scritta per esteso in F1: *«ogni cosa dà
+  punti una volta al giorno»*, applicata alle sole due fonti scoperte (diario e consigli).
+  Non toccare la soglia dei 2.500 finché non si è visto un mese vero.
+- **Quanto sono private le foto del Tavolo di Lavoro?** Ennio: *«rimangono all'interno del
+  gaming»*. → Questa è l'intenzione, e **il codice oggi non la rispetta**. Vedi F2: c'è una
+  prova da 30 secondi da fare prima di decidere quanto lavoro serve.
 
 ## Ancora aperte — servono prima di scrivere il codice
 
@@ -1341,11 +1531,7 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
    annulla lo sconto applicato? Pulsante dedicato o correzione a mano dalla scheda?
 2. **A5** — Va bene che palloncini e aeroplanini possano comparire fino a mezzo minuto
    dopo l'invio, invece di quindici secondi?
-3. **F1** — Che tetto mettere ai punti guadagnabili in un giorno, ora che 2.500 punti
-   in un mese valgono uno sconto vero su un corso?
-4. **F2** — Quanto è davvero privata la foto de "Il Tavolo di Lavoro"? (Da questa risposta
-   dipende se serve un lavoro grosso o solo cambiare due parole nei testi.)
-5. **F3** — Su che web server gira il sito, Apache o nginx? Decide se i backup sono
+3. **F3** — Su che web server gira il sito, Apache o nginx? Decide se i backup sono
    davvero protetti.
 
 ## Ordine rivisto dopo le conferme del 22/08/2026
@@ -1356,7 +1542,8 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 | **1** | A3 + A3-bis | Costo pagato a ogni visita, confermato acceso. |
 | 2 | A1 | Errore contabile, ma scatta solo il 1° del mese. |
 | 3 | A2, A5, B1, B2, B5 | Soldi e carico. |
-| 4 | il resto, nell'ordine del documento | |
+| 4 | F1 + F2 (solo Tempo 1) | Prima che venga assegnato il Buono del mese. |
+| 5 | il resto, nell'ordine del documento | |
 
 # Limiti di questa analisi
 
