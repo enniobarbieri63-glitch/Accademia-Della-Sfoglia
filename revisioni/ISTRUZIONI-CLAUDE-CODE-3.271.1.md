@@ -32,20 +32,210 @@ Il tuo compito è **applicare le correzioni qui sotto, una per volta**.
 7. Il prefisso delle funzioni resta `gs_`. Tutti i file passano `php -l` prima della
    consegna (verificato: al 22/08/2026 sono **tutti puliti**, nessun errore di sintassi).
 
-### Ordine di esecuzione consigliato
+---
 
-> **Rivisto il 22/08/2026 dopo le conferme di Ennio sul sito vero.**
-> **Giro 0 → G2 e basta.** Togliere gli otto nomi inventati dalla pagina «Le Sfogline»:
-> sei righe da cancellare, nessun rischio, e leva subito dal sito pubblico delle persone
-> che non esistono. Poi fermati e consegna: è una cosa sola e va vista in produzione.
-> Subito dopo, **A3 + A3-bis**, che ora sono confermati accesi e costano a ogni visita.
+# ORDINE DI LAVORO — leggi qui, poi fermati dove ti dico
 
-- **Giro 1** → il resto del Blocco A (contabilità e carico). È quello che oggi può far
-  perdere soldi o mandare in ginocchio l'hosting.
-- **Giro 2** → Blocco B (lo stesso difetto di A1 ripetuto in altri 6 punti) + Blocco C (cron).
-- **Giro 3** → Blocchi D ed E (interruttori morti e bug puntuali).
-- **Giro 4** → Blocco G (codice morto), solo dopo che tutto il resto è in produzione e stabile.
-- Il **Blocco F** non richiede codice: sono verifiche da fare sull'ambiente reale.
+Questa è la parte operativa. **Il resto del documento è materiale di riferimento**: serve
+a capire *perché*, non a decidere *cosa*. Non partire dal Blocco A: parti da qui.
+
+Sono previsti sei giri. **Adesso devi fare solo il Giro 0 e il Giro 1**, e fermarti.
+Ennio rilegge e ti dice se proseguire. Ogni giro è una consegna separata.
+
+---
+
+## GIRO 0 — Togliere le otto sfogline che non esistono
+
+**Perché per prima:** è l'unica correzione che non può rompere niente ed è visibile
+adesso da chiunque apra il sito. Sei righe da cancellare.
+
+### Cosa fare
+
+File: `includes/nastro-vetrine.php`. Dentro `gs_sc_nastro_grande_sfogline()`.
+
+**Cancella queste sei righe** (righe 259-264, subito dopo la chiusura del `foreach` sulle
+sfogline vere):
+
+```php
+	// --- INIZIO DATI DEMO TEMPORANEI (da togliere su richiesta di Ennio) ---
+	$nomi_demo = array( 'Marta Colombo', 'Federica Bianchi', 'Silvia Ferraris', 'Chiara Bellini', 'Elena Marchetti', 'Paola Ricci', 'Anna Conti', 'Laura Moretti' );
+	foreach ( $nomi_demo as $nome ) {
+		$sfogline[] = array( 'nome' => $nome, 'tag' => 'Sfoglina', 'foto' => '', 'url' => '#' );
+	}
+	// --- FINE DATI DEMO TEMPORANEI ---
+```
+
+**Cancella anche il blocco di commento alle righe 239-245**, quello che comincia con
+`ATTENZIONE — DATI DIMOSTRATIVI TEMPORANEI`: descrive una cosa che non esiste più, e
+lasciarlo farebbe cercare a qualcuno un codice che non c'è. Il resto del docblock
+(la descrizione dello shortcode) **resta**.
+
+**Non toccare nient'altro in quel file.** In particolare lascia stare
+`if ( ! $sfogline ) { return ''; }` alla riga successiva: gestisce già il caso in cui,
+tolti i falsi, non resti nessuna sfoglina, e il nastro grande semplicemente non compare.
+
+### Come verificare
+
+1. `php -l includes/nastro-vetrine.php` → deve dire *No syntax errors*.
+2. Cerca in tutto il plugin che non sia rimasto niente:
+   `grep -rn "nomi_demo\|Marta Colombo\|DATI DEMO" includes/` → **zero risultati**.
+3. Su Local, apri la pagina «Le Sfogline» e controlla il nastro grande: devono restare
+   **solo** le sfogline vere con la Vetrina attiva. Se su Local non ce n'è nessuna, il
+   nastro non compare: è il comportamento giusto, non un errore.
+
+### Poi FERMATI e scrivi a Ennio
+
+> Giro 0 fatto. Tolti gli otto nomi inventati da `nastro-vetrine.php`.
+> Sulla pagina «Le Sfogline» ora restano N sfogline vere.
+> Controlla su accademiadellasfoglia.it/le-sfogline/ e dimmi se va bene prima che proceda.
+
+**Non passare al Giro 1 finché Ennio non risponde.** Questa cosa si vede sul sito
+pubblico: deve guardarla lui.
+
+---
+
+## GIRO 1 — Far smettere al Nastro di contare tutti gli utenti a ogni visita
+
+**Perché adesso:** il Nastro è acceso in produzione (confermato da Ennio il 22/08/2026).
+Ogni singola visita a ogni pagina del sito fa una scansione completa della tabella utenti.
+Sulla pagina «Le Sfogline» la fa **due volte**, di cui una completamente sprecata.
+
+Sono due correzioni in un giro solo perché toccano la stessa funzione.
+
+### 1a — Dare una memoria di quindici minuti alla raccolta dei nomi
+
+File: `includes/nastro-vetrine.php`, funzione `gs_nastro_raccogli_voci()` (riga 132).
+
+**All'inizio della funzione**, subito dopo la riga `function gs_nastro_raccogli_voci( $max, $esclusi = array() ) {`, aggiungi:
+
+```php
+	// Il Nastro gira su OGNI pagina del sito (wp_footer), per ogni visitatore,
+	// anche non collegato. Senza memoria, ogni visita rifà una scansione
+	// completa della tabella utenti più due dei CPT partner. Qui la cache è
+	// legittima e non contraddice la regola della Torre di controllo: il
+	// Nastro è una vetrina che scorre, non un numero che qualcuno guarda per
+	// decidere se agire. Una sfoglina nuova che compare un quarto d'ora dopo
+	// non fa danno a nessuno.
+	$chiave_cache = 'gs_nastro_voci_' . md5( wp_json_encode( array( $max, $esclusi ) ) );
+	$in_memoria   = get_transient( $chiave_cache );
+	if ( is_array( $in_memoria ) ) {
+		return $in_memoria;
+	}
+```
+
+**Alla fine della funzione**, sostituisci `return $voci;` con:
+
+```php
+	set_transient( $chiave_cache, $voci, 15 * MINUTE_IN_SECONDS );
+	return $voci;
+```
+
+**Attenzione a due cose, entrambe importanti:**
+
+- **Non serve svuotare la cache quando Ennio salva il pannello Caroselli.** La chiave
+  contiene già l'hash della configurazione: se cambia un'impostazione o un elenco di
+  esclusi, cambia la chiave, e il nastro nuovo si ricostruisce al primo caricamento.
+  Non aggiungere `delete_transient()` in `caroselli.php`: sarebbe codice inutile.
+- **Verifica che `$voci` contenga solo testo.** Deve essere così (ogni voce è un array di
+  stringhe: tipo, tag, nome, foto, simbolo, url) e va bene per un transient. **Se trovi
+  che ci finisce dentro un oggetto `WP_User`, fermati e dimmelo invece di procedere**:
+  serializzare oggetti utente in un'opzione è un problema diverso e più serio.
+
+**Aggiungi anche un tetto di sicurezza** alla `get_users()` di riga 138, che oggi non ne
+ha nessuno — serve per il primo caricamento dopo ogni scadenza:
+
+```php
+	foreach ( get_users( array( 'orderby' => 'display_name', 'order' => 'ASC', 'number' => 500 ) ) as $u ) {
+```
+
+### 1b — Non calcolare il nastro piccolo sulla pagina che non lo mostra
+
+Stesso file, funzione `gs_render_nastro_vetrine()` (riga 46). Oggi il nastro piccolo su
+«Le Sfogline» è nascosto **solo dal CSS**: il PHP lo calcola comunque e il browser lo
+butta via.
+
+**Subito dopo il blocco del blackout** (quello che finisce con `return;` intorno alla
+riga 57), e **prima** della riga `$voci = gs_nastro_raccogli_voci( ... );`, aggiungi:
+
+```php
+	// Sulla pagina «Le Sfogline» c'è già il nastro grande dedicato, e il CSS
+	// nasconde questo. Ma nasconderlo con display:none non evita di calcolarlo:
+	// meglio non montarlo affatto (prima di questa riga la tabella utenti veniva
+	// scansionata due volte su quella pagina, una delle due per niente).
+	$pagina_sfogline = (int) get_option( 'gs_page_sfogline' );
+	if ( $pagina_sfogline && is_page( $pagina_sfogline ) ) {
+		return;
+	}
+```
+
+**Usa `get_option( 'gs_page_sfogline' )`, non il numero 64342.** Quell'id è
+l'identificativo della pagina sul sito vero e su Local è diverso: scriverlo a mano
+farebbe funzionare la correzione in produzione e non in prova, che è il modo peggiore di
+sbagliare.
+
+**Non togliere ancora la riga di CSS** `body.page-id-64342 #gs-nastro-fisso { display: none !important; }`
+(`assets/css/gaming.css:2174`). Diventa superflua, ma toglierla adesso significa che se il
+controllo PHP non funziona il nastro doppio ricompare sul sito vero. Si toglie al giro
+dopo, quando questa correzione è stata vista funzionare in produzione.
+
+### Come verificare — e questa volta serve misurare
+
+1. `php -l includes/nastro-vetrine.php`.
+2. Su Local, con **Query Monitor** attivo:
+   - apri una pagina qualsiasi (non «Le Sfogline») e **annota il numero di query**;
+   - **ricarica la stessa pagina**: il secondo caricamento deve farne **molte di meno**.
+     Se il numero non cambia, il transient non sta lavorando: fermati e capisci perché,
+     non consegnare.
+   - aspetta 15 minuti (o cancella il transient a mano) e ricarica: deve ricostruirsi.
+3. Apri la pagina «Le Sfogline» e verifica **entrambe** le cose:
+   - il nastro **grande** c'è ancora e funziona;
+   - il nastro **piccolo** sotto il menu non c'è (com'era prima, ma ora perché non viene
+     nemmeno calcolato);
+   - in Query Monitor, la scansione utenti compare **una volta sola**, non due.
+4. Su una pagina normale, controlla che il nastro piccolo **ci sia ancora** e scorra:
+   la correzione 1b non deve averlo spento dappertutto. Questo è l'errore più probabile
+   di tutto il giro — provalo davvero, non darlo per scontato.
+
+### Poi FERMATI e scrivi a Ennio
+
+> Giro 1 fatto. Il Nastro ora si ricalcola una volta ogni 15 minuti invece che a ogni
+> visita, e sulla pagina «Le Sfogline» non viene più calcolato due volte.
+> Misurato su Local: da N query a M query al secondo caricamento.
+> Controlla sul sito vero che il nastro si veda ancora sulle pagine normali e che «Le
+> Sfogline» sia a posto, poi dimmi se procedo.
+
+---
+
+## GIRI DA 2 A 6 — non farli adesso
+
+Quando Ennio ti dà il via, l'ordine è questo. Per ognuno, il documento più sotto ha la
+voce completa con file, righe, codice e compromessi.
+
+| Giro | Voci | Che problema risolve |
+|---|---|---|
+| **2** | A1, C1, C2 | La chiusura del mese può raddoppiare gli sconti, e può non scattare mai |
+| **3** | A2, E4 | Un doppio clic brucia due livelli corso |
+| **4** | A5, E5 | Cinque richieste ogni 15 secondi per ogni scheda aperta |
+| **5** | B1, B2, B5, B6, B3, B4 | Premi, token e messaggi consegnati due volte |
+| **6** | F1, F3, testi di F2, poi D ed E | Punti coltivabili, backup, interruttori morti |
+
+**Regole che valgono per tutti i giri:**
+
+- Una voce per volta dentro il giro, con `php -l` dopo ognuna.
+- **Mai** disattivare o saltare un controllo per far passare una prova.
+- Se una correzione richiede una scelta che il documento non ha già deciso, **fermati e
+  chiedi a Ennio** invece di sceglierla tu.
+- Se durante il lavoro trovi un problema che non è in questo documento: **scrivilo, non
+  correggerlo.** Ennio decide se entra in questo lavoro o nel prossimo.
+
+## Se qualcosa va storto
+
+Il plugin gira in produzione. Se dopo una consegna qualcosa si comporta diversamente dal
+previsto sul sito vero, **la cosa giusta è tornare indietro subito**, non correggere
+sopra in fretta: rimetti il file com'era, dillo a Ennio, e ricomincia da capo con calma.
+Ogni giro tocca pochi file proprio perché tornare indietro sia semplice.
+
+---
 
 ### Legenda
 
@@ -1580,17 +1770,13 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
    dopo l'invio, invece di quindici secondi?
 *(Nessun'altra domanda aperta: F2 e F3 sono state chiuse il 22/08/2026.)*
 
-## Ordine rivisto dopo le conferme del 22/08/2026
+## Ordine di lavoro
 
-| Priorità | Voce | Perché |
-|---|---|---|
-| **0** | G2 | Nomi finti in vetrina, adesso. Sei righe da cancellare, nessun rischio. |
-| **1** | A3 + A3-bis | Costo pagato a ogni visita, confermato acceso. |
-| 2 | A1 | Errore contabile, ma scatta solo il 1° del mese. |
-| 3 | A2, A5, B1, B2, B5 | Soldi e carico. |
-| 4 | F1 | Prima che venga assegnato il Buono di questo mese. |
-| 5 | F3 + testi di F2 | Mezz'ora in tutto, chiude due punti. |
-| 6 | il resto, nell'ordine del documento | |
+**È in cima al documento**, nella sezione ORDINE DI LAVORO: sei giri, con il Giro 0 e il
+Giro 1 scritti per esteso e i punti dove fermarsi. Questa sezione non lo ripete, per non
+avere due elenchi che possono contraddirsi.
+
+---
 
 # Limiti di questa analisi
 
