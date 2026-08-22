@@ -1,0 +1,1389 @@
+<title>Aeroplanini con Striscione</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Archivo:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#EFE4CE;
+    --ground-2:#FAF5EC;
+    --ink:#2A1F17;
+    --ink-soft:#6B5A4C;
+    --rule:#D8C7AE;
+    --accent:#A93B27;
+    --gold:#D9A227;
+    --panel:rgba(250,245,236,.9);
+    --panel-line:rgba(42,31,23,.14);
+    --halo:rgba(217,162,39,.20);
+    --nube:rgba(255,253,246,.78);
+    --field:rgba(42,31,23,.10);
+    --campo:rgba(42,31,23,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#171210;
+      --ground-2:#241A14;
+      --ink:#F4E8D7;
+      --ink-soft:#B49E88;
+      --rule:#3D2E23;
+      --accent:#E07A5F;
+      --gold:#E8BC53;
+      --panel:rgba(28,21,16,.86);
+      --panel-line:rgba(244,232,215,.16);
+      --halo:rgba(224,122,95,.16);
+      --nube:rgba(244,232,215,.07);
+      --field:rgba(244,232,215,.14);
+      --campo:rgba(244,232,215,.06);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#171210;
+    --ground-2:#241A14;
+    --ink:#F4E8D7;
+    --ink-soft:#B49E88;
+    --rule:#3D2E23;
+    --accent:#E07A5F;
+    --gold:#E8BC53;
+    --panel:rgba(28,21,16,.86);
+    --panel-line:rgba(244,232,215,.16);
+    --halo:rgba(224,122,95,.16);
+    --nube:rgba(244,232,215,.07);
+    --field:rgba(244,232,215,.14);
+    --campo:rgba(244,232,215,.06);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:Archivo,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+
+  /* ---- il cielo ---- */
+  .cielo{
+    position:fixed;inset:0;z-index:0;
+    overflow:hidden;isolation:isolate;
+    background:
+      radial-gradient(circle at 78% 14%, var(--halo) 0, transparent 42%),
+      radial-gradient(circle at 12% 82%, var(--halo) 0, transparent 46%),
+      linear-gradient(to bottom, var(--ground-2) 0%, var(--ground) 62%);
+  }
+  .nuvole{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .nube{
+    position:absolute;left:0;
+    width:280px;opacity:.9;
+    animation:deriva linear infinite;
+    will-change:transform;
+  }
+  .nube svg{display:block;width:100%;height:auto}
+  @keyframes deriva{
+    from{transform:translateX(-34vw)}
+    to{transform:translateX(132vw)}
+  }
+  .volo{position:absolute;inset:0;z-index:1}
+  .aereo{
+    position:absolute;top:0;left:0;
+    will-change:transform;
+  }
+  .aereo svg{display:block;width:100%;height:auto;overflow:visible}
+  .elica{
+    transform-box:fill-box;
+    transform-origin:50% 50%;
+    animation:gira .16s linear infinite;
+  }
+  @keyframes gira{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  .scritta{
+    font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    letter-spacing:.05em;
+  }
+
+  /* ---- testata ---- */
+  .testata{
+    position:fixed;z-index:3;top:0;left:0;right:0;
+    display:flex;align-items:flex-start;justify-content:space-between;gap:24px;
+    padding:22px 26px;pointer-events:none;
+  }
+  .testata::before{
+    content:"";position:absolute;inset:0 0 -54px 0;
+    background:linear-gradient(to bottom, var(--ground-2) 10%, transparent);
+    opacity:.9;z-index:-1;
+  }
+  .marchio{display:flex;align-items:center;gap:11px}
+  .marchio svg{flex:none}
+  .marchio-testo{display:flex;flex-direction:column;gap:2px}
+  .marchio-nome{
+    font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    font-size:23px;line-height:1.1;
+  }
+  .etichetta{
+    font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .titolo{display:flex;flex-direction:column;gap:3px;text-align:right;max-width:300px}
+  .titolo h1{
+    margin:0;font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    font-weight:400;font-size:33px;line-height:1.05;text-wrap:balance;
+  }
+  .titolo h1 em{font-style:italic;color:var(--accent)}
+
+  .nota{
+    position:fixed;z-index:2;left:26px;bottom:24px;max-width:290px;
+    font-size:15px;line-height:1.55;color:var(--ink-soft);pointer-events:none;
+  }
+
+  /* ---- sala comandi ---- */
+  .pannello{
+    position:fixed;z-index:5;top:104px;right:20px;bottom:20px;
+    width:336px;display:flex;flex-direction:column;
+    background:var(--panel);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid var(--panel-line);border-radius:2px;
+    box-shadow:0 14px 34px rgba(42,31,23,.14);
+    transition:transform .28s ease, opacity .28s ease;
+  }
+  .pannello[data-chiuso="true"]{transform:translateX(calc(100% + 26px));opacity:0;pointer-events:none}
+  .pannello-testa{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 16px;border-bottom:1px solid var(--panel-line);flex:none;
+  }
+  .pannello-corpo{
+    flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;
+    display:flex;flex-direction:column;gap:20px;padding:16px;
+  }
+  .gruppo{display:flex;flex-direction:column;gap:12px}
+  .gruppo h2{
+    margin:0;font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+    font-weight:500;color:var(--accent);
+  }
+  .cursore{display:flex;flex-direction:column;gap:5px}
+  .cursore .riga{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .cursore .valore{
+    font-family:"Bodoni Moda","Bodoni MT",Didot,Georgia,serif;
+    font-size:18px;letter-spacing:0;color:var(--ink);font-variant-numeric:tabular-nums;
+  }
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:16px;background:transparent;margin:0;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--field)}
+  input[type=range]::-moz-range-track{height:2px;background:var(--field)}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:13px;height:13px;margin-top:-5.5px;border-radius:50%;
+    background:var(--accent);border:2px solid var(--ground-2);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:13px;height:13px;border-radius:50%;
+    background:var(--accent);border:2px solid var(--ground-2);
+  }
+  input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+
+  .bottoni{display:flex;flex-wrap:wrap;gap:8px}
+  button{
+    font-family:inherit;font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink);background:transparent;
+    border:1px solid var(--panel-line);border-radius:1px;
+    padding:10px 13px;cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  button:hover{background:var(--accent);border-color:var(--accent);color:var(--ground-2)}
+  button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground-2)}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  #b-motori{border-color:var(--accent);color:var(--accent)}
+  #b-motori[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--ground-2)}
+  .chiudi{
+    border:none;padding:4px 8px;font-size:20px;line-height:1;letter-spacing:0;
+    color:var(--ink-soft);background:transparent;
+  }
+  .chiudi:hover{background:transparent;color:var(--accent)}
+
+  .apri{
+    position:fixed;z-index:5;top:104px;right:20px;
+    background:var(--panel);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    transition:opacity .28s ease;
+  }
+  .apri[hidden]{display:none}
+
+  .segmenti{display:flex;border:1px solid var(--panel-line);border-radius:1px;overflow:hidden}
+  .segmenti button{
+    flex:1;border:none;border-right:1px solid var(--panel-line);
+    padding:10px 6px;font-size:12px;letter-spacing:.08em;
+  }
+  .segmenti button:last-child{border-right:none}
+
+  textarea{
+    font-family:inherit;font-size:14px;line-height:1.5;
+    color:var(--ink);background:var(--campo);
+    border:1px solid var(--panel-line);border-radius:1px;
+    padding:10px 11px;resize:vertical;min-height:96px;width:100%;
+  }
+  textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .aiuto{font-size:12.5px;line-height:1.5;color:var(--ink-soft)}
+
+  .galleria{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:10px;
+  }
+  .pezzo{position:relative}
+  .pezzo input{
+    position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;
+  }
+  .pezzo label{display:block;cursor:pointer}
+  .miniatura{
+    display:block;width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;
+    background:var(--ground-2);
+    border:1.5px solid var(--panel-line);
+    box-shadow:0 0 0 0 var(--gold);
+    transition:border-color .16s ease, box-shadow .16s ease, opacity .16s ease;
+    opacity:.42;filter:saturate(.35);
+  }
+  .miniatura svg,.miniatura img{display:block;width:100%;height:100%;object-fit:cover}
+  .pezzo input:checked + .miniatura{
+    opacity:1;filter:none;border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);
+  }
+  .pezzo input:focus-visible + .miniatura{outline:2px solid var(--accent);outline-offset:3px}
+  .via{
+    position:absolute;top:-5px;right:-5px;
+    width:20px;height:20px;padding:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;line-height:1;letter-spacing:0;
+    border-radius:50%;background:var(--ground-2);border:1px solid var(--panel-line);
+  }
+  .via:hover{background:var(--accent);color:var(--ground-2);border-color:var(--accent)}
+
+  .avviso{
+    position:fixed;z-index:6;left:26px;bottom:152px;
+    max-width:min(360px, calc(100vw - 52px));
+    padding:10px 16px;background:var(--accent);color:var(--ground-2);
+    font-size:13.5px;line-height:1.45;letter-spacing:.04em;border-radius:2px;
+    box-shadow:0 8px 20px rgba(42,31,23,.2);
+    pointer-events:none;transition:opacity .5s ease;
+  }
+  .avviso[hidden]{display:none}
+  .avviso.spento{opacity:0}
+
+  @media (prefers-reduced-motion: reduce){
+    .nube{animation:none}
+    .elica{animation-duration:1.6s}
+    .pannello{transition:none}
+  }
+  @media (max-width:900px){
+    .nota{display:none}
+    .titolo h1{font-size:26px}
+    .pannello{
+      top:auto;right:12px;left:12px;bottom:12px;width:auto;max-height:64vh;
+    }
+    .pannello[data-chiuso="true"]{transform:translateY(calc(100% + 20px))}
+    .apri{top:auto;bottom:12px;right:12px}
+    .avviso{top:92px;bottom:auto;left:12px;right:12px;max-width:none;text-align:center}
+  }
+  @media (max-width:560px){
+    .titolo{display:none}
+  }
+</style>
+
+<div class="cielo" aria-hidden="true">
+  <div class="nuvole" id="nuvole"></div>
+  <div class="volo" id="volo"></div>
+</div>
+
+<header class="testata">
+  <div class="marchio">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M4.6 9.2h14.8M4.6 14.8h14.8M9.2 3.4v17.2M14.8 3.4v17.2"></path>
+    </svg>
+    <div class="marchio-testo">
+      <span class="marchio-nome">Accademia della Sfoglia</span>
+      <span class="etichetta">Studio di movimento</span>
+    </div>
+  </div>
+  <div class="titolo">
+    <span class="etichetta">Proposta grafica</span>
+    <h1>Aeroplanini <em>con striscione</em></h1>
+  </div>
+</header>
+
+<p class="nota">Ogni aeroplanino si tira dietro il suo striscione: ci scrivi un messaggio, ci appendi i loghi e i volti che scegli. Clicca un aereo e ti fa il giro della morte.</p>
+
+<button type="button" class="apri" id="b-apri" hidden>Sala comandi</button>
+
+<aside class="pannello" id="pannello" data-chiuso="false" aria-label="Sala comandi">
+  <div class="pannello-testa">
+    <span class="etichetta">Sala comandi</span>
+    <button type="button" class="chiudi" id="b-chiudi" aria-label="Nascondi la sala comandi">&times;</button>
+  </div>
+  <div class="pannello-corpo">
+
+    <section class="gruppo">
+      <h2>Volo</h2>
+      <div class="cursore">
+        <label class="riga" for="n-aerei">Aeroplanini <span class="valore" id="v-aerei">7</span></label>
+        <input type="range" id="n-aerei" min="1" max="16" step="1" value="7">
+      </div>
+      <div class="cursore">
+        <label class="riga" for="n-velocita">Velocità <span class="valore" id="v-velocita">1,0&times;</span></label>
+        <input type="range" id="n-velocita" min="0" max="30" step="1" value="10">
+      </div>
+      <div class="cursore">
+        <label class="riga" for="n-dimensione">Dimensione <span class="valore" id="v-dimensione">1,0&times;</span></label>
+        <input type="range" id="n-dimensione" min="5" max="22" step="1" value="10">
+      </div>
+      <div class="bottoni">
+        <button type="button" id="b-pausa" aria-pressed="false">Pausa</button>
+        <button type="button" id="b-rimescola">Nuovi aerei</button>
+      </div>
+    </section>
+
+    <section class="gruppo">
+      <h2>Motori</h2>
+      <div class="cursore">
+        <label class="riga" for="n-volume">Volume <span class="valore" id="v-volume">5</span></label>
+        <input type="range" id="n-volume" min="0" max="10" step="1" value="5">
+      </div>
+      <div class="bottoni">
+        <button type="button" id="b-motori" aria-pressed="false">&#9834; Accendi i motori</button>
+      </div>
+    </section>
+
+    <section class="gruppo">
+      <h2>Striscione</h2>
+      <div class="segmenti" role="group" aria-label="Cosa portano gli striscioni">
+        <button type="button" class="segmento" id="s-testo" data-modo="testo" aria-pressed="false">Testo</button>
+        <button type="button" class="segmento" id="s-volti" data-modo="volti" aria-pressed="false">Volti</button>
+        <button type="button" class="segmento" id="s-misto" data-modo="misto" aria-pressed="true">Testo e volti</button>
+      </div>
+      <label class="riga etichetta" for="t-messaggi" style="letter-spacing:.18em">Messaggi</label>
+      <textarea id="t-messaggi" spellcheck="false" aria-describedby="aiuto-messaggi">Accademia della Sfoglia
+Corso di sfoglia al mattarello
+Uovo, farina e mattarello
+Iscrizioni aperte
+Buon compleanno!</textarea>
+      <p class="aiuto" id="aiuto-messaggi">Una riga per striscione. Se gli aerei sono più delle righe, ricominciano da capo.</p>
+    </section>
+
+    <section class="gruppo">
+      <h2>In coda</h2>
+      <div class="bottoni">
+        <button type="button" id="b-tutti">Tutti</button>
+        <button type="button" id="b-nessuno">Nessuno</button>
+        <button type="button" id="b-carica">+ Loghi e foto</button>
+        <button type="button" id="b-volti">Altri volti</button>
+      </div>
+      <input type="file" id="f-carica" accept="image/*" multiple hidden>
+      <div class="galleria" id="galleria"></div>
+      <p class="aiuto">Clicca per far salire o scendere un volto. Le immagini che carichi restano su questo computer, non partono da qui.</p>
+    </section>
+
+  </div>
+</aside>
+
+<div class="avviso" id="avviso">Tocca lo schermo per accendere i motori</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var volo = document.getElementById("volo");
+  var nuvole = document.getElementById("nuvole");
+  var galleriaEl = document.getElementById("galleria");
+  var avviso = document.getElementById("avviso");
+
+  var ATTACCO = 90;      /* quanto sta indietro l'inizio dello striscione */
+  var ALT = 46;          /* altezza del nastro */
+  var RAG = 18;          /* raggio delle medaglie in coda */
+  var CORPO = 114;       /* lunghezza dell'aeroplanino, in unita' di disegno */
+
+  /* ---------- casualita' ripetibile ---------- */
+  function seme(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function scegli(r, arr) { return arr[Math.floor(r() * arr.length) % arr.length]; }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function scurisci(hex, q) {
+    var n = parseInt(hex.slice(1), 16);
+    var r = Math.round((n >> 16 & 255) * (1 - q));
+    var g = Math.round((n >> 8 & 255) * (1 - q));
+    var b = Math.round((n & 255) * (1 - q));
+    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+  }
+
+  /* ---------- le tinte di casa ---------- */
+  var TINTE = [
+    { corpo: "#F5E7D0", luce: "#FFFAF0", bordo: "#C7A87F" },
+    { corpo: "#F1BE9C", luce: "#FDDFC9", bordo: "#B26B49" },
+    { corpo: "#EFCF8A", luce: "#FBEDC8", bordo: "#B58F31" },
+    { corpo: "#E49582", luce: "#F6C6B8", bordo: "#A44F38" },
+    { corpo: "#CBD4B8", luce: "#E8EEDA", bordo: "#82906A" },
+    { corpo: "#D08161", luce: "#EDB295", bordo: "#8E4526" }
+  ];
+  var FAZZOLETTI = ["#A93B27", "#D9A227", "#6E7F5B", "#8A2F1F", "#C2603C", "#B8843A"];
+  var CAPELLI = ["#6B4A2E", "#3A2A1E", "#8A6B49", "#B9A48D", "#A9602E"];
+  var INCHIOSTRO = "#38281C";
+  var CARTA = "#FDF6E7";
+
+  var contatore = 0;
+
+  /* ---------- il volto della sfoglina ----------
+     Stesso disegno dei palloncini: fazzoletto, occhiali, orecchini d'oro,
+     una spolverata di farina. Vive dentro un riquadro 100x100. */
+  function voltoSVG(r, id) {
+    var t = scegli(r, TINTE);
+    var fazz = scegli(r, FAZZOLETTI);
+    var cap = scegli(r, CAPELLI);
+    var conFazzoletto = r() < 0.72;
+    var occhiali = r() < 0.3;
+    var orecchini = r() < 0.45;
+    var farina = r() < 0.55;
+    var rughe = r() < 0.35;
+    var occhi = scegli(r, ["aperti", "aperti", "aperti", "chiusi", "occhiolino"]);
+    var bocca = scegli(r, ["sorriso", "sorriso", "risata", "denti", "o"]);
+    var pois = r() < 0.5;
+    var s = [];
+
+    s.push('<defs>');
+    s.push('<radialGradient id="gv' + id + '" cx="34%" cy="26%" r="82%">');
+    s.push('<stop offset="0" stop-color="' + t.luce + '"/><stop offset="1" stop-color="' + t.corpo + '"/>');
+    s.push('</radialGradient>');
+    s.push('<clipPath id="cv' + id + '"><circle cx="50" cy="50" r="44"/></clipPath>');
+    s.push('</defs>');
+
+    s.push('<circle cx="50" cy="50" r="44" fill="url(#gv' + id + ')"/>');
+
+    s.push('<g clip-path="url(#cv' + id + ')">');
+    if (conFazzoletto) {
+      s.push('<g fill="none" stroke="' + cap + '" stroke-width="3" stroke-linecap="round">');
+      s.push('<path d="M12 30q-3 10 3 16"/><path d="M88 30q3 10-3 16"/><path d="M28 35q-3 5 0 9"/><path d="M72 35q3 5 0 9"/>');
+      s.push('</g>');
+      s.push('<path d="M0 24q50 22 100 0V0H0z" fill="' + fazz + '"/>');
+      if (pois) {
+        s.push('<g fill="#FAF5EC" opacity=".8"><circle cx="26" cy="12" r="1.7"/><circle cx="44" cy="17" r="1.7"/><circle cx="62" cy="15" r="1.7"/><circle cx="78" cy="8" r="1.7"/><circle cx="35" cy="3" r="1.7"/></g>');
+      }
+      s.push('<path d="M0 24q50 22 100 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.3" opacity=".4"/>');
+      var ombra = scurisci(fazz, 0.26);
+      s.push('<g fill="' + fazz + '" stroke="' + ombra + '" stroke-width="1.1" stroke-linejoin="round">');
+      s.push('<path d="M50 13 38 9l3 10z"/><path d="M50 13 62 9l-3 10z"/>');
+      s.push('<ellipse cx="50" cy="12.5" rx="5.4" ry="4.4"/>');
+      s.push('</g>');
+    } else {
+      s.push('<g fill="none" stroke="' + cap + '" stroke-width="3.2" stroke-linecap="round">');
+      s.push('<path d="M9 34q-3 14 3 24"/><path d="M91 34q3 14-3 24"/>');
+      s.push('</g>');
+      s.push('<path d="M0 26C12 41 22 41 33 31 44 21 56 41 67 35 78 29 90 37 100 26V0H0z" fill="' + cap + '"/>');
+      s.push('<ellipse cx="50" cy="2" rx="14" ry="10" fill="' + cap + '"/>');
+      s.push('<path d="M63 12l13 4" fill="none" stroke="#D9A227" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>');
+    }
+    s.push('</g>');
+
+    s.push('<g fill="#C9603F" opacity=".32"><ellipse cx="31" cy="61" rx="7" ry="4.2"/><ellipse cx="69" cy="61" rx="7" ry="4.2"/></g>');
+    s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.7" stroke-linecap="round" opacity=".8">');
+    s.push('<path d="M32 41q7-4 13-1"/><path d="M68 41q-7-4-13-1"/>');
+    s.push('</g>');
+
+    if (occhi === "chiusi") {
+      s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="2.1" stroke-linecap="round"><path d="M33 52q6-6 12 0"/><path d="M55 52q6-6 12 0"/></g>');
+    } else if (occhi === "occhiolino") {
+      s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="2.1" stroke-linecap="round"><path d="M33 52q6-6 12 0"/></g>');
+      s.push('<ellipse cx="61" cy="51" rx="3.2" ry="3.7" fill="' + INCHIOSTRO + '"/><circle cx="62.3" cy="49.7" r="1" fill="#FFFDF7"/>');
+    } else {
+      s.push('<g fill="' + INCHIOSTRO + '"><ellipse cx="39" cy="51" rx="3.2" ry="3.7"/><ellipse cx="61" cy="51" rx="3.2" ry="3.7"/></g>');
+      s.push('<g fill="#FFFDF7"><circle cx="40.3" cy="49.7" r="1"/><circle cx="62.3" cy="49.7" r="1"/></g>');
+    }
+    if (rughe) {
+      s.push('<g fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.1" stroke-linecap="round" opacity=".45">');
+      s.push('<path d="M29 48l-4-2M29 53l-4 1M71 48l4-2M71 53l4 1"/>');
+      s.push('</g>');
+    }
+    s.push('<path d="M49 55q3.4 2.6 1 4.6" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.5" stroke-linecap="round" opacity=".85"/>');
+
+    if (bocca === "risata") {
+      s.push('<path d="M40 64q10 11 20 0z" fill="#8A2F1F"/><path d="M40 64q10 11 20 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.5" stroke-linejoin="round"/>');
+    } else if (bocca === "denti") {
+      s.push('<path d="M40 64q10 10 20 0z" fill="#8A2F1F"/><path d="M42.5 64.6h15q-1.6 3.4-7.5 3.4t-7.5-3.4z" fill="#FFFBF2"/><path d="M40 64q10 10 20 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="1.5" stroke-linejoin="round"/>');
+    } else if (bocca === "o") {
+      s.push('<ellipse cx="50" cy="66" rx="3.4" ry="4.2" fill="#8A2F1F"/>');
+    } else {
+      s.push('<path d="M41 64q9 7.5 18 0" fill="none" stroke="' + INCHIOSTRO + '" stroke-width="2" stroke-linecap="round"/>');
+    }
+    if (occhiali) {
+      s.push('<g fill="#FFFFFF" fill-opacity=".16" stroke="' + INCHIOSTRO + '" stroke-width="1.5">');
+      s.push('<circle cx="39" cy="51" r="8.4"/><circle cx="61" cy="51" r="8.4"/>');
+      s.push('<path d="M47.6 51h4.8M30.8 48.6l-6-3.2M69.2 48.6l6-3.2" fill="none" stroke-linecap="round"/>');
+      s.push('</g>');
+    }
+    if (farina) {
+      s.push('<g fill="#FFFDF6" opacity=".9"><circle cx="27" cy="72" r="1.3"/><circle cx="34" cy="77" r="0.9"/><circle cx="70" cy="74" r="1.1"/><circle cx="63" cy="79" r="0.8"/><circle cx="50" cy="80" r="1"/></g>');
+    }
+    if (orecchini) {
+      s.push('<g fill="#D9A227" stroke="#8A6516" stroke-width=".7"><circle cx="8.4" cy="60" r="2.6"/><circle cx="91.6" cy="60" r="2.6"/></g>');
+    }
+    return s.join("");
+  }
+
+  /* ---------- l'aeroplanino ciccione ----------
+     Naso in avanti verso destra, coda a sinistra, centro del corpo a 0,0. */
+  function aereoSVG(r, id) {
+    var t = scegli(r, TINTE);
+    var fascia = scegli(r, FAZZOLETTI);
+    var scuro = scurisci(t.corpo, 0.30);
+    var piuScuro = scurisci(t.corpo, 0.46);
+    var s = [];
+    var pancia = "M44-14C40-25 12-28-16-25C-34-23-46-15-52-4C-53-2-53 2-52 4C-46 15-34 23-16 25C12 28 40 25 44 14C50 10 52 4 52 0C52-4 50-10 44-14Z";
+
+    s.push('<defs>');
+    s.push('<radialGradient id="ga' + id + '" cx="32%" cy="22%" r="88%">');
+    s.push('<stop offset="0" stop-color="' + t.luce + '"/><stop offset="1" stop-color="' + t.corpo + '"/>');
+    s.push('</radialGradient>');
+    s.push('<clipPath id="ca' + id + '"><path d="' + pancia + '"/></clipPath>');
+    s.push('<clipPath id="cp' + id + '"><circle cx="19" cy="-13" r="10"/></clipPath>');
+    s.push('</defs>');
+
+    /* la fune che tiene lo striscione */
+    s.push('<path d="M-52 1H-90" fill="none" stroke="' + scuro + '" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>');
+
+    /* ala di la', piano di coda, deriva: tutto dietro al corpo */
+    s.push('<path d="M2 2C6 14-6 26-22 28C-33 29-36 24-30 18C-23 11-10 4 2 2Z" fill="' + piuScuro + '" transform="translate(-9,-9)"/>');
+    s.push('<path d="M-42-6C-50-12-58-16-63-14C-66-13-66-9-63-7C-56-3-48-2-43-2Z" fill="' + scuro + '" stroke="' + t.bordo + '" stroke-width="1.2" stroke-linejoin="round"/>');
+    s.push('<path d="M-24-24C-30-34-40-42-50-45C-54-46-56-43-55-39C-53-28-51-16-50-6Z" fill="' + t.corpo + '" stroke="' + t.bordo + '" stroke-width="1.4" stroke-linejoin="round"/>');
+    s.push('<g transform="translate(-45,-28) scale(.58)" fill="none" stroke="' + fascia + '" stroke-width="2.6" stroke-linecap="round">');
+    s.push('<circle cx="0" cy="0" r="9"/><path d="M-8.6-3.4h17.2M-8.6 3.4h17.2M-3.4-8.6v17.2M3.4-8.6v17.2"/>');
+    s.push('</g>');
+
+    /* ruota e gambetta */
+    s.push('<path d="M6 22V30" fill="none" stroke="' + scuro + '" stroke-width="2.6" stroke-linecap="round"/>');
+    s.push('<circle cx="6" cy="33" r="6" fill="' + INCHIOSTRO + '"/><circle cx="6" cy="33" r="2.4" fill="#D9A227"/>');
+    s.push('<path d="M-46 8v5" fill="none" stroke="' + scuro + '" stroke-width="2" stroke-linecap="round"/>');
+    s.push('<circle cx="-46" cy="15" r="3.4" fill="' + INCHIOSTRO + '"/>');
+
+    /* corpo */
+    s.push('<path d="' + pancia + '" fill="url(#ga' + id + ')" stroke="' + t.bordo + '" stroke-width="1.7"/>');
+
+    /* fascia decorativa e riflesso, ritagliati nella pancia */
+    s.push('<g clip-path="url(#ca' + id + ')">');
+    s.push('<path d="M-54 7C-30 13 20 13 48 6V13C20 20-30 20-54 14Z" fill="' + fascia + '" opacity=".9"/>');
+    s.push('<path d="M-54 12.4C-30 18.4 20 18.4 48 11.4v1.8C20 20.2-30 20.2-54 14.2Z" fill="#D9A227"/>');
+    s.push('<ellipse cx="6" cy="-19" rx="22" ry="6.4" fill="#FFFFFF" opacity=".26" transform="rotate(-5 6 -19)"/>');
+    s.push('</g>');
+
+    /* obló */
+    s.push('<g stroke="#C9A24A" stroke-width="1.5">');
+    s.push('<circle cx="-6" cy="-5" r="5.4" fill="#EAF0F2"/><circle cx="-22" cy="-4" r="5" fill="#EAF0F2"/>');
+    s.push('</g>');
+
+    /* cabina con la sfoglina che guida */
+    s.push('<ellipse cx="19" cy="-13" rx="14" ry="11.6" fill="#EAF0F2" stroke="' + t.bordo + '" stroke-width="1.6"/>');
+    s.push('<g clip-path="url(#cp' + id + ')"><g transform="translate(19,-13) scale(' + (20 / 88).toFixed(4) + ') translate(-50,-50)">');
+    s.push(voltoSVG(seme(Math.floor(r() * 1e9)), "p" + id));
+    s.push('</g></g>');
+    s.push('<ellipse cx="19" cy="-13" rx="14" ry="11.6" fill="none" stroke="' + t.bordo + '" stroke-width="1.6"/>');
+    s.push('<path d="M8-20C12-24 26-24 30-20" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>');
+
+    /* sciarpa al vento */
+    if (r() < 0.7) {
+      s.push('<path d="M6-23C-6-19-22-25-36-19C-41-17-43-22-38-24C-24-30-8-29 4-31Z" fill="' + fascia + '" stroke="' + scurisci(fascia, .3) + '" stroke-width="1" stroke-linejoin="round"/>');
+    }
+
+    /* ala di qua */
+    s.push('<path d="M8 6C12 20-4 32-22 34C-34 35-38 29-31 22C-23 14-8 8 8 6Z" fill="' + scuro + '" stroke="' + t.bordo + '" stroke-width="1.4" stroke-linejoin="round"/>');
+    s.push('<path d="M2 10C-8 15-18 21-25 27" fill="none" stroke="' + piuScuro + '" stroke-width="1.2" opacity=".7"/>');
+
+    /* ogiva ed elica */
+    s.push('<path d="M44-13C52-9 56-4 56 0C56 4 52 9 44 13Z" fill="' + fascia + '" stroke="' + scurisci(fascia, .3) + '" stroke-width="1.2" stroke-linejoin="round"/>');
+    s.push('<g class="elica">');
+    s.push('<ellipse cx="58" cy="0" rx="2.4" ry="27" fill="' + INCHIOSTRO + '" opacity=".14"/>');
+    s.push('<ellipse cx="58" cy="-14" rx="3.2" ry="14" fill="' + INCHIOSTRO + '" opacity=".62"/>');
+    s.push('<ellipse cx="58" cy="14" rx="3.2" ry="14" fill="' + INCHIOSTRO + '" opacity=".62"/>');
+    s.push('</g>');
+    s.push('<circle cx="57" cy="0" r="3.6" fill="#D9A227" stroke="#8A6516" stroke-width=".9"/>');
+
+    return s.join("");
+  }
+
+  /* ---------- le nuvole di fondo ---------- */
+  (function () {
+    var NUVOLA = '<svg viewBox="0 0 160 76" xmlns="http://www.w3.org/2000/svg"><path d="M18 66C6 66 0 58 4 50C8 42 18 41 23 44C22 28 34 19 47 21C55 8 76 6 86 17C95 10 111 13 115 26C130 24 141 34 138 47C150 48 154 57 149 63C146 66 141 66 136 66Z" fill="var(--nube)"/></svg>';
+    var righe = [[9, 1.35, 168], [24, .82, 232], [46, 1.1, 196], [63, .62, 268], [77, 1.5, 148]];
+    var s = [];
+    for (var i = 0; i < righe.length; i++) {
+      s.push('<div class="nube" style="top:' + righe[i][0] + '%;width:' + Math.round(230 * righe[i][1]) +
+        'px;opacity:' + (0.5 + righe[i][1] * 0.24).toFixed(2) + ';animation-duration:' + righe[i][2] +
+        's;animation-delay:-' + Math.round(righe[i][2] * (i * 0.19 + 0.05)) + 's">' + NUVOLA + '</div>');
+    }
+    nuvole.innerHTML = s.join("");
+  })();
+
+  /* ---------- chi vola in coda: volti disegnati e immagini caricate ---------- */
+  var CHIAVE = "accademia.aeroplanini.v1";
+  var galleria = [];
+  var scelte = {};
+
+  function nuoviVolti(quanti) {
+    var elenco = [];
+    for (var i = 0; i < quanti; i++) {
+      elenco.push({ id: "v" + i, tipo: "volto", seme: Math.floor(Math.random() * 1e9) });
+    }
+    return elenco;
+  }
+
+  function miniatura(pezzo) {
+    if (pezzo.tipo === "volto") {
+      return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+        voltoSVG(seme(pezzo.seme), "g" + (++contatore)) + '</svg>';
+    }
+    return '<img src="' + pezzo.dati + '" alt="' + esc(pezzo.nome || "logo") + '">';
+  }
+
+  function disegnaGalleria() {
+    var s = [];
+    for (var i = 0; i < galleria.length; i++) {
+      var pz = galleria[i];
+      var acceso = scelte[pz.id] !== false;
+      s.push('<div class="pezzo">');
+      s.push('<label><input type="checkbox" data-id="' + pz.id + '"' + (acceso ? " checked" : "") +
+        '><span class="miniatura">' + miniatura(pz) + '</span></label>');
+      if (pz.tipo === "immagine") {
+        s.push('<button type="button" class="via" data-via="' + pz.id + '" aria-label="Togli ' + esc(pz.nome || "immagine") + '">&times;</button>');
+      }
+      s.push('</div>');
+    }
+    galleriaEl.innerHTML = s.join("");
+  }
+
+  function selezionati() {
+    return galleria.filter(function (pz) { return scelte[pz.id] !== false; });
+  }
+
+  /* ---------- la squadriglia ---------- */
+  var aerei = [];
+  var L = window.innerWidth, H = window.innerHeight;
+  var velocita = 1, dimensione = 1, inPausa = false, modo = "misto";
+  var tempo = 0, semeFlotta = Math.floor(Math.random() * 1e9);
+  var puntatore = { x: -999, y: -999, attivo: false };
+  var motoRidotto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function nuovoAereo(i) {
+    var el = document.createElement("div");
+    el.className = "aereo";
+    var id = ++contatore;
+    var r = seme((semeFlotta ^ Math.imul(i + 1, 2654435761)) >>> 0);
+    r(); r(); r();
+    el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-66 -60 132 120">' +
+      '<g class="striscione"></g><g class="corpo">' + aereoSVG(r, id) + '</g></svg>';
+    volo.appendChild(el);
+
+    var angolo = Math.random() * Math.PI * 2;
+    var profondita = 0.62 + Math.random() * 0.55;
+    var base = (0.85 + Math.random() * 0.7) * profondita;
+    var p = {
+      el: el, indice: i, profondita: profondita,
+      svg: el.firstChild,
+      gStriscione: el.querySelector(".striscione"),
+      corpo: el.querySelector(".corpo"),
+      x: (0.12 + Math.random() * 0.76) * L,
+      y: (0.12 + Math.random() * 0.76) * H,
+      vx: Math.cos(angolo) * base, vy: Math.sin(angolo) * base,
+      ang: angolo, verso: Math.cos(angolo) < 0 ? -1 : 1,
+      faseV: Math.random() * 6.28, ritmoV: 0.012 + Math.random() * 0.016,
+      faseOnda: Math.random() * 6.28,
+      ritmoOnda: 0.09 + Math.random() * 0.05,
+      k: 0.015 + Math.random() * 0.009,
+      amp: 5.5 + Math.random() * 3.5,
+      giro: 0, BL: 0, testo: "", pezzi: [],
+      medaglie: [], medaglieT: [], campioni: 10,
+      scala: 1, offX: 0, offY: 0, raggio: 40
+    };
+    el.style.zIndex = String(Math.round(profondita * 100));
+    el.style.opacity = (0.72 + 0.28 * Math.min(1, (profondita - 0.62) / 0.55)).toFixed(2);
+    misura(p);
+    return p;
+  }
+
+  function misura(p) {
+    var minLato = Math.min(L, H);
+    p.lunghezzaPx = Math.max(62, minLato * 0.135 * p.profondita * dimensione);
+    p.scala = p.lunghezzaPx / CORPO;
+    p.raggio = p.lunghezzaPx * 0.42;
+    ricomponi(p);
+  }
+
+  /* Lo striscione sta sempre dietro. Quando l'aereo punta a sinistra
+     ribaltiamo il disegno e mandiamo il nastro dall'altra parte, cosi'
+     le scritte restano dritte e leggibili. */
+  function ricomponi(p) {
+    var d = p.verso, minX, maxX;
+    if (!p.BL) { minX = -70; maxX = 66; }
+    else if (d === 1) { minX = -(ATTACCO + p.BL + 26); maxX = 66; }
+    else { minX = -66; maxX = ATTACCO + p.BL + 26; }
+    var larg = maxX - minX;
+    p.svg.setAttribute("viewBox", minX + " -60 " + larg + " 120");
+    p.el.style.width = (larg * p.scala).toFixed(1) + "px";
+    p.offX = -minX * p.scala;
+    p.offY = 60 * p.scala;
+    p.el.style.transformOrigin = p.offX.toFixed(1) + "px " + p.offY.toFixed(1) + "px";
+    p.corpo.setAttribute("transform", d === 1 ? "scale(1,1)" : "scale(-1,1)");
+  }
+
+  /* ---------- cosa porta ogni striscione ---------- */
+  function leggiMessaggi() {
+    return campoMessaggi.value.split("\n").map(function (riga) {
+      return riga.trim().slice(0, 34);
+    }).filter(function (riga) { return riga.length > 0; });
+  }
+
+  function assegnaCarichi() {
+    var testi = leggiMessaggi();
+    var sel = selezionati();
+    for (var i = 0; i < aerei.length; i++) {
+      var p = aerei[i];
+      p.testo = (modo !== "volti" && testi.length) ? testi[i % testi.length] : "";
+      p.pezzi = [];
+      if (modo !== "testo" && sel.length) {
+        var per = Math.max(1, Math.min(modo === "misto" ? 2 : 5, Math.ceil(sel.length / aerei.length)));
+        var via = (i * per) % sel.length;
+        for (var k = 0; k < per; k++) p.pezzi.push(sel[(via + k) % sel.length]);
+      }
+      costruisciStriscione(p);
+    }
+  }
+
+  /* quanto e' lunga davvero una scritta: la misuriamo, non la indoviniamo */
+  var righello = null, misure = {};
+  function larghezzaTesto(testo, fs) {
+    var chiave = fs + "|" + testo;
+    if (misure[chiave] != null) return misure[chiave];
+    if (!righello) {
+      var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("aria-hidden", "true");
+      svg.style.cssText = "position:absolute;left:-9999px;top:0;width:0;height:0;overflow:hidden";
+      righello = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      righello.setAttribute("class", "scritta");
+      svg.appendChild(righello);
+      document.body.appendChild(svg);
+    }
+    righello.setAttribute("font-size", fs);
+    righello.textContent = testo;
+    var l = 0;
+    try { l = righello.getComputedTextLength(); } catch (e) { l = 0; }
+    if (!l) l = testo.length * fs * 0.62;
+    misure[chiave] = l;
+    return l;
+  }
+
+  function costruisciStriscione(p) {
+    var fs = 25, passo = 2 * RAG + 9;
+    var nM = p.pezzi.length;
+    var lMed = nM ? nM * passo : 0;
+    var scritta = p.testo ? p.testo.toUpperCase() : "";
+    var wTesto = scritta ? larghezzaTesto(scritta, fs) : 0;
+    var lTesto = scritta ? Math.max(120, wTesto + 46) : 0;
+    var BL = (lMed || lTesto) ? Math.min(900, 26 + lMed + lTesto + 22) : 0;
+
+    p.BL = BL;
+    p.medaglie = [];
+    p.medaglieT = [];
+    p.linea = null;
+    p.nastro = null;
+    if (!BL) { p.gStriscione.innerHTML = ""; ricomponi(p); return; }
+
+    var idn = ++contatore;
+    var s = [];
+    s.push('<defs><path id="lt' + idn + '" fill="none"/></defs>');
+    s.push('<path class="nastro" fill="' + CARTA + '" stroke="#A93B27" stroke-width="1.8" stroke-linejoin="round"/>');
+
+    if (scritta) {
+      p.testoT0 = 26 + lMed + 14;
+      p.testoT1 = BL - 16;
+      var spazio = p.testoT1 - p.testoT0;
+      var stretta = wTesto > spazio ? ' textLength="' + (spazio - 6).toFixed(1) + '" lengthAdjust="spacingAndGlyphs"' : '';
+      s.push('<text class="scritta" font-size="' + fs + '" fill="#A93B27" text-anchor="middle" dy="0.34em"' + stretta + '>' +
+        '<textPath href="#lt' + idn + '" startOffset="50%">' + esc(scritta) + '</textPath></text>');
+    }
+
+    for (var k = 0; k < p.pezzi.length; k++) {
+      var pz = p.pezzi[k];
+      var cid = "md" + (++contatore);
+      var r2 = RAG - 2.6;
+      p.medaglieT.push(26 + RAG + k * passo);
+      s.push('<g class="medaglia">');
+      s.push('<clipPath id="' + cid + '"><circle cx="0" cy="0" r="' + r2 + '"/></clipPath>');
+      s.push('<circle cx="0" cy="0" r="' + RAG + '" fill="' + CARTA + '" stroke="#C9A24A" stroke-width="1.8"/>');
+      if (pz.tipo === "volto") {
+        s.push('<g clip-path="url(#' + cid + ')"><g transform="scale(' + (2 * r2 / 88).toFixed(4) + ') translate(-50,-50)">' +
+          voltoSVG(seme(pz.seme), "s" + (++contatore)) + '</g></g>');
+      } else {
+        s.push('<image clip-path="url(#' + cid + ')" href="' + pz.dati + '" x="' + (-r2) + '" y="' + (-r2) +
+          '" width="' + (2 * r2) + '" height="' + (2 * r2) + '" preserveAspectRatio="xMidYMid slice"/>');
+      }
+      s.push('</g>');
+    }
+
+    p.gStriscione.innerHTML = s.join("");
+    p.nastro = p.gStriscione.querySelector(".nastro");
+    p.linea = p.gStriscione.querySelector("#lt" + idn);
+    p.medaglie = [].slice.call(p.gStriscione.querySelectorAll(".medaglia"));
+    p.campioni = Math.max(10, Math.min(30, Math.round(BL / 22)));
+    ricomponi(p);
+  }
+
+  function aggiornaStriscione(p, dt) {
+    if (!p.BL || !p.nastro) return;
+    if (!inPausa) p.faseOnda += p.ritmoOnda * dt * (0.4 + velocita * 0.7);
+    var d = p.verso, BL = p.BL, h = ALT / 2, k = p.k, fase = p.faseOnda, amp = p.amp;
+
+    function Y(t) {
+      var env = t < 84 ? t / 84 : 1;
+      return Math.sin(t * k + fase) * amp * env;
+    }
+    function X(t) { return -d * (ATTACCO + t); }
+
+    var N = p.campioni, su = [], giu = [], i, t, x, y;
+    for (i = 0; i <= N; i++) {
+      t = BL * i / N; x = X(t); y = Y(t);
+      su.push(x.toFixed(1) + " " + (y - h).toFixed(1));
+      giu.push(x.toFixed(1) + " " + (y + h).toFixed(1));
+    }
+    giu.reverse();
+    p.nastro.setAttribute("d", "M" + su.join("L") +
+      "L" + (X(BL) + d * 17).toFixed(1) + " " + Y(BL).toFixed(1) +
+      "L" + giu.join("L") + "Z");
+
+    if (p.linea) {
+      var M = 12, punti = [];
+      for (i = 0; i <= M; i++) {
+        t = p.testoT0 + (p.testoT1 - p.testoT0) * i / M;
+        punti.push(X(t).toFixed(1) + " " + Y(t).toFixed(1));
+      }
+      if (d === 1) punti.reverse();
+      p.linea.setAttribute("d", "M" + punti.join("L"));
+    }
+
+    for (i = 0; i < p.medaglie.length; i++) {
+      t = p.medaglieT[i];
+      var dy = Y(t + 6) - Y(t - 6), dx = X(t + 6) - X(t - 6);
+      var gradi = Math.atan2(dy, dx) * 180 / Math.PI;
+      if (dx < 0) gradi += 180;
+      p.medaglie[i].setAttribute("transform",
+        "translate(" + X(t).toFixed(1) + "," + Y(t).toFixed(1) + ") rotate(" + gradi.toFixed(2) + ")");
+    }
+  }
+
+  function imposta(n) {
+    while (aerei.length > n) aerei.pop().el.remove();
+    while (aerei.length < n) aerei.push(nuovoAereo(aerei.length));
+    assegnaCarichi();
+  }
+
+  function rimescola() {
+    semeFlotta = Math.floor(Math.random() * 1e9);
+    var n = aerei.length;
+    aerei.forEach(function (p) { p.el.remove(); });
+    aerei.length = 0;
+    imposta(n);
+  }
+
+  /* ---------- i motori ----------
+     Nessun file da scaricare: il rombo nasce qui, due seghe basse filtrate,
+     un soffio d'aria e il battito dell'elica sopra. */
+  var motore = (function () {
+    var ctx = null, master = null, acceso = false, avviato = false;
+    var oscA, oscB, lfo, lfoGain, battito, volume = 0.5, ultimoSbuffo = 0;
+
+    function apri() {
+      if (ctx) return;
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      ctx = new AC();
+      master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(ctx.destination);
+
+      battito = ctx.createGain();
+      battito.gain.value = 0.7;
+      battito.connect(master);
+
+      var basso = ctx.createBiquadFilter();
+      basso.type = "lowpass";
+      basso.frequency.value = 380;
+      basso.Q.value = 0.8;
+      basso.connect(battito);
+
+      oscA = ctx.createOscillator(); oscA.type = "sawtooth"; oscA.frequency.value = 58;
+      oscB = ctx.createOscillator(); oscB.type = "sawtooth"; oscB.frequency.value = 73;
+      var gA = ctx.createGain(); gA.gain.value = 0.5;
+      var gB = ctx.createGain(); gB.gain.value = 0.34;
+      oscA.connect(gA); gA.connect(basso);
+      oscB.connect(gB); gB.connect(basso);
+      oscA.start(); oscB.start();
+
+      /* soffio d'aria */
+      var lung = Math.floor(ctx.sampleRate * 2);
+      var buf = ctx.createBuffer(1, lung, ctx.sampleRate);
+      var dati = buf.getChannelData(0);
+      for (var i = 0; i < lung; i++) dati[i] = Math.random() * 2 - 1;
+      var vento = ctx.createBufferSource();
+      vento.buffer = buf; vento.loop = true;
+      var banda = ctx.createBiquadFilter();
+      banda.type = "bandpass"; banda.frequency.value = 760; banda.Q.value = 0.9;
+      var gV = ctx.createGain(); gV.gain.value = 0.08;
+      vento.connect(banda); banda.connect(gV); gV.connect(battito);
+      vento.start();
+
+      /* il battito dell'elica */
+      lfo = ctx.createOscillator(); lfo.type = "sine"; lfo.frequency.value = 15;
+      lfoGain = ctx.createGain(); lfoGain.gain.value = 0.3;
+      lfo.connect(lfoGain); lfoGain.connect(battito.gain);
+      lfo.start();
+
+      avviato = true;
+      regola();
+    }
+
+    function livello() {
+      if (!acceso) return 0;
+      var n = Math.min(aerei.length, 12);
+      return Math.pow(volume, 1.5) * (0.05 + n * 0.014) * (inPausa ? 0.35 : 1);
+    }
+
+    function regola() {
+      if (!ctx) return;
+      var v = motoRidotto ? 0.5 : velocita;
+      var ora = ctx.currentTime;
+      master.gain.setTargetAtTime(livello(), ora, 0.25);
+      oscA.frequency.setTargetAtTime(46 + 22 * v, ora, 0.35);
+      oscB.frequency.setTargetAtTime(59 + 27 * v, ora, 0.35);
+      lfo.frequency.setTargetAtTime(9 + 11 * v, ora, 0.35);
+    }
+
+    return {
+      attivo: function () { return acceso; },
+      accendi: function (si) {
+        acceso = si;
+        if (si) {
+          apri();
+          if (ctx && ctx.state === "suspended") ctx.resume();
+        }
+        regola();
+      },
+      volume: function (v) { volume = v; regola(); },
+      regola: regola,
+      /* una virata stretta si sente: un colpo d'aria sull'ala */
+      sbuffo: function () {
+        if (!acceso || !ctx || !avviato || document.hidden) return;
+        var ora = ctx.currentTime;
+        if (ora - ultimoSbuffo < 0.75 || Math.random() > 0.35) return;
+        ultimoSbuffo = ora;
+        var lung = Math.floor(ctx.sampleRate * 0.5);
+        var buf = ctx.createBuffer(1, lung, ctx.sampleRate);
+        var dati = buf.getChannelData(0);
+        for (var i = 0; i < lung; i++) dati[i] = (Math.random() * 2 - 1) * (1 - i / lung);
+        var src = ctx.createBufferSource(); src.buffer = buf;
+        var f = ctx.createBiquadFilter();
+        f.type = "bandpass"; f.Q.value = 1.4;
+        f.frequency.setValueAtTime(1900, ora);
+        f.frequency.exponentialRampToValueAtTime(420, ora + 0.45);
+        var g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, ora);
+        g.gain.exponentialRampToValueAtTime(Math.max(0.001, volume * 0.5), ora + 0.06);
+        g.gain.exponentialRampToValueAtTime(0.0001, ora + 0.5);
+        src.connect(f); f.connect(g); g.connect(master);
+        src.start(ora); src.stop(ora + 0.52);
+      }
+    };
+  })();
+
+  /* ---------- il volo ---------- */
+  var ultimo = performance.now();
+
+  function passo(ora) {
+    var dt = Math.min(48, ora - ultimo) / 16.6667;
+    ultimo = ora;
+    tempo += dt;
+
+    for (var i = 0; i < aerei.length; i++) {
+      var p = aerei[i];
+
+      if (!inPausa) {
+        var v = velocita * (motoRidotto ? 0.4 : 1);
+
+        /* ogni aereo cerca la sua strada: una virata lenta e sempre diversa */
+        var virata = Math.sin(tempo * p.ritmoV + p.faseV) * 0.022 * dt;
+        var c = Math.cos(virata), sn = Math.sin(virata);
+        var nvx = p.vx * c - p.vy * sn;
+        p.vy = p.vx * sn + p.vy * c;
+        p.vx = nvx;
+
+        if (puntatore.attivo) {
+          var dx = p.x - puntatore.x, dy = p.y - puntatore.y;
+          var d2 = dx * dx + dy * dy, R = 190;
+          if (d2 < R * R) {
+            var dd = Math.sqrt(d2) || 1;
+            var f = (1 - dd / R) * 0.55;
+            p.vx += (dx / dd) * f;
+            p.vy += (dy / dd) * f;
+          }
+        }
+
+        p.x += p.vx * dt * v;
+        p.y += p.vy * dt * v;
+
+        var urto = false;
+        if (p.x < p.raggio) { p.x = p.raggio; p.vx = Math.abs(p.vx); urto = true; }
+        if (p.x > L - p.raggio) { p.x = L - p.raggio; p.vx = -Math.abs(p.vx); urto = true; }
+        if (p.y < p.raggio) { p.y = p.raggio; p.vy = Math.abs(p.vy); urto = true; }
+        if (p.y > H - p.raggio) { p.y = H - p.raggio; p.vy = -Math.abs(p.vy); urto = true; }
+        if (urto) { p.vy += (Math.random() - 0.5) * 0.1; motore.sbuffo(); }
+
+        var s = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        var max = 2.6 * p.profondita, min = 0.5 * p.profondita;
+        if (s > max) { p.vx *= max / s; p.vy *= max / s; }
+        if (s < min && s > 0) { p.vx *= min / s; p.vy *= min / s; }
+
+        /* nessuno sale a picco: la rotta resta entro una trentina di gradi,
+           altrimenti lo striscione finisce per aria e non si legge piu' */
+        s = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 0.001;
+        var minVx = 0.86 * s;
+        if (Math.abs(p.vx) < minVx) {
+          p.vx = (p.vx < 0 ? -1 : 1) * minVx;
+          p.vy = (p.vy < 0 ? -1 : 1) * Math.sqrt(Math.max(0, s * s - p.vx * p.vx));
+        }
+      }
+
+      /* il muso insegue la rotta senza scatti */
+      var bersaglio = Math.atan2(p.vy, p.vx);
+      var diff = bersaglio - p.ang;
+      while (diff > Math.PI) diff -= 6.283185307;
+      while (diff < -Math.PI) diff += 6.283185307;
+      p.ang += diff * Math.min(1, 0.13 * dt);
+
+      var cx = Math.cos(p.ang);
+      var verso = cx < -0.2 ? -1 : (cx > 0.2 ? 1 : p.verso);
+      if (verso !== p.verso) { p.verso = verso; ricomponi(p); }
+
+      var gradi = p.ang * 180 / Math.PI;
+      if (p.verso === -1) gradi -= 180;
+
+      if (p.giro > 0) {
+        p.giro = Math.max(0, p.giro - dt / 70);
+        var u = 1 - p.giro;
+        gradi += 360 * u * u * (3 - 2 * u) * p.verso;
+      }
+
+      p.el.style.transform = "translate3d(" + (p.x - p.offX).toFixed(1) + "px," +
+        (p.y - p.offY).toFixed(1) + "px,0) rotate(" + gradi.toFixed(2) + "deg)";
+
+      aggiornaStriscione(p, dt);
+    }
+
+    requestAnimationFrame(passo);
+  }
+
+  /* ---------- la sala comandi ---------- */
+  var nAerei = document.getElementById("n-aerei");
+  var nVelocita = document.getElementById("n-velocita");
+  var nDimensione = document.getElementById("n-dimensione");
+  var nVolume = document.getElementById("n-volume");
+  var vAerei = document.getElementById("v-aerei");
+  var vVelocita = document.getElementById("v-velocita");
+  var vDimensione = document.getElementById("v-dimensione");
+  var vVolume = document.getElementById("v-volume");
+  var bPausa = document.getElementById("b-pausa");
+  var bRimescola = document.getElementById("b-rimescola");
+  var bMotori = document.getElementById("b-motori");
+  var campoMessaggi = document.getElementById("t-messaggi");
+  var segmenti = [].slice.call(document.querySelectorAll(".segmento"));
+  var bTutti = document.getElementById("b-tutti");
+  var bNessuno = document.getElementById("b-nessuno");
+  var bCarica = document.getElementById("b-carica");
+  var bVolti = document.getElementById("b-volti");
+  var fCarica = document.getElementById("f-carica");
+  var pannello = document.getElementById("pannello");
+  var bChiudi = document.getElementById("b-chiudi");
+  var bApri = document.getElementById("b-apri");
+
+  function moltiplicatore(x) { return (x / 10).toFixed(1).replace(".", ",") + "×"; }
+
+  function parla(testo) {
+    avviso.textContent = testo;
+    avviso.hidden = false;
+    avviso.classList.remove("spento");
+    clearTimeout(parla.t);
+    parla.t = setTimeout(function () {
+      avviso.classList.add("spento");
+      setTimeout(function () { avviso.hidden = true; }, 600);
+    }, 3600);
+  }
+
+  nAerei.addEventListener("input", function () {
+    vAerei.textContent = nAerei.value;
+    imposta(parseInt(nAerei.value, 10));
+    motore.regola();
+    salva();
+  });
+  nVelocita.addEventListener("input", function () {
+    velocita = parseInt(nVelocita.value, 10) / 10;
+    vVelocita.textContent = moltiplicatore(nVelocita.value);
+    motore.regola();
+    salva();
+  });
+  nDimensione.addEventListener("input", function () {
+    dimensione = parseInt(nDimensione.value, 10) / 10;
+    vDimensione.textContent = moltiplicatore(nDimensione.value);
+    aerei.forEach(misura);
+    salva();
+  });
+  nVolume.addEventListener("input", function () {
+    vVolume.textContent = nVolume.value;
+    motore.volume(parseInt(nVolume.value, 10) / 10);
+    salva();
+  });
+
+  bPausa.addEventListener("click", function () {
+    inPausa = !inPausa;
+    bPausa.setAttribute("aria-pressed", String(inPausa));
+    bPausa.textContent = inPausa ? "Riprendi" : "Pausa";
+    motore.regola();
+  });
+  bRimescola.addEventListener("click", rimescola);
+
+  bMotori.addEventListener("click", function () {
+    var acceso = !motore.attivo();
+    motore.accendi(acceso);
+    bMotori.setAttribute("aria-pressed", String(acceso));
+    bMotori.textContent = acceso ? "♪ Spegni i motori" : "♪ Accendi i motori";
+    avviso.hidden = true;
+    salva();
+  });
+
+  segmenti.forEach(function (b) {
+    b.addEventListener("click", function () {
+      modo = b.dataset.modo;
+      segmenti.forEach(function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+      assegnaCarichi();
+      salva();
+    });
+  });
+
+  var attesa = null;
+  campoMessaggi.addEventListener("input", function () {
+    clearTimeout(attesa);
+    attesa = setTimeout(function () { assegnaCarichi(); salva(); }, 260);
+  });
+
+  galleriaEl.addEventListener("change", function (e) {
+    var id = e.target && e.target.dataset ? e.target.dataset.id : null;
+    if (!id) return;
+    scelte[id] = e.target.checked;
+    assegnaCarichi();
+    salva();
+  });
+
+  galleriaEl.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest(".via") : null;
+    if (!b) return;
+    var id = b.dataset.via;
+    galleria = galleria.filter(function (pz) { return pz.id !== id; });
+    delete scelte[id];
+    disegnaGalleria();
+    assegnaCarichi();
+    salva();
+  });
+
+  bTutti.addEventListener("click", function () {
+    galleria.forEach(function (pz) { scelte[pz.id] = true; });
+    disegnaGalleria(); assegnaCarichi(); salva();
+  });
+  bNessuno.addEventListener("click", function () {
+    galleria.forEach(function (pz) { scelte[pz.id] = false; });
+    disegnaGalleria(); assegnaCarichi(); salva();
+  });
+  bVolti.addEventListener("click", function () {
+    galleria.forEach(function (pz) {
+      if (pz.tipo === "volto") pz.seme = Math.floor(Math.random() * 1e9);
+    });
+    disegnaGalleria(); assegnaCarichi(); salva();
+  });
+
+  bCarica.addEventListener("click", function () { fCarica.click(); });
+  fCarica.addEventListener("change", function () {
+    var elenco = [].slice.call(fCarica.files || []);
+    if (!elenco.length) return;
+    var rimasti = elenco.length;
+    elenco.forEach(function (file) {
+      riduci(file, function (dati) {
+        rimasti--;
+        if (dati) {
+          var id = "u" + Date.now() + Math.floor(Math.random() * 1000);
+          galleria.push({ id: id, tipo: "immagine", nome: file.name, dati: dati });
+          scelte[id] = true;
+        }
+        if (!rimasti) {
+          disegnaGalleria();
+          assegnaCarichi();
+          salva();
+          parla("In coda ci sono anche i tuoi.");
+        }
+      });
+    });
+    fCarica.value = "";
+  });
+
+  /* le immagini caricate diventano piccole: bastano 240px per una medaglia */
+  function riduci(file, fatto) {
+    if (!/^image\//.test(file.type)) { fatto(null); return; }
+    var lettore = new FileReader();
+    lettore.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var lato = 240;
+        var tela = document.createElement("canvas");
+        tela.width = lato; tela.height = lato;
+        var g = tela.getContext("2d");
+        var scala = Math.max(lato / img.width, lato / img.height);
+        var w = img.width * scala, h = img.height * scala;
+        var trasparente = /png|webp|gif|svg/.test(file.type);
+        if (!trasparente) { g.fillStyle = "#FDF6E7"; g.fillRect(0, 0, lato, lato); }
+        g.drawImage(img, (lato - w) / 2, (lato - h) / 2, w, h);
+        try {
+          fatto(tela.toDataURL(trasparente ? "image/png" : "image/jpeg", 0.84));
+        } catch (e) { fatto(null); }
+      };
+      img.onerror = function () { fatto(null); };
+      img.src = lettore.result;
+    };
+    lettore.onerror = function () { fatto(null); };
+    lettore.readAsDataURL(file);
+  }
+
+  function chiudiPannello(chiuso) {
+    pannello.dataset.chiuso = String(chiuso);
+    bApri.hidden = !chiuso;
+    if (!chiuso) bChiudi.focus();
+  }
+  bChiudi.addEventListener("click", function () { chiudiPannello(true); bApri.focus(); });
+  bApri.addEventListener("click", function () { chiudiPannello(false); });
+
+  window.addEventListener("resize", function () {
+    L = window.innerWidth; H = window.innerHeight;
+    aerei.forEach(function (p) {
+      misura(p);
+      p.x = Math.min(Math.max(p.x, p.raggio), L - p.raggio);
+      p.y = Math.min(Math.max(p.y, p.raggio), H - p.raggio);
+    });
+  });
+
+  window.addEventListener("pointermove", function (e) {
+    if (e.target.closest && e.target.closest(".pannello, .testata, .apri")) {
+      puntatore.attivo = false;
+      return;
+    }
+    puntatore.x = e.clientX; puntatore.y = e.clientY; puntatore.attivo = true;
+  });
+  window.addEventListener("pointerleave", function () { puntatore.attivo = false; });
+
+  /* un clic sull'aereo e quello ti fa il giro della morte */
+  window.addEventListener("pointerdown", function (e) {
+    if (e.target.closest && e.target.closest(".pannello, .testata, .apri")) return;
+    var scelto = null, piu = 1e9;
+    for (var i = 0; i < aerei.length; i++) {
+      var p = aerei[i];
+      var d = Math.hypot(p.x - e.clientX, p.y - e.clientY);
+      if (d < p.raggio * 1.5 && d < piu) { piu = d; scelto = p; }
+    }
+    if (scelto && !scelto.giro) { scelto.giro = 1; motore.sbuffo(); }
+  });
+
+  /* ---------- memoria ---------- */
+  function salva() {
+    var dati = {
+      numero: parseInt(nAerei.value, 10),
+      velocita: parseInt(nVelocita.value, 10),
+      dimensione: parseInt(nDimensione.value, 10),
+      volume: parseInt(nVolume.value, 10),
+      motori: motore.attivo(),
+      modo: modo,
+      messaggi: campoMessaggi.value,
+      scelte: scelte,
+      volti: galleria.filter(function (p) { return p.tipo === "volto"; }),
+      loghi: galleria.filter(function (p) { return p.tipo === "immagine"; })
+    };
+    try {
+      localStorage.setItem(CHIAVE, JSON.stringify(dati));
+    } catch (e) {
+      try {
+        dati.loghi = [];
+        localStorage.setItem(CHIAVE, JSON.stringify(dati));
+        parla("Non c'e' spazio per ricordare i loghi: restano solo per questa visita.");
+      } catch (e2) { /* pazienza */ }
+    }
+  }
+
+  function carica() {
+    try { return JSON.parse(localStorage.getItem(CHIAVE) || "null"); }
+    catch (e) { return null; }
+  }
+
+  /* ---------- si parte ---------- */
+  var memoria = carica();
+  if (memoria) {
+    if (memoria.numero) nAerei.value = memoria.numero;
+    if (memoria.velocita != null) nVelocita.value = memoria.velocita;
+    if (memoria.dimensione) nDimensione.value = memoria.dimensione;
+    if (memoria.volume != null) nVolume.value = memoria.volume;
+    if (typeof memoria.messaggi === "string") campoMessaggi.value = memoria.messaggi;
+    if (memoria.modo) modo = memoria.modo;
+    if (memoria.scelte) scelte = memoria.scelte;
+    galleria = (memoria.volti && memoria.volti.length ? memoria.volti : nuoviVolti(8))
+      .concat(memoria.loghi || []);
+  } else {
+    galleria = nuoviVolti(8);
+  }
+
+  velocita = parseInt(nVelocita.value, 10) / 10;
+  dimensione = parseInt(nDimensione.value, 10) / 10;
+  vAerei.textContent = nAerei.value;
+  vVelocita.textContent = moltiplicatore(nVelocita.value);
+  vDimensione.textContent = moltiplicatore(nDimensione.value);
+  vVolume.textContent = nVolume.value;
+  segmenti.forEach(function (o) { o.setAttribute("aria-pressed", String(o.dataset.modo === modo)); });
+  motore.volume(parseInt(nVolume.value, 10) / 10);
+
+  disegnaGalleria();
+  imposta(parseInt(nAerei.value, 10));
+  if (window.innerWidth <= 900) chiudiPannello(true);
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { misure = {}; assegnaCarichi(); });
+  }
+
+  if (motoRidotto) {
+    inPausa = true;
+    bPausa.textContent = "Riprendi";
+    bPausa.setAttribute("aria-pressed", "true");
+    avviso.hidden = true;
+  } else {
+    /* i motori partono al primo tocco: i browser non lasciano suonare prima */
+    motore.accendi(true);
+    bMotori.setAttribute("aria-pressed", "true");
+    bMotori.textContent = "♪ Spegni i motori";
+    ["pointerdown", "keydown", "touchstart", "wheel"].forEach(function (ev) {
+      window.addEventListener(ev, function accendi() {
+        window.removeEventListener(ev, accendi);
+        if (motore.attivo()) motore.accendi(true);
+        avviso.classList.add("spento");
+        setTimeout(function () { avviso.hidden = true; }, 600);
+      }, { once: true });
+    });
+  }
+
+  requestAnimationFrame(passo);
+})();
+</script>
