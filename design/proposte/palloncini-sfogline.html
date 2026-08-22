@@ -502,14 +502,11 @@
   }
 
   var FRASI = [
-    "guarda come volo",
-    "ohhh che bellooooo",
-    "vieni anche tuuuuu",
-    "su dai vieni che ci divertiamooooo",
-    "che bella sfoglia",
-    "ancora un giroooo",
-    "evviva laccademia della sfoglia",
-    "evviva la sfoglia"
+    "viva la sfoglia!",
+    "oOOooh che bello",
+    "che bella sfoglia!",
+    "su dai vieni che ci divertiamo!",
+    "guarda come volo!"
   ];
 
   /* ---------- suono: risatine e tuc dei palloncini, sintetizzati ---------- */
@@ -960,7 +957,7 @@
       scrivi(nas, function (g) { return g.nas; });
 
       /* --- la linea del tono: una curva sola per tutta la frase --- */
-      var esclama = /evviva|ohh/.test(testo.toLowerCase());
+      var esclama = testo.indexOf("!") >= 0 || /viva|ohh|ooh/.test(testo.toLowerCase());
       var partenza = esclama ? 1.1 : 1.05, calo = esclama ? 0.28 : 0.22;
       for (i = 0; i < n; i++) {
         var uf = Math.min(1, (i / sr) / Math.max(0.2, fine));
@@ -1062,15 +1059,16 @@
         for (var q = 0; q < n; q++) { y = aa * y + (1 - aa) * arr[q]; arr[q] = y; }
       }
       lisc(amp, 0.009); lisc(voz, 0.011); lisc(rum, 0.004);
-      lisc(amp, 0.004); lisc(voz, 0.004);
+      lisc(amp, 0.006); lisc(voz, 0.006);
       lisc(bF, 0.004); lisc(bQ, 0.004);
 
       /* --- sintesi --- */
       var poli = [{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0}];
       var banda = { y1: 0, y2: 0 };
       var fase = 0, nn = 0, prec = 0, drift = 0, zx1 = 0, zx2 = 0;
-      var morbido = 0, kMorbido = 1 - Math.exp(-2 * Math.PI * 3400 / sr);
-      var cima = 0, kCima = 1 - Math.exp(-2 * Math.PI * 7800 / sr);
+      var morbido = 0, kMorbido = 1 - Math.exp(-2 * Math.PI * 2900 / sr);
+      var fase2 = 0, nn2 = 0;   /* la seconda corda, appena scordata */
+      var cima = 0, kCima = 1 - Math.exp(-2 * Math.PI * 6800 / sr);
       var a1 = [], a2 = [], A = [], gn = 0, thz = 0, ba1 = 0, ba2 = 0, bA = 0;
       for (i = 0; i < n; i++) {
         if (i % 24 === 0) {
@@ -1090,14 +1088,18 @@
         if (i % 200 === 0) drift = drift * 0.93 + gauss() * 0.003;
         var f0 = tono[i] * (1 + drift + 0.008 * Math.sin(2 * Math.PI * 4.8 * i / sr));
         if (fase <= 0) { fase = sr / f0 * (1 + gauss() * 0.010); nn = 0; }
-        var T1 = fase * 0.44, T2 = fase * 0.16, g = 0;
+        if (fase2 <= 0) { fase2 = sr / (f0 * 1.006) * (1 + gauss() * 0.008); nn2 = 0; }
+        var T1 = fase * 0.48, T2 = fase * 0.22, g = 0;
         if (nn < T1) g = 0.5 * (1 - Math.cos(Math.PI * nn / T1));
         else if (nn < T1 + T2) g = Math.cos(Math.PI * (nn - T1) / (2 * T2));
-        nn++; fase--;
+        var U1 = fase2 * 0.48, U2 = fase2 * 0.22, g2 = 0;
+        if (nn2 < U1) g2 = 0.5 * (1 - Math.cos(Math.PI * nn2 / U1));
+        else if (nn2 < U1 + U2) g2 = Math.cos(Math.PI * (nn2 - U1) / (2 * U2));
+        nn++; fase--; nn2++; fase2--;
 
         /* le armoniche della voce: un polo dolce le arrotonda, cosi' il
            timbro non frigge e le vocali si fondono meglio */
-        var crudo = (g + (Math.random() * 2 - 1) * 0.03) * voz[i] * amp[i];
+        var crudo = ((g + g2 * 0.14) / 1.14 + (Math.random() * 2 - 1) * 0.02) * voz[i] * amp[i];
         morbido += (crudo - morbido) * kMorbido;
         var x = morbido;
         if (gn > 0) {
@@ -1117,7 +1119,7 @@
         var yb = bA * bianco + ba1 * banda.y1 + ba2 * banda.y2;
         banda.y2 = banda.y1; banda.y1 = yb;
         var somma = orale + nsl * gn * 0.6 + yb * 0.9;
-        var irradiata = somma - 0.96 * prec;
+        var irradiata = somma - 0.9 * prec;
         prec = somma;
         cima += (irradiata - cima) * kCima;   /* via il frizzo in cima */
         out[i] = cima;
