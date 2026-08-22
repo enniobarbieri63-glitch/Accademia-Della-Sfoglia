@@ -1160,50 +1160,45 @@ richiede di impastare, tirare, fotografare. Scrivere due righe di consiglio e cu
 non dovrebbero valere uguale. Portare il consiglio a 10 punti riequilibrerebbe, ma è una
 scelta di gioco: **non farla senza che Ennio l'abbia chiesta esplicitamente.**
 
-## F2 · Le foto del Tavolo di Lavoro devono restare dentro il gaming — e oggi non è così
+## F2 · CHIUSO — le foto non sono materiale riservato
 
-> **Ennio ha risposto il 22/08/2026: «le foto delle sfogline nel Tavolo di Lavoro
-> rimangono all'interno del gaming».** Questa è l'intenzione. Il codice non la rispetta.
+> **Ennio, 22/08/2026: «le foto non sono cosa segreta».**
+> **Questa è una risposta completa e chiude il punto.** Il lavoro grosso ipotizzato nella
+> prima stesura — spostare gli allegati fuori da `uploads/` e servirli da un endpoint con
+> controllo dei permessi — **non va fatto.** Non proporlo, non iniziarlo, non rimetterlo
+> in lista a un giro successivo.
 
-**Stato:** il meccanismo è VERIFICATO; **quanto sia facile arrivarci da fuori è DA
-VERIFICARE con la prova di trenta secondi qui sotto.**
+**Stato:** decisione presa. Resta solo del lavoro di parole, più una correzione facoltativa.
 
-### Cosa succede oggi
+### Perché la risposta chiude davvero il punto
 
-Tutti gli allegati passano da `media_handle_upload()` (`includes/media-msg.php:45`), che
-li deposita in `/wp-content/uploads/AAAA/MM/`. **Quella cartella è servita direttamente
-dal web server: WordPress non viene nemmeno interpellato**, quindi nessun controllo di
-permesso del plugin la tocca. Chi ha l'indirizzo del file lo apre, collegato o no.
+Il "problema" era **solo** lo scarto tra quello che i testi promettevano e quello che il
+codice faceva. Tolta la promessa, non resta niente da difendere: le foto delle sfoglie
+sono già pubbliche per costruzione (Galleria, Vetrina), e quelle del Tavolo di Lavoro
+sono foto di sfoglia stesa, non documenti personali. Un indirizzo lungo e non pubblicizzato
+è una protezione proporzionata a quel contenuto.
 
-Riguarda: le foto del Tavolo di Lavoro, gli audio del Matterello Parlante, i media
-allegati ai messaggi privati e alle conversazioni con gli esperti, le foto del diario.
+Questo è **il modo giusto di chiudere un rilievo di sicurezza**: non tutto ciò che è
+raggiungibile è un problema. Lo diventa quando qualcuno si è fidato di una promessa
+diversa.
 
-**Aggravante da verificare:** gli allegati sono creati con `media_handle_upload( $field, 0 )`
-— genitore `0`, cioè "orfani" — e **il plugin non disattiva le pagine allegato di
-WordPress**. Se sono attive, `?attachment_id=N` con N che scorre da 1 in su permette di
-sfogliare *tutti* i media del sito uno dopo l'altro, senza indovinare nessun nome di file.
-La differenza è enorme: «serve avere il link» è un conto, «si scorrono tutti con un
-contatore» è un altro.
+### Cosa resta da fare, ed è poco
 
-### La prova di trenta secondi, da fare prima di scrivere una riga di codice
+**1 · Allineare i testi — è l'unica cosa necessaria.**
+Nel riquadro del Tavolo di Lavoro la sezione è presentata come *"foto del giorno,
+privata"*. La parola «privata» promette più di quanto il sito mantenga e va sostituita.
+Formula suggerita: **«la vedono solo le sfogline iscritte e i maestri»** — vera, chiara,
+e non fa promesse sul file.
 
-1. Da collegata, aprire una foto del Tavolo di Lavoro e **copiarne l'indirizzo**
-   (tasto destro → Copia indirizzo immagine).
-2. Aprire una **finestra in incognito** e incollare quell'indirizzo.
-   - Si vede la foto → confermato: gli allegati sono pubblici.
-3. Sempre in incognito, provare `https://accademiadellasfoglia.it/?attachment_id=1000`
-   e poi 1001, 1002…
-   - Si vedono le foto → **le pagine allegato sono attive: i media sono enumerabili.**
-   - Esce 404 → l'enumerazione è chiusa, resta solo il punto 2.
+Cercare la parola in `includes/tavolo.php` (testo di `gs_sezione_aiuto()`) e nel
+docblock in cima al file, e correggere entrambe. **Da proporre a Ennio prima di
+applicare**: è testo che leggono le sfogline, non codice.
 
-**Riportare l'esito prima di proporre qualsiasi correzione.** Le due risposte portano a
-due lavori di dimensioni molto diverse.
-
-### Correzione, in due tempi
-
-**Tempo 1 — subito, se il punto 3 mostra le foto.** Rimandare le pagine allegato alla
-home invece di mostrarle. Poche righe in `helpers.php`, nessun rischio, chiude
-l'enumerazione:
+**2 · Bloccare le pagine allegato — facoltativa, ma conviene.**
+Indipendentemente dalla riservatezza, oggi `?attachment_id=N` (se attivo sul tema in uso)
+permette di sfogliare **tutti** i media del sito con un contatore. Anche per contenuti non
+segreti è una porta che non serve a niente: nessuna pagina del plugin usa le pagine
+allegato. Chiuderla costa dieci righe e toglie una via di enumerazione:
 
 ```php
 add_action( 'template_redirect', 'gs_blocca_pagine_allegato' );
@@ -1211,69 +1206,115 @@ function gs_blocca_pagine_allegato() {
     if ( ! is_attachment() ) {
         return;
     }
-    // Chi gestisce il portale continua a vederle dal wp-admin.
     if ( function_exists( 'gs_can_manage' ) && gs_can_manage() ) {
-        return;
+        return; // chi gestisce continua a vederle dal wp-admin
     }
     wp_safe_redirect( home_url( '/' ), 301 );
     exit;
 }
 ```
 
-Attenzione: **non chiude il punto 2.** Il file resta raggiungibile al suo indirizzo
-diretto. Chiude solo la possibilità di trovarlo scorrendo i numeri.
+**Priorità bassa**, in fondo al Blocco E. Prima verificare su Local che nessuna pagina del
+sito usi i link agli allegati, altrimenti si rompono dei collegamenti.
 
-**Tempo 2 — la consegna protetta, solo se Ennio la vuole davvero.** Per far corrispondere
-il codice all'intenzione («restano dentro il gaming») servirebbe: salvare gli allegati
-delle sezioni riservate **fuori** da `uploads/`, e consegnarli tramite un endpoint del
-plugin che controlla i permessi prima di leggere il file (lo schema c'è già ed è
-collaudato: `gs_ajax_fe_backup_download()` in `media-backup.php:270`, che fa esattamente
-questo per i backup).
+### Un limite di questa decisione, da rileggere se cambia qualcosa
 
-**È un lavoro grosso, non una correzione**, e va detto chiaramente prima di iniziare:
-- tocca ogni sezione che accetta media (Tavolo, Matterello, messaggi, conversazioni, diario);
-- **le foto già caricate restano dove sono**: o si migrano, o si convive con due sistemi;
-- si perdono le miniature automatiche di WordPress e la compressione già impostata, che
-  vanno rifatte a mano;
-- se il sito ha una cache o una CDN davanti, va verificato che non memorizzi le risposte
-  protette servendole poi a chi non deve.
+La risposta di Ennio riguardava **le foto del Tavolo di Lavoro**. Gli allegati passano
+tutti dallo stesso tubo (`gs_msg_upload()`, `includes/media-msg.php:16`), quindi la stessa
+conclusione si estende automaticamente a: foto e video dei **messaggi privati**, audio del
+**Matterello Parlante**, media del **Diario**, allegati delle **conversazioni con gli
+esperti** (quelle a pagamento, con i token).
 
-**Raccomandazione: fare il Tempo 1 adesso** (è dentro il Blocco E per dimensione: poche
-righe, nessun rischio) **e portare a Ennio il Tempo 2 come proposta separata**, con il
-suo costo scritto, dopo che i blocchi A, B e C sono in produzione. Non iniziarlo dentro
-questa revisione.
+**Presumi che valga per tutti** — è la lettura ragionevole della risposta, ed è quella da
+seguire. Ma se in futuro qualcuno chiede di allegare un documento davvero personale a una
+consulenza privata, **quel giorno il discorso si riapre**, perché il tubo è lo stesso e la
+protezione è la stessa: nessuna. Lasciato scritto qui perché la prossima revisione lo
+ritrovi invece di riscoprirlo da capo.
 
-### Nel frattempo, una cosa che costa zero
+## F3 · La protezione dei backup: non stare a indovinare, cambia il nome del file
 
-Finché il Tempo 2 non è fatto, **il testo della sezione non deve promettere più di quello
-che il codice mantiene**. Oggi il Tavolo di Lavoro è descritto come *"foto del giorno,
-privata"*. È vero rispetto alle altre sfogline; non è vero rispetto a chi ha il link.
-Basta una frase più esatta nel testo di aiuto — «la vedi solo tu e i maestri» invece di
-«privata» — e la promessa torna a corrispondere alla realtà. **Questa è una correzione di
-parole, da proporre a Ennio, non da applicare da soli.**
+**File:** `includes/media-backup.php:108-122` (`gs_backup_prepara_dir()`),
+`includes/media-backup.php:143` (nome del file)
+**Stato:** meccanismo VERIFICATO; l'ambiente resta incerto — **e la conclusione è che non
+conviene accertarlo.**
 
-## F3 · DA VERIFICARE — la protezione dei backup funziona solo su Apache
-
-**File:** `includes/media-backup.php:108-122` (`gs_backup_prepara_dir()`) — DA VERIFICARE
+### Il fatto
 
 La cartella dei backup è protetta scrivendoci dentro un `.htaccess` con `Deny from all`.
-**`.htaccess` è ignorato da nginx e da LiteSpeed**, molto comuni sull'hosting italiano.
+**`.htaccess` è un file di configurazione di Apache: nginx lo ignora completamente.**
+Se i file `.zip` sono serviti da nginx senza passare da Apache, quella protezione non
+esiste — e i backup contengono **tutte le foto delle sfoglie**, comprese quelle nel cestino.
 
-Se il sito gira su nginx, i file `backup-AAAA-MM-GG-HHMMSS.zip` — che contengono **tutte
-le foto delle sfoglie**, comprese quelle nel cestino — sono scaricabili da chiunque
-indovini il nome. Il nome contiene l'orario al secondo: sono 86.400 tentativi per una
-data nota, cioè poche ore di richieste automatiche.
+Il nome è prevedibile: `backup-AAAA-MM-GG-HHMMSS.zip`. Nota una data e ti restano 86.400
+possibilità: poche ore di tentativi automatici.
 
-**Da verificare per primo:** su che web server gira il sito. Ennio lo sa, o si legge in
-Diagnostica. **Se è Apache, non c'è niente da fare.** Se è nginx:
+### Sull'hosting — chiarimento del 22/08/2026
 
-**Correzione:** dare al file un nome imprevedibile —
-`'backup-' . date( 'Y-m-d-His' ) . '-' . wp_generate_password( 12, false ) . '.zip'` —
-e adeguare di conseguenza sia il `preg_match` di `gs_ajax_fe_backup_download`
-(riga 275) sia `gs_backup_lista()`. È una correzione da mezz'ora che rende inutile
-indovinare, indipendentemente dal web server. La soluzione completa (spostare i backup
-fuori dalla document root) è più solida ma richiede di sapere dov'è scrivibile sul
-server: da valutare insieme, non da decidere da soli.
+Ennio ha risposto «hosting SeedProd». **SeedProd non è un hosting: è un plugin WordPress**
+per pagine di atterraggio e modalità "sito in costruzione". Probabilmente è installato sul
+sito, ma non dice niente su dove il sito è ospitato.
+
+**L'indizio vero è nella schermata che Ennio ha mandato**: nella barra di amministrazione
+in alto si legge **«Pulisci la Cache SG»**, che è il pulsante del plugin *SiteGround
+Optimizer*. **Il sito è quasi certamente su SiteGround.**
+
+E qui sta il punto: **SiteGround non dà una risposta netta.** Il loro stack mette nginx
+davanti ad Apache — le richieste PHP passano da Apache (quindi `.htaccess` funziona), ma i
+**file statici**, e uno `.zip` lo è, possono essere consegnati direttamente da nginx senza
+mai arrivare ad Apache. Dipende dalla configurazione del singolo piano, e cambia nel tempo
+senza che il cliente ne sia informato.
+
+### Conclusione operativa: rendere la domanda irrilevante
+
+Accertare la configurazione richiede una prova sul sito vero, e **la risposta potrebbe
+cambiare al prossimo aggiornamento dell'hosting, senza preavviso.** Una protezione che
+dipende da come è configurato il server oggi non è una protezione: è una scommessa.
+
+**Correzione: dare al backup un nome che non si può indovinare.** Mezz'ora di lavoro, e
+funziona identica su Apache, su nginx e su qualunque cosa SiteGround decida domani.
+
+In `gs_run_backup()`, riga 143:
+
+```php
+$nome = 'backup-' . date( 'Y-m-d-His' ) . '-' . wp_generate_password( 16, false ) . '.zip';
+```
+
+Poi **adeguare i due punti che riconoscono quel nome**, altrimenti i backup nuovi
+diventano invisibili e non scaricabili:
+
+1. `gs_ajax_fe_backup_download()`, riga 275 — il controllo del nome:
+   ```php
+   if ( ! preg_match( '/^backup-[0-9-]+-[A-Za-z0-9]{16}\.zip$/', $nome ) ) { wp_die( 'File non valido.' ); }
+   ```
+   Tenere anche il vecchio schema in alternativa (`|^backup-[0-9-]+\.zip$`), altrimenti i
+   backup già presenti sul sito smettono di essere scaricabili.
+2. `gs_backup_lista()` — verificare che il filtro con cui elenca i file della cartella
+   accetti il nome nuovo. **Provarlo su Local prima di consegnare: è il punto che si rompe
+   se qualcosa va storto.**
+
+Lasciare il `.htaccess` dov'è: su Apache continua a fare il suo lavoro, e non dà fastidio
+altrove. Le due protezioni si sommano.
+
+### Mentre ci sei: far dire alla Diagnostica su cosa gira il sito
+
+Nella prima stesura avevo scritto che il web server si legge dalla Diagnostica.
+**Non è vero: `includes/diagnostica.php` non lo mostra** (controlla cron, permalink,
+pagine, cartella caricamenti, ZipArchive, GD, mbstring, ffmpeg — non il server).
+
+Visto che la domanda è saltata fuori e tornerà, aggiungere una riga a `gs_diag_stato()`
+costa sei righe e la chiude per sempre:
+
+```php
+$server = isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : '';
+$righe[] = array(
+    'label'     => 'Web server',
+    'stato'     => $server ? 'ok' : 'warn',
+    'dettaglio' => $server ? $server : 'Non dichiarato dal server.',
+);
+```
+
+Utile ben oltre i backup: è la prima cosa che serve sapere ogni volta che qualcosa si
+comporta diversamente dal previsto sull'hosting.
 
 ## F4 · Minore — chiunque sia collegato può gonfiare il contatore di lettura dell'Aeroplanino
 
@@ -1496,8 +1537,8 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 | E5 | Nonce scaduto = polling muto | `gaming.js` (6 punti) | Medio | Verificato · nuovo |
 | E6 | CSV senza protezione formule | `export-dati.php:133` | Basso | Verificato · nuovo |
 | **F1** | **Punti coltivabili scrivendo → Buono** | `forms.php:56,125` | **Alto** | Verificato · **deciso** |
-| F2 | Foto del Tavolo raggiungibili da fuori | `media-msg.php:45` | Medio | Meccanismo verificato · **prova da fare** |
-| F3 | `.htaccess` inutile su nginx | `media-backup.php:113` | ? | **Da verificare** |
+| F2 | Foto raggiungibili da fuori | `media-msg.php:45` | — | **Chiuso: non sono riservate** |
+| F3 | Nome del backup indovinabile | `media-backup.php:143` | Medio | Verificato · **deciso** |
 | F4 | Contatore Aeroplanino gonfiabile | `volo-notifiche.php:821` | Basso | Verificato · nuovo |
 | G1 | 10 funzioni mai chiamate | vari | Basso | Verificato |
 | **G2** | **48 pillole con 8 nomi inventati, in vetrina** | `nastro-vetrine.php:260` | **CRITICO** | **Visto in produzione** |
@@ -1521,9 +1562,15 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
   tetto e **ha delegato la scelta**. → Decisa e scritta per esteso in F1: *«ogni cosa dà
   punti una volta al giorno»*, applicata alle sole due fonti scoperte (diario e consigli).
   Non toccare la soglia dei 2.500 finché non si è visto un mese vero.
-- **Quanto sono private le foto del Tavolo di Lavoro?** Ennio: *«rimangono all'interno del
-  gaming»*. → Questa è l'intenzione, e **il codice oggi non la rispetta**. Vedi F2: c'è una
-  prova da 30 secondi da fare prima di decidere quanto lavoro serve.
+- **Quanto sono private le foto del Tavolo di Lavoro?** Ennio, seconda risposta:
+  *«le foto non sono cosa segreta»*. → **F2 è chiuso.** Il lavoro grosso (consegna
+  protetta) **non va fatto**: resta solo da correggere la parola «privata» nei testi, più
+  un blocco facoltativo delle pagine allegato. Vale per tutti gli allegati, non solo il Tavolo.
+- **Su che hosting gira il sito?** Ennio ha detto «SeedProd», che però è un plugin, non un
+  hosting. La sua schermata mostra «Pulisci la Cache SG»: **è SiteGround**, dove la
+  risposta su `.htaccess` è ambigua per costruzione. → **F3 è chiuso senza bisogno di
+  accertarlo**: si cambia il nome del backup in uno non indovinabile e la domanda diventa
+  irrilevante su qualunque server.
 
 ## Ancora aperte — servono prima di scrivere il codice
 
@@ -1531,8 +1578,7 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
    annulla lo sconto applicato? Pulsante dedicato o correzione a mano dalla scheda?
 2. **A5** — Va bene che palloncini e aeroplanini possano comparire fino a mezzo minuto
    dopo l'invio, invece di quindici secondi?
-3. **F3** — Su che web server gira il sito, Apache o nginx? Decide se i backup sono
-   davvero protetti.
+*(Nessun'altra domanda aperta: F2 e F3 sono state chiuse il 22/08/2026.)*
 
 ## Ordine rivisto dopo le conferme del 22/08/2026
 
@@ -1542,8 +1588,9 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 | **1** | A3 + A3-bis | Costo pagato a ogni visita, confermato acceso. |
 | 2 | A1 | Errore contabile, ma scatta solo il 1° del mese. |
 | 3 | A2, A5, B1, B2, B5 | Soldi e carico. |
-| 4 | F1 + F2 (solo Tempo 1) | Prima che venga assegnato il Buono del mese. |
-| 5 | il resto, nell'ordine del documento | |
+| 4 | F1 | Prima che venga assegnato il Buono di questo mese. |
+| 5 | F3 + testi di F2 | Mezz'ora in tutto, chiude due punti. |
+| 6 | il resto, nell'ordine del documento | |
 
 # Limiti di questa analisi
 
