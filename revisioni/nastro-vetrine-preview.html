@@ -1,0 +1,698 @@
+<title>Il Nastro delle Vetrine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+/* ============================================================
+   TOKEN — palette chiara completa su :root nudo
+   ============================================================ */
+:root {
+  --ground:   #e9ecf0;
+  --surface:  #ffffff;
+  --surface-2:#f3f5f8;
+  --line:     #d5dae1;
+  --line-soft:#e6eaef;
+  --ink:      #1a1f26;
+  --ink-2:    #4d5763;
+  --ink-3:    #78838f;
+  --accent:   #1d4f7c;
+  --accent-2: #2f6fa5;
+  --accent-wash:#e4edf5;
+  --warn:     #8f5a0e;
+  --warn-wash:#f7ecd8;
+  --crit:     #9a3529;
+  --crit-wash:#f8e5e2;
+  --shadow:   0 1px 2px rgba(20,30,45,.06), 0 6px 20px rgba(20,30,45,.07);
+  --shadow-lg:0 2px 6px rgba(20,30,45,.08), 0 20px 50px rgba(20,30,45,.13);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:   #14171b;
+    --surface:  #1c2026;
+    --surface-2:#232830;
+    --line:     #333a44;
+    --line-soft:#282e37;
+    --ink:      #e8ecf1;
+    --ink-2:    #a8b2be;
+    --ink-3:    #7b8592;
+    --accent:   #79b3e2;
+    --accent-2: #9dc9ee;
+    --accent-wash:#1d2c3a;
+    --warn:     #d9a441;
+    --warn-wash:#332a17;
+    --crit:     #e08574;
+    --crit-wash:#3a221e;
+    --shadow:   0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.3);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.45), 0 20px 50px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:   #14171b;
+  --surface:  #1c2026;
+  --surface-2:#232830;
+  --line:     #333a44;
+  --line-soft:#282e37;
+  --ink:      #e8ecf1;
+  --ink-2:    #a8b2be;
+  --ink-3:    #7b8592;
+  --accent:   #79b3e2;
+  --accent-2: #9dc9ee;
+  --accent-wash:#1d2c3a;
+  --warn:     #d9a441;
+  --warn-wash:#332a17;
+  --crit:     #e08574;
+  --crit-wash:#3a221e;
+  --shadow:   0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.3);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.45), 0 20px 50px rgba(0,0,0,.45);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 96px; }
+h1, h2, h3 { font-family: "Fraunces", Georgia, "Times New Roman", serif; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+code, .mono {
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .86em;
+}
+a { color: var(--accent); }
+
+/* ---- intestazione ---- */
+.head { padding: 72px 0 40px; display: flex; flex-direction: column; gap: 20px; }
+.eyebrow {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+h1 { font-size: clamp(38px, 6.5vw, 62px); font-weight: 600; line-height: 1.03; letter-spacing: -.02em; }
+.lead { font-size: 19px; line-height: 1.55; color: var(--ink-2); max-width: 62ch; }
+.lead strong { color: var(--ink); font-weight: 600; }
+
+/* ---- sezioni ---- */
+section { margin-top: 64px; display: flex; flex-direction: column; gap: 18px; }
+h2 { font-size: 27px; font-weight: 600; letter-spacing: -.01em; }
+h3 { font-size: 18px; font-weight: 600; font-family: "IBM Plex Sans", sans-serif; letter-spacing: -.005em; }
+section > p { max-width: 66ch; color: var(--ink-2); }
+section > p strong { color: var(--ink); font-weight: 600; }
+
+/* ---- callout ---- */
+.note {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-wash);
+  padding: 16px 20px; border-radius: 0 8px 8px 0;
+  display: flex; flex-direction: column; gap: 8px;
+  font-size: 15px; color: var(--ink-2); max-width: 68ch;
+}
+.note.warn { border-left-color: var(--warn); background: var(--warn-wash); }
+.note.crit { border-left-color: var(--crit); background: var(--crit-wash); }
+.note b { color: var(--ink); }
+
+/* ---- blocco codice ---- */
+pre {
+  margin: 0; background: var(--surface-2); border: 1px solid var(--line-soft);
+  border-radius: 10px; padding: 16px 18px; overflow-x: auto;
+  font-family: "IBM Plex Mono", monospace; font-size: 13px; line-height: 1.75; color: var(--ink-2);
+}
+pre .k { color: var(--accent); }
+pre .c { color: var(--ink-3); font-style: italic; }
+pre .hl { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   MOCK BROWSER
+   ============================================================ */
+.demo-frame {
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  background: var(--surface); box-shadow: var(--shadow-lg);
+}
+.chrome {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+.dots { display: flex; gap: 6px; }
+.dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: block; }
+.urlbar {
+  flex: 1; background: var(--surface); border: 1px solid var(--line-soft); border-radius: 6px;
+  padding: 4px 11px; font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--ink-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* la finestra scorrevole che simula la pagina */
+.viewport {
+  height: 430px; overflow-y: auto; overflow-x: hidden;
+  background: #fdfcfa; position: relative;
+  scrollbar-width: thin;
+}
+
+/* menu finto del tema (sticky = il menu fisso del tema Newspaper) */
+.site-menu {
+  position: sticky; top: 0; z-index: 40;
+  background: #2c2418; color: #f0e6d2;
+  display: flex; align-items: center; gap: 18px;
+  padding: 0 18px; height: 46px;
+}
+.site-menu .brand {
+  font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 14px;
+  letter-spacing: .02em; color: #d9b45f; white-space: nowrap;
+}
+.site-menu nav { display: flex; gap: 15px; font-size: 11.5px; opacity: .82; }
+
+/* pagina finta */
+.page-body { padding: 26px 26px 40px; }
+.page-body .ph-title {
+  font-family: "Fraunces", Georgia, serif; font-size: 22px; font-weight: 600;
+  color: #3b2f20; margin-bottom: 14px;
+}
+.ph-line { height: 9px; border-radius: 4px; background: #ece3d4; margin-bottom: 9px; }
+.ph-img { height: 108px; border-radius: 8px; background: #e3d8c4; margin: 18px 0; }
+.scroll-hint {
+  position: absolute; right: 14px; bottom: 12px; z-index: 60;
+  background: rgba(28,32,38,.86); color: #fff; font-size: 11px; font-weight: 500;
+  padding: 5px 11px; border-radius: 999px; pointer-events: none;
+  transition: opacity .35s; letter-spacing: .01em;
+}
+.viewport.scrolled .scroll-hint { opacity: 0; }
+
+/* ============================================================
+   IL NASTRO — valori presi da assets/css/gaming.css:2176-2226
+   Colori del plugin, non della pagina: è uno specimen, resta
+   identico in tema chiaro e scuro perché così lo vedono i visitatori.
+   ============================================================ */
+.gs-nastro-fisso {
+  position: sticky; top: 46px; z-index: 30;   /* nel sito vero: position:fixed; top: --gs-header-h */
+  background: linear-gradient(180deg, #fffaf0, #f3e5c7);
+  border-bottom: 1px solid #e3d5b8;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  overflow: hidden; padding: 8px 12px;
+}
+.gs-nastro-pista {
+  display: flex; gap: 12px; width: max-content;
+  animation: gs-nastro-scorre 42s linear infinite;
+}
+.gs-nastro-pista + .gs-nastro-pista { margin-top: 8px; }
+.gs-nastro-pista-dx { animation-name: gs-nastro-scorre-dx; }
+.gs-nastro-fisso:hover .gs-nastro-pista { animation-play-state: paused; }
+@keyframes gs-nastro-scorre    { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+@keyframes gs-nastro-scorre-dx { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+.gs-pillola-nastro {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 9px;
+  background: #fff; border: 1px solid #e3d5b8; border-radius: 999px;
+  padding: 5px 16px 5px 5px; text-decoration: none; color: #4a3a28;
+  transition: border-color .15s, box-shadow .15s;
+}
+.gs-pillola-nastro:hover { border-color: #bd8a13; box-shadow: 0 3px 10px rgba(0,0,0,.08); }
+.gs-ph-nastro {
+  width: 30px; height: 30px; border-radius: 50%; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff; background-size: cover; background-position: center;
+}
+.gs-nastro-nome { font-weight: 700; font-size: 12.5px; white-space: nowrap; }
+.gs-nastro-tag {
+  font-size: 9px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  padding: 1px 7px; border-radius: 999px; white-space: nowrap;
+}
+.gs-nastro-tag-sfoglina  { background: #f2e6d2; color: #b5722a; }
+.gs-nastro-tag-artigiano { background: #e6efe0; color: #1f6e37; }
+.gs-nastro-tag-scuola    { background: #fbf0d6; color: #bd8a13; }
+.gs-nastro-tag-sponsor   { background: #f5e6c0; color: #8f6a10; }
+.gs-nastro-tag-fondatore { background: #f0dcc4; color: #7a3d33; }
+
+/* modalità "grande" — gaming.css:2220-2225 */
+.gs-nastro-modalita-grande { padding: 12px; }
+.gs-nastro-modalita-grande .gs-nastro-pista { gap: 16px; }
+.gs-nastro-modalita-grande .gs-pillola-nastro { gap: 13px; padding: 8px 22px 8px 8px; }
+.gs-nastro-modalita-grande .gs-ph-nastro { width: 44px; height: 44px; font-size: 20px; }
+.gs-nastro-modalita-grande .gs-nastro-nome { font-size: 17px; }
+.gs-nastro-modalita-grande .gs-nastro-tag { font-size: 12px; padding: 3px 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-nastro-pista { animation: none; }
+}
+
+/* ---- comandi della demo ---- */
+.controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 13px 16px; background: var(--surface-2); border-top: 1px solid var(--line);
+}
+.controls .lbl { font-size: 12px; font-weight: 600; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; }
+.seg { display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 2px; gap: 2px; }
+.seg button {
+  font: inherit; font-size: 13px; font-weight: 500; border: 0; cursor: pointer;
+  background: transparent; color: var(--ink-2); padding: 5px 13px; border-radius: 6px;
+  transition: background .14s, color .14s;
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.seg button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+
+.caption {
+  font-size: 13.5px; color: var(--ink-3); max-width: 68ch;
+  display: flex; gap: 9px; align-items: flex-start;
+}
+.caption::before {
+  content: ""; flex: 0 0 auto; width: 2px; align-self: stretch;
+  background: var(--line); border-radius: 2px;
+}
+
+/* ---- anatomia della pillola ---- */
+.anatomy {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  padding: 26px 24px; display: flex; flex-direction: column; gap: 22px;
+  box-shadow: var(--shadow);
+}
+.anatomy-stage {
+  background: linear-gradient(180deg, #fffaf0, #f3e5c7);
+  border: 1px solid #e3d5b8; border-radius: 10px;
+  padding: 26px 20px; display: flex; justify-content: center;
+}
+.anatomy-list { display: grid; gap: 0; }
+.anatomy-list > div {
+  display: grid; grid-template-columns: 132px 1fr; gap: 16px;
+  padding: 11px 0; border-top: 1px solid var(--line-soft); font-size: 14.5px;
+}
+.anatomy-list > div:first-child { border-top: 0; }
+.anatomy-list dt, .anatomy-list .t {
+  font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent);
+  padding-top: 2px; word-break: break-word;
+}
+.anatomy-list .d { color: var(--ink-2); }
+
+/* ---- tabella costi ---- */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 520px; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+thead th {
+  font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3);
+  font-weight: 600; background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+tbody tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", monospace; font-size: 13px; white-space: nowrap; }
+tr.total td { background: var(--crit-wash); font-weight: 600; color: var(--ink); }
+
+/* ---- pillola di stato ---- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 999px; letter-spacing: .02em; white-space: nowrap;
+}
+.chip.on  { background: var(--crit-wash); color: var(--crit); }
+.chip.off { background: var(--surface-2); color: var(--ink-3); border: 1px solid var(--line); }
+
+/* ---- checklist finale ---- */
+.steps { display: flex; flex-direction: column; gap: 2px; counter-reset: s; }
+.steps > li {
+  list-style: none; counter-increment: s; display: grid;
+  grid-template-columns: 30px 1fr; gap: 14px; padding: 14px 0;
+  border-top: 1px solid var(--line-soft); font-size: 15px; color: var(--ink-2);
+}
+.steps > li:first-child { border-top: 0; }
+.steps > li::before {
+  content: counter(s); font-family: "IBM Plex Mono", monospace; font-size: 12px; font-weight: 500;
+  color: var(--accent); background: var(--accent-wash); border-radius: 50%;
+  width: 24px; height: 24px; display: grid; place-items: center; margin-top: 1px;
+}
+.steps b { color: var(--ink); font-weight: 600; }
+ul.plain { margin: 0; padding-left: 20px; color: var(--ink-2); font-size: 15px; display: flex; flex-direction: column; gap: 7px; }
+ul.plain b { color: var(--ink); font-weight: 600; }
+
+footer.doc {
+  margin-top: 72px; padding-top: 22px; border-top: 1px solid var(--line);
+  font-size: 13px; color: var(--ink-3); display: flex; flex-direction: column; gap: 6px;
+}
+
+@media (max-width: 620px) {
+  .wrap { padding: 0 18px 72px; }
+  .head { padding: 48px 0 30px; }
+  .anatomy-list > div { grid-template-columns: 1fr; gap: 4px; }
+  .viewport { height: 380px; }
+  .gs-nastro-nome { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+}
+</style>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="eyebrow">gaming-sfogline 3.271.0 · nastro-vetrine.php</div>
+    <h1>Il Nastro delle&nbsp;Vetrine</h1>
+    <p class="lead">
+      È la striscia di nomi che scorre <strong>in cima a ogni pagina del sito</strong>, subito sotto
+      il menu. Nel documento l'ho chiamata «agganciata al footer» — ed è lì che nasce la confusione:
+      <strong>il footer è dove il codice la stampa, non dove si vede.</strong>
+      Qui sotto c'è com'è fatta davvero, e perché quel dettaglio conta.
+    </p>
+  </header>
+
+  <!-- ========================================================
+       1. DOV'È
+       ======================================================== -->
+  <section>
+    <h2>Dov'è, davvero</h2>
+    <p>
+      Questa è una riproduzione fedele: stessi colori, stesse dimensioni, stessa velocità
+      (un giro completo in 42 secondi) del codice vero.
+      <strong>Scorri dentro la finestra qui sotto</strong> — il nastro resta incollato sotto il menu
+      mentre la pagina scivola via.
+    </p>
+
+    <div class="demo-frame">
+      <div class="chrome">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="urlbar">accademiadellasfoglia.it &nbsp;·&nbsp; una pagina qualsiasi del sito</div>
+      </div>
+
+      <div class="viewport" id="vp">
+        <div class="site-menu">
+          <span class="brand">ACCADEMIA DELLA SFOGLIA</span>
+          <nav><span>Corsi</span><span>Chi siamo</span><span>Blog</span><span>Contatti</span></nav>
+        </div>
+
+        <div class="gs-nastro-fisso" id="nastro">
+          <div class="gs-nastro-pista" id="pistaSx"></div>
+          <div class="gs-nastro-pista gs-nastro-pista-dx" id="pistaDx"></div>
+        </div>
+
+        <div class="page-body">
+          <div class="ph-title">Corso Base di Sfoglia — le date di settembre</div>
+          <div class="ph-line" style="width:100%"></div>
+          <div class="ph-line" style="width:96%"></div>
+          <div class="ph-line" style="width:88%"></div>
+          <div class="ph-img"></div>
+          <div class="ph-line" style="width:100%"></div>
+          <div class="ph-line" style="width:93%"></div>
+          <div class="ph-line" style="width:97%"></div>
+          <div class="ph-line" style="width:71%"></div>
+          <div class="ph-img" style="height:84px"></div>
+          <div class="ph-line" style="width:100%"></div>
+          <div class="ph-line" style="width:90%"></div>
+          <div class="ph-line" style="width:64%"></div>
+        </div>
+
+        <div class="scroll-hint" id="hint">↓ scorri qui dentro</div>
+      </div>
+
+      <div class="controls">
+        <span class="lbl">Modalità</span>
+        <div class="seg" role="group" aria-label="Modalità del nastro">
+          <button type="button" data-mode="doppio"  aria-pressed="true">Doppio</button>
+          <button type="button" data-mode="singolo" aria-pressed="false">Singolo</button>
+          <button type="button" data-mode="grande"  aria-pressed="false">Grande</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">
+      I tre pulsanti sono l'impostazione vera <span class="mono">nastro_modalita</span> del pannello
+      Caroselli: due file che scorrono in direzioni opposte, una fila sola, o una fila sola ingrandita
+      di circa una volta e mezza. Passa il mouse sul nastro e si ferma — è il comportamento del codice,
+      non un'aggiunta mia.
+    </p>
+
+    <div class="note">
+      <b>Nomi di esempio.</b>
+      <span>
+        «Ennio Barbieri · Fondatore» e «Mulino Marino · Partner» sono gli unici due nomi scritti
+        davvero dentro il codice: il primo è aggiunto sempre in testa, il secondo si ripete tra un
+        nome e l'altro. Tutti gli altri sono segnaposto — nel sito vero al loro posto compaiono le
+        sfogline con la Vetrina attiva, gli Artigiani della Pasta e le Scuole di Cucina pubblicati,
+        alternati a turno, fino a un massimo di 18.
+      </span>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       2. ANATOMIA
+       ======================================================== -->
+  <section>
+    <h2>Com'è fatta una pillola</h2>
+    <p>
+      Ogni voce del nastro è un link a forma di pillola, montato da
+      <span class="mono">gs_nastro_pillola_render()</span>. Quattro pezzi, sempre gli stessi:
+    </p>
+
+    <div class="anatomy">
+      <div class="anatomy-stage">
+        <a class="gs-pillola-nastro" href="#anatomia" style="pointer-events:none">
+          <span class="gs-ph-nastro" style="background:linear-gradient(150deg,#cd8b0c,#a8712a)">🧑‍🍳</span>
+          <span class="gs-nastro-nome">Nome della sfoglina</span>
+          <span class="gs-nastro-tag gs-nastro-tag-sfoglina">Sfoglina</span>
+        </a>
+      </div>
+
+      <div class="anatomy-list">
+        <div><span class="t">.gs-ph-nastro</span><span class="d">La foto della biografia. Se non c'è, un cerchio colorato con un'emoji: terracotta per le sfogline, verde per gli artigiani, oro per le scuole.</span></div>
+        <div><span class="t">.gs-nastro-nome</span><span class="d">Il nome visualizzato, in grassetto, su una riga sola.</span></div>
+        <div><span class="t">.gs-nastro-tag</span><span class="d">L'etichetta del tipo: Sfoglina, Artigiano, Scuola, Partner o Fondatore. Ognuna ha il suo colore.</span></div>
+        <div><span class="t">href</span><span class="d">Il link: la Vetrina pubblica della sfoglina, la scheda dell'artigiano o della scuola. Lo sponsor apre in una scheda nuova.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       3. IL MALINTESO
+       ======================================================== -->
+  <section>
+    <h2>Perché avevo scritto «footer»</h2>
+    <p>
+      Perché è il nome del gancio che WordPress usa per stampare quel pezzo di pagina. Ma il codice
+      usa quel gancio solo come <em>momento</em> in cui scrivere l'HTML: dove la striscia si vede
+      lo decide il CSS, e il CSS la inchioda in alto.
+    </p>
+
+    <pre><span class="c">// includes/nastro-vetrine.php:44 — QUANDO viene stampata</span>
+add_action( <span class="hl">'wp_footer'</span>, 'gs_render_nastro_vetrine' );
+
+<span class="c">/* assets/css/gaming.css:2176 — DOVE si vede */</span>
+.gs-nastro-fisso {
+  position: <span class="hl">fixed</span> !important;
+  top: <span class="hl">var( --gs-header-h, 0px )</span> !important;   <span class="c">/* = subito sotto il menu */</span>
+  left: 0 !important; right: 0 !important;
+  z-index: 99000 !important;
+}</pre>
+
+    <p>
+      <span class="mono">wp_footer</span> è l'ultimo gancio disponibile prima della chiusura della
+      pagina: è il posto giusto per stampare qualcosa che deve esistere ovunque. Poi
+      <span class="mono">position: fixed</span> la stacca dal flusso e la porta in cima.
+      <strong>La conclusione tecnica non cambia di una virgola</strong> — «gira su ogni pagina del
+      sito» resta vero — ma la parola «footer» era fuorviante, e avevi ragione a fermarti.
+    </p>
+
+    <div class="note">
+      <b>Un dettaglio che dice quanto è pervasiva.</b>
+      <span>
+        Il CSS contiene la riga <span class="mono">body.page-id-64342 #gs-nastro-fisso { display: none !important; }</span>
+        — è stato necessario nascondere il nastro <em>a mano</em>, su una pagina precisa (Le Sfogline),
+        perché lì c'era già la versione grande e le due si sovrapponevano. Si spegne per esclusione,
+        pagina per pagina: di suo c'è dappertutto.
+      </span>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       4. IL COSTO
+       ======================================================== -->
+  <section>
+    <h2>Cosa succede a ogni visita</h2>
+    <p>
+      Ed è qui che il «su ogni pagina» diventa un problema. Prima di disegnare quelle diciotto
+      pillole, il codice rifà ogni volta tutto il conto da capo — <strong>senza nessuna
+      memoria</strong> di averlo già fatto un secondo prima per il visitatore precedente:
+    </p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Operazione</th><th>Per quante righe</th><th style="width:98px">Letture</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono">get_users()</span> senza limite<br><span style="color:var(--ink-3);font-size:13px">tutta la tabella utenti, ordinata per nome</span></td>
+            <td>ogni account del sito</td><td class="num">1 query</td>
+          </tr>
+          <tr>
+            <td><span class="mono">gs_e_sfoglina_vera()</span><br><span style="color:var(--ink-3);font-size:13px">è davvero una sfoglina?</span></td>
+            <td>per <em>ogni</em> account</td><td class="num">3 + ruoli</td>
+          </tr>
+          <tr>
+            <td><span class="mono">gs_vetrina_disponibile()</span></td>
+            <td>per ogni account</td><td class="num">2</td>
+          </tr>
+          <tr>
+            <td><span class="mono">gs_get_level()</span> · <span class="mono">gs_bio_foto_url()</span> · <span class="mono">gs_vetrina_url()</span></td>
+            <td>per ogni account</td><td class="num">3</td>
+          </tr>
+          <tr>
+            <td><span class="mono">gs_art_elenco()</span> + <span class="mono">gs_scu_elenco()</span><br><span style="color:var(--ink-3);font-size:13px">artigiani e scuole, senza limite</span></td>
+            <td>tutti, più i loro dati</td><td class="num">2 query +</td>
+          </tr>
+          <tr class="total">
+            <td colspan="2">A ogni singola visualizzazione di pagina, per chiunque — anche chi non è collegato, anche Google che passa</td>
+            <td class="num">tutto</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="caption">
+      Per fare un paragone: la Classifica del Mese, che la revisione precedente aveva indicato come
+      «di gran lunga la cosa più pesante del plugin», fa un conto simile 180 volte l'ora — ma solo
+      se qualcuno sta fermo su quella pagina. Il Nastro lo fa una volta per <em>ogni pagina aperta
+      da chiunque</em>, ovunque nel sito.
+    </p>
+
+    <div class="note crit">
+      <b>La correzione è piccola: una memoria di quindici minuti.</b>
+      <span>
+        Un <span class="mono">transient</span> che conserva l'elenco già montato e lo riusa per le
+        visite successive. Qui la memoria è la scelta giusta e non contraddice la regola della Torre
+        di controllo: il Nastro è una vetrina che scorre, non un numero che qualcuno guarda per
+        decidere se agire. Una sfoglina nuova che compare un quarto d'ora dopo non fa male a nessuno.
+      </span>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       5. È ACCESO?
+       ======================================================== -->
+  <section>
+    <h2>Ma è acceso, sul sito vero?</h2>
+    <p>
+      Questa è l'unica cosa che non posso sapere dal codice, ed è la domanda che cambia tutto.
+      Il nastro è protetto da un interruttore che <strong>di partenza è spento</strong>:
+    </p>
+
+    <pre><span class="c">// includes/nastro-vetrine.php:48</span>
+if ( empty( $cfg['nastro_attivo'] ) ) {
+    return;   <span class="c">// interruttore spento: non fa proprio niente</span>
+}</pre>
+
+    <ul class="plain">
+      <li><span class="chip off">spento</span> &nbsp;<b>Il problema è solo potenziale.</b> Scende in fondo alla lista: si corregge con calma, prima che qualcuno lo accenda senza sapere cosa comporta.</li>
+      <li><span class="chip on">acceso</span> &nbsp;<b>Diventa la prima correzione in assoluto</b>, prima ancora della chiusura del mese: è un peso che il sito paga adesso, a ogni visita, tutto il giorno.</li>
+    </ul>
+
+    <h3 style="margin-top:14px">Come guardarlo, in trenta secondi</h3>
+    <ol class="steps">
+      <li><b>Apri il sito da una scheda in incognito</b> (così sei un visitatore qualsiasi, non il titolare).</li>
+      <li><b>Guarda in cima, sotto il menu.</b> Se vedi la striscia crema con i nomi che scorrono, è acceso. Se non c'è, è spento.</li>
+      <li>Per conferma: <b>Pannello → Caroselli per la Home Page → Nastro delle Vetrine</b>, la casella «Attivo».</li>
+    </ol>
+
+    <div class="note warn">
+      <b>Mentre sei in quel pannello, una cosa da sapere.</b>
+      <span>
+        Le tre caselle <em>Sfogline</em>, <em>Scuole</em> e <em>Negozi</em> che stanno lì accanto
+        <strong>oggi non fanno niente</strong>: il valore viene salvato correttamente, ma la funzione
+        che monta il nastro non lo legge mai. Togliere la spunta a «Scuole» non toglie le scuole dal
+        nastro. È il punto <span class="mono">D3</span> del documento — correzione da poche righe,
+        ma va fatta dopo quella della memoria, per non toccare due volte la stessa funzione.
+      </span>
+    </div>
+  </section>
+
+  <footer class="doc">
+    <div>Riproduzione fedele di <span class="mono">includes/nastro-vetrine.php</span> e <span class="mono">assets/css/gaming.css:2174-2226</span> — gaming-sfogline 3.271.0.</div>
+    <div>Il plugin non è stato eseguito: colori, misure e velocità sono letti dal codice, non misurati su un sito vero.</div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Le due voci realmente scritte nel codice, più segnaposto per il resto.
+     Nessun nome di persona inventato: sarebbe esattamente il problema
+     segnalato al punto G2 del documento. */
+  var FONDATORE = { tipo: 'fondatore', tag: 'Fondatore', nome: 'Ennio Barbieri', sim: '⭐', col: 'linear-gradient(150deg,#8a5a3c,#6b4126)' };
+  var SPONSOR   = { tipo: 'sponsor',   tag: 'Partner',   nome: 'Mulino Marino',  sim: '🌾', col: 'linear-gradient(150deg,#c9a227,#8f6a10)' };
+
+  var VOCI = [
+    { tipo:'sfoglina',  tag:'Sfoglina',  nome:'Sfoglina con Vetrina attiva', sim:'🧑‍🍳', col:'linear-gradient(150deg,#cd8b0c,#a8712a)' },
+    { tipo:'artigiano', tag:'Artigiano', nome:'Artigiano della Pasta',       sim:'🍝',   col:'linear-gradient(150deg,#1f6e37,#144d27)' },
+    { tipo:'scuola',    tag:'Scuola',    nome:'Scuola di Cucina',            sim:'🎓',   col:'linear-gradient(150deg,#bd8a13,#8f6a10)' },
+    { tipo:'sfoglina',  tag:'Sfoglina',  nome:'Seconda sfoglina',            sim:'🧑‍🍳', col:'linear-gradient(150deg,#cd8b0c,#a8712a)' },
+    { tipo:'artigiano', tag:'Artigiano', nome:'Secondo artigiano',           sim:'🍝',   col:'linear-gradient(150deg,#1f6e37,#144d27)' },
+    { tipo:'scuola',    tag:'Scuola',    nome:'Seconda scuola',              sim:'🎓',   col:'linear-gradient(150deg,#bd8a13,#8f6a10)' },
+    { tipo:'sfoglina',  tag:'Sfoglina',  nome:'Terza sfoglina',              sim:'🧑‍🍳', col:'linear-gradient(150deg,#cd8b0c,#a8712a)' }
+  ];
+
+  function pillola(v) {
+    var a = document.createElement('a');
+    a.className = 'gs-pillola-nastro';
+    a.href = '#';
+    a.setAttribute('tabindex', '-1');
+    a.addEventListener('click', function (e) { e.preventDefault(); });
+
+    var ph = document.createElement('span');
+    ph.className = 'gs-ph-nastro';
+    ph.style.background = v.col;
+    ph.textContent = v.sim;
+
+    var nome = document.createElement('span');
+    nome.className = 'gs-nastro-nome';
+    nome.textContent = v.nome;
+
+    var tag = document.createElement('span');
+    tag.className = 'gs-nastro-tag gs-nastro-tag-' + v.tipo;
+    tag.textContent = v.tag;
+
+    a.appendChild(ph); a.appendChild(nome); a.appendChild(tag);
+    return a;
+  }
+
+  /* gs_nastro_intervalla(): lo sponsor dopo OGNI voce. */
+  function intervalla(voci) {
+    var out = [];
+    for (var i = 0; i < voci.length; i++) { out.push(voci[i]); out.push(SPONSOR); }
+    return out;
+  }
+
+  function riempi(el, voci) {
+    el.textContent = '';
+    var lista = intervalla(voci);
+    /* due giri, come nel PHP: serve a far tornare il ciclo di translateX(-50%) */
+    for (var giro = 0; giro < 2; giro++) {
+      for (var i = 0; i < lista.length; i++) { el.appendChild(pillola(lista[i])); }
+    }
+  }
+
+  var sx = document.getElementById('pistaSx');
+  var dx = document.getElementById('pistaDx');
+  var conVoci = [FONDATORE].concat(VOCI);          // array_unshift() del PHP
+  riempi(sx, conVoci);
+  riempi(dx, conVoci.slice().reverse());           // la seconda fila è invertita
+
+  /* --- modalità --- */
+  var nastro = document.getElementById('nastro');
+  var bottoni = document.querySelectorAll('.seg button');
+
+  function applica(mode) {
+    nastro.classList.toggle('gs-nastro-modalita-grande', mode === 'grande');
+    dx.style.display = (mode === 'doppio') ? '' : 'none';
+    for (var i = 0; i < bottoni.length; i++) {
+      bottoni[i].setAttribute('aria-pressed', String(bottoni[i].dataset.mode === mode));
+    }
+  }
+  for (var i = 0; i < bottoni.length; i++) {
+    bottoni[i].addEventListener('click', function () { applica(this.dataset.mode); });
+  }
+
+  /* --- il suggerimento «scorri» sparisce al primo scorrimento --- */
+  var vp = document.getElementById('vp');
+  vp.addEventListener('scroll', function () {
+    if (vp.scrollTop > 8) { vp.classList.add('scrolled'); }
+  }, { passive: true });
+})();
+</script>
