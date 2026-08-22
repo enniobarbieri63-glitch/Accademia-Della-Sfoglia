@@ -351,6 +351,15 @@ footer.doc {
       <strong>il footer è dove il codice la stampa, non dove si vede.</strong>
       Qui sotto c'è com'è fatta davvero, e perché quel dettaglio conta.
     </p>
+    <div class="note crit" style="max-width:none">
+      <b>Confermato acceso — 22 agosto 2026</b>
+      <span>
+        Ennio ha verificato sul sito: il nastro è <b>attivo, a corsia singola</b>. Non è più un
+        problema potenziale. Con la conferma cadono anche due ipotesi che avevo lasciato aperte —
+        la corsia singola <b>non ha alleggerito niente</b> sul server, e sulla pagina «Le Sfogline»
+        il conto viene fatto <b>due volte</b>. Le trovi spiegate in fondo.
+      </span>
+    </div>
   </header>
 
   <!-- ========================================================
@@ -404,9 +413,9 @@ footer.doc {
       <div class="controls">
         <span class="lbl">Modalità</span>
         <div class="seg" role="group" aria-label="Modalità del nastro">
-          <button type="button" data-mode="doppio"  aria-pressed="true">Doppio</button>
+          <button type="button" data-mode="doppio"  aria-pressed="false">Doppio</button>
           <button type="button" data-mode="singolo" aria-pressed="false">Singolo</button>
-          <button type="button" data-mode="grande"  aria-pressed="false">Grande</button>
+          <button type="button" data-mode="grande"  aria-pressed="true">Grande <span style="opacity:.7;font-size:11px">· sul sito</span></button>
         </div>
       </div>
     </div>
@@ -566,37 +575,108 @@ add_action( <span class="hl">'wp_footer'</span>, 'gs_render_nastro_vetrine' );
        5. È ACCESO?
        ======================================================== -->
   <section>
-    <h2>Ma è acceso, sul sito vero?</h2>
+    <h2>Due sorprese, ora che so com'è impostato</h2>
+
+    <h3>1. La corsia singola non ha alleggerito niente</h3>
     <p>
-      Questa è l'unica cosa che non posso sapere dal codice, ed è la domanda che cambia tutto.
-      Il nastro è protetto da un interruttore che <strong>di partenza è spento</strong>:
+      Verrebbe da pensare che una fila invece di due costi la metà. Non è così, e il motivo sta
+      tutto nell'ordine di tre righe:
     </p>
 
-    <pre><span class="c">// includes/nastro-vetrine.php:48</span>
-if ( empty( $cfg['nastro_attivo'] ) ) {
-    return;   <span class="c">// interruttore spento: non fa proprio niente</span>
+    <pre>$voci = <span class="hl">gs_nastro_raccogli_voci</span>( $cfg['nastro_max'], $cfg );   <span class="c">// riga 59 ← il costo è TUTTO qui</span>
+
+$modalita = $cfg['nastro_modalita'];                            <span class="c">// riga 85 ← letta DOPO</span>
+
+if ( 'doppio' === $modalita ) {                                 <span class="c">// riga 101</span>
+    $voci_dx = gs_nastro_intervalla( <span class="hl">array_reverse</span>( $voci ), $sponsor );  <span class="c">// nessuna query in più</span>
 }</pre>
 
-    <ul class="plain">
-      <li><span class="chip off">spento</span> &nbsp;<b>Il problema è solo potenziale.</b> Scende in fondo alla lista: si corregge con calma, prima che qualcuno lo accenda senza sapere cosa comporta.</li>
-      <li><span class="chip on">acceso</span> &nbsp;<b>Diventa la prima correzione in assoluto</b>, prima ancora della chiusura del mese: è un peso che il sito paga adesso, a ogni visita, tutto il giorno.</li>
-    </ul>
+    <p>
+      La raccolta dei dati avviene <strong>prima</strong> che la modalità venga letta, e la seconda
+      fila riusa lo stesso elenco già in memoria. <strong>Corsia singola = stesse identiche query,
+      metà dell'HTML.</strong> Il risparmio è qualche kilobyte di pagina, zero sul database.
+    </p>
 
-    <h3 style="margin-top:14px">Come guardarlo, in trenta secondi</h3>
-    <ol class="steps">
-      <li><b>Apri il sito da una scheda in incognito</b> (così sei un visitatore qualsiasi, non il titolare).</li>
-      <li><b>Guarda in cima, sotto il menu.</b> Se vedi la striscia crema con i nomi che scorrono, è acceso. Se non c'è, è spento.</li>
-      <li>Per conferma: <b>Pannello → Caroselli per la Home Page → Nastro delle Vetrine</b>, la casella «Attivo».</li>
-    </ol>
+    <h3 style="margin-top:12px">2. Su «Le Sfogline» il conto si fa due volte</h3>
+    <p>
+      Su <span class="mono">/le-sfogline/</span> il nastro piccolo non si vede, perché lì c'è già
+      quello grande. Ma è nascosto <strong>solo dal CSS</strong>:
+    </p>
+
+    <pre><span class="c">/* assets/css/gaming.css:2174 */</span>
+body.page-id-64342 #gs-nastro-fisso { <span class="hl">display: none</span> !important; }</pre>
+
+    <p>
+      Il PHP non ha nessun controllo di pagina: su quella pagina <strong>fa comunque la scansione
+      completa, monta tutto l'HTML, e il browser lo butta via senza disegnarlo</strong>. Poi il
+      nastro grande ne fa <strong>una seconda</strong>, sua. Due scansioni della tabella utenti per
+      ogni visita, di cui una interamente sprecata.
+    </p>
+
+    <div class="note">
+      <b>Si risolve con due righe di PHP</b>, non di CSS: un
+      <span class="mono">is_page( get_option( 'gs_page_sfogline' ) )</span> all'inizio della
+      funzione, e la riga 2174 del CSS diventa superflua. Usando l'opzione e non il numero 64342
+      scritto a mano, che su Local è diverso.
+    </div>
+  </section>
+
+  <!-- ========================================================
+       6. LE SFOGLINE INVENTATE
+       ======================================================== -->
+  <section>
+    <h2>E poi c'è la cosa da fare stasera</h2>
+    <p>
+      Nella schermata di <span class="mono">/le-sfogline/</span> i nomi che si leggono sono
+      <em>Elena Marchetti, Paola Ricci, Anna Conti, Federica Bianchi, Silvia Ferraris,
+      Chiara Bellini</em>. <strong>Non esistono.</strong> Sono otto nomi inventati scritti dentro
+      il codice il 17 agosto, come riempitivo temporaneo:
+    </p>
+
+    <pre><span class="c">// includes/nastro-vetrine.php:259 — INIZIO DATI DEMO TEMPORANEI</span>
+$nomi_demo = array( 'Marta Colombo', 'Federica Bianchi', 'Silvia Ferraris',
+                    'Chiara Bellini', 'Elena Marchetti', 'Paola Ricci',
+                    'Anna Conti', 'Laura Moretti' );
+foreach ( $nomi_demo as $nome ) {
+    $sfogline[] = array( 'nome' =&gt; $nome, 'tag' =&gt; 'Sfoglina', 'foto' =&gt; '', <span class="hl">'url' =&gt; '#'</span> );
+}</pre>
+
+    <p>
+      Il commento sopra dice testualmente <em>«vanno tolti… non appena Ennio lo chiede»</em>.
+      Sono attaccati <strong>in coda</strong> all'elenco, dopo le sfogline vere — che sono poche —
+      quindi occupano proprio la parte che si vede. Ogni riga stampa l'elenco due volte, su tre
+      righe: <strong>48 pillole finte</strong> in una pagina sola, ognuna con
+      <span class="mono">url = '#'</span>, cioè anche link morti.
+    </p>
+
+    <div class="note crit">
+      <b>È l'unica correzione di tutto il lavoro che si può fare senza aspettare risposte.</b>
+      <span>
+        Sei righe da cancellare, nient'altro. Il controllo subito sotto
+        (<span class="mono">if ( ! $sfogline ) return '';</span>) gestisce già il caso in cui,
+        tolti i falsi, non resti nessuno: il nastro grande semplicemente non compare, invece di
+        comparire vuoto. Non può rompere niente, e toglie dal sito pubblico l'unica cosa che
+        davvero non dovrebbe esserci.
+      </span>
+    </div>
+
+    <h3 style="margin-top:14px">Un difetto minore che si vede nella stessa schermata</h3>
+    <p>
+      La prima e la terza riga del nastro grande sono <strong>identiche e perfettamente
+      sincronizzate</strong> — stesso contenuto, stessa direzione, stessa durata, partite insieme.
+      Non sembra un effetto voluto, sembra la pagina disegnata due volte. Si sistema sfasando la
+      terza di mezzo giro (<span class="mono">animation-delay: -75s</span>), ma è estetica: dopo
+      tutto il resto.
+    </p>
 
     <div class="note warn">
-      <b>Mentre sei in quel pannello, una cosa da sapere.</b>
+      <b>Un'ultima cosa sul pannello Caroselli.</b>
       <span>
-        Le tre caselle <em>Sfogline</em>, <em>Scuole</em> e <em>Negozi</em> che stanno lì accanto
-        <strong>oggi non fanno niente</strong>: il valore viene salvato correttamente, ma la funzione
-        che monta il nastro non lo legge mai. Togliere la spunta a «Scuole» non toglie le scuole dal
-        nastro. È il punto <span class="mono">D3</span> del documento — correzione da poche righe,
-        ma va fatta dopo quella della memoria, per non toccare due volte la stessa funzione.
+        Le tre caselle <em>Sfogline</em>, <em>Scuole</em> e <em>Negozi</em>
+        <strong>oggi non fanno niente</strong>: il valore viene salvato correttamente, ma la
+        funzione che monta il nastro non lo legge mai. Togliere la spunta a «Scuole» non toglie le
+        scuole dal nastro. È il punto <span class="mono">D3</span> — poche righe, da fare dopo
+        quella della memoria per non toccare due volte la stessa funzione.
       </span>
     </div>
   </section>
@@ -673,6 +753,7 @@ if ( empty( $cfg['nastro_attivo'] ) ) {
   var conVoci = [FONDATORE].concat(VOCI);          // array_unshift() del PHP
   riempi(sx, conVoci);
   riempi(dx, conVoci.slice().reverse());           // la seconda fila è invertita
+  var MODE_INIZIALE = 'grande';                    // com'è impostato il sito vero
 
   /* --- modalità --- */
   var nastro = document.getElementById('nastro');
@@ -688,6 +769,7 @@ if ( empty( $cfg['nastro_attivo'] ) ) {
   for (var i = 0; i < bottoni.length; i++) {
     bottoni[i].addEventListener('click', function () { applica(this.dataset.mode); });
   }
+  applica(MODE_INIZIALE);
 
   /* --- il suggerimento «scorri» sparisce al primo scorrimento --- */
   var vp = document.getElementById('vp');

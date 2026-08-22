@@ -34,8 +34,14 @@ Il tuo compito è **applicare le correzioni qui sotto, una per volta**.
 
 ### Ordine di esecuzione consigliato
 
-- **Giro 1** → Blocco A (contabilità e carico). È quello che oggi può far perdere soldi
-  o mandare in ginocchio l'hosting.
+> **Rivisto il 22/08/2026 dopo le conferme di Ennio sul sito vero.**
+> **Giro 0 → G2 e basta.** Togliere gli otto nomi inventati dalla pagina «Le Sfogline»:
+> sei righe da cancellare, nessun rischio, e leva subito dal sito pubblico delle persone
+> che non esistono. Poi fermati e consegna: è una cosa sola e va vista in produzione.
+> Subito dopo, **A3 + A3-bis**, che ora sono confermati accesi e costano a ogni visita.
+
+- **Giro 1** → il resto del Blocco A (contabilità e carico). È quello che oggi può far
+  perdere soldi o mandare in ginocchio l'hosting.
 - **Giro 2** → Blocco B (lo stesso difetto di A1 ripetuto in altri 6 punti) + Blocco C (cron).
 - **Giro 3** → Blocchi D ed E (interruttori morti e bug puntuali).
 - **Giro 4** → Blocco G (codice morto), solo dopo che tutto il resto è in produzione e stabile.
@@ -200,12 +206,25 @@ scheda personale. Chiedere a Ennio quale delle due preferisce **prima** di scriv
 
 ---
 
-## A3 · ALTO — Il Nastro delle Vetrine scansiona tutta la tabella utenti a ogni pagina del sito
+## A3 · CRITICO — Il Nastro delle Vetrine scansiona tutta la tabella utenti a ogni pagina del sito
+
+> **QUESTA È LA PRIMA COSA DA CORREGGERE, PRIMA ANCORA DI A1.**
+> Nella prima stesura questo punto era condizionato a un interruttore che di default è
+> spento. **Ennio ha confermato il 22/08/2026 che il Nastro è acceso sul sito vero**
+> (`accademiadellasfoglia.it`), in modalità a corsia singola. Non è più un problema
+> potenziale: è un costo che il sito paga adesso, a ogni visita, tutto il giorno.
 
 **File:** `includes/nastro-vetrine.php:44` (`add_action( 'wp_footer', 'gs_render_nastro_vetrine' )`),
 `includes/nastro-vetrine.php:132-138` (`gs_nastro_raccogli_voci()`)
-**Stato:** VERIFICATO nel codice — **non era nella revisione precedente**.
-L'entità dipende da un interruttore: vedi "Prima di correggere".
+**Stato:** VERIFICATO nel codice + **confermato acceso in produzione**
+
+### Nota sul nome: «footer» è fuorviante
+
+Il gancio è `wp_footer`, ma questo dice solo **quando** l'HTML viene stampato. Dove si
+vede lo decide il CSS (`assets/css/gaming.css:2176`):
+`position: fixed !important; top: var( --gs-header-h, 0px ) !important;`.
+**La striscia compare in cima a ogni pagina, fissa sotto il menu del tema** — non in fondo.
+Non cambia niente sulla sostanza tecnica; cambia solo come descriverlo a Ennio.
 
 ### Cosa succede oggi
 
@@ -236,13 +255,64 @@ di gran lunga il percorso più caro del plugin — molto più caro di
 `gs_classifica_mensile_dati` (A4), che almeno richiede che qualcuno stia fermo sulla
 pagina Classifica.
 
-### Prima di correggere
+### La corsia singola NON ha ridotto il costo — e questo è il punto meno intuitivo
 
-Il blocco è protetto da `if ( empty( $cfg['nastro_attivo'] ) ) return;` (riga 48), e
-`nastro_attivo` è **spento di default**. **Prima di scrivere codice, chiedi a Ennio (o
-guarda l'opzione `gs_settings` → `caroselli.nastro_attivo` sul sito vero) se il Nastro
-delle Vetrine è acceso.** Se è spento, questo problema è latente e ha priorità bassa;
-se è acceso, è la prima cosa da correggere di tutto il documento.
+Il sito è in modalità a **corsia singola** (`nastro_modalita` = `singolo` o `grande`).
+Verrebbe da pensare che una fila invece di due costi la metà. **Non è così, e il motivo è
+nell'ordine delle righe:**
+
+```php
+$voci = gs_nastro_raccogli_voci( $cfg['nastro_max'], $cfg );   // riga 59 ← TUTTO IL COSTO È QUI
+// ...
+$modalita = $cfg['nastro_modalita'];                            // riga 85 ← letta DOPO
+// ...
+if ( 'doppio' === $modalita ) {                                 // riga 101
+    $voci_dx = gs_nastro_intervalla( array_reverse( $voci ), $sponsor );   // solo un array_reverse
+}
+```
+
+La raccolta dei dati avviene **prima** che la modalità venga letta, e la seconda fila
+riusa lo stesso array già in memoria (`array_reverse`), senza una query in più.
+
+**Quindi: corsia singola = stesse identiche query, metà dell'HTML.** Il risparmio è
+qualche kilobyte di pagina, zero sul database. Chi ha scelto la corsia singola pensando
+di alleggerire il sito non ha alleggerito niente. **Dillo esplicitamente a Ennio**, perché
+è il tipo di dettaglio che porta a credere che il problema sia già stato mitigato.
+
+### A3-bis · Su «Le Sfogline» il conto si fa DUE volte
+
+**File:** `assets/css/gaming.css:2174` — VERIFICATO, **nuovo**
+
+```css
+body.page-id-64342 #gs-nastro-fisso { display: none !important; }
+```
+
+Sulla pagina *Le Sfogline* (`/le-sfogline/`, id 64342) il nastro piccolo è nascosto
+perché lì c'è già il nastro grande dedicato. Ma è nascosto **solo dal CSS**:
+`gs_render_nastro_vetrine()` non ha nessun controllo di pagina, quindi su quella pagina
+il PHP **esegue comunque la scansione completa, monta tutto l'HTML, e il browser lo butta
+via senza disegnarlo**.
+
+E il nastro grande (`gs_sc_nastro_grande_sfogline()`, riga 247) fa **una seconda
+`get_users()` senza limite**, con gli stessi controlli per riga.
+
+**Su `/le-sfogline/` la tabella utenti viene scansionata per intero due volte per ogni
+visita, e una delle due è interamente sprecata.**
+
+**Correzione (due righe, da fare insieme ad A3):** aggiungere il controllo di pagina nel
+PHP, all'inizio di `gs_render_nastro_vetrine()`, dopo il controllo sul blackout:
+
+```php
+$pagina_sfogline = (int) get_option( 'gs_page_sfogline' );
+if ( $pagina_sfogline && is_page( $pagina_sfogline ) ) {
+    return; // lì c'è il nastro grande: non calcolare nemmeno quello piccolo
+}
+```
+
+Usare `get_option( 'gs_page_sfogline' )` e non il numero 64342 scritto a mano: l'id è
+diverso su Local e si romperebbe alla prima prova. Una volta fatto questo, **la riga CSS
+2174 diventa superflua** e si può togliere — ma toglila solo dopo aver verificato su
+Local che il controllo PHP funzioni, non prima.
 
 ### Correzione minima
 
@@ -1083,10 +1153,40 @@ Su un progetto arrivato alla 3.271 dopo circa 270 rilasci ce n'è meno del previ
 **Correzione:** cancellarle una alla volta, con `php -l` dopo ognuna, e un solo commit
 per tutto il blocco così è facile tornare indietro.
 
-## G2 · Dati inventati sul sito pubblico
+## G2 · Otto nomi inventati, VISIBILI ADESSO su /le-sfogline/
 
-**File:** `includes/nastro-vetrine.php:239-264` — VERIFICATO. **Da segnalare a Ennio,
-non da correggere da soli.**
+> **AGGIORNATO IL 22/08/2026 — QUESTO NON È PIÙ CODICE MORTO, È IN VETRINA.**
+> Ennio ha mandato la schermata di `accademiadellasfoglia.it/le-sfogline/`. I nomi che
+> si leggono nel nastro grande sono **Elena Marchetti, Paola Ricci, Anna Conti, Federica
+> Bianchi, Silvia Ferraris, Chiara Bellini** — cioè `$nomi_demo`, i nomi inventati.
+> **Riempiono la pagina**: le sfogline vere con Vetrina attiva sono poche e finiscono in
+> testa all'elenco, i falsi sono appesi in coda e occupano la parte che si vede.
+> **Sposta questo punto in cima alla lista, insieme ad A3: non è manutenzione, è una
+> pagina pubblica che presenta persone che non esistono.**
+
+**File:** `includes/nastro-vetrine.php:239-264` — VERIFICATO nel codice **e confermato
+in produzione da schermata**.
+
+### Quanto sono presenti
+
+`$sfogline` viene montato così: prima le sfogline vere (`get_users()` + filtri), **poi in
+coda gli otto nomi finti**, senza riordinare. Poi ogni riga stampa l'elenco intero due
+volte (`for ( $giro = 0; $giro < 2; $giro++ )`), su **tre righe** (`$righe`, riga 289).
+
+**Otto nomi × 2 giri × 3 righe = 48 pillole finte** in una sola pagina. Ognuna con
+`'url' => '#'`: sono anche link morti, che non portano da nessuna parte.
+
+### Correzione
+
+Due cancellazioni, righe 259-264: l'array `$nomi_demo` e il ciclo che lo unisce a
+`$sfogline`. Nient'altro. Il `if ( ! $sfogline ) { return ''; }` alla riga 266 gestisce
+già il caso in cui, tolti i falsi, non resti nessuno: il nastro grande semplicemente non
+compare, invece di comparire vuoto.
+
+**È l'unica voce di tutto il documento che si può applicare senza aspettare risposte**:
+il commento nel codice dice già *"vanno tolti… non appena Ennio lo chiede"*, e la
+schermata è la richiesta. Fallo per primo — è una cancellazione, non può rompere niente,
+e toglie subito dal sito pubblico l'unica cosa che non dovrebbe esserci.
 
 Il codice contiene otto nomi di sfogline **inventati** che vengono aggiunti al Nastro
 Grande delle Vetrine ("Marta Colombo", "Federica Bianchi", "Silvia Ferraris",
@@ -1096,18 +1196,51 @@ Il commento sopra è esplicito e onesto: è una **deroga temporanea concessa da 
 17/08/2026**, per vedere il nastro pieno prima che ci fossero abbastanza sfogline vere,
 e dice testualmente *"vanno tolti… non appena Ennio lo chiede"*.
 
-Sono passati cinque giorni e il codice è in produzione alla 3.271.0. **Sono persone che
-non esistono, mostrate a visitatori veri su un sito vero.**
+Sono passati cinque giorni, il codice è in produzione alla 3.271.0 **e la schermata del
+22/08/2026 mostra che quei nomi sono la cosa più visibile della pagina «Le Sfogline»**.
 
-**Non è una correzione tecnica: è una domanda.** Chiedere a Ennio se è il momento di
-toglierli. Se dice di sì, bastano due cancellazioni (l'array `$nomi_demo` alla riga 260
-e il ciclo che lo unisce, righe 261-263). Se dice di no, **rimettere una data di scadenza
-esplicita nel commento**, così la prossima revisione lo ritrova invece di lasciarlo
-scivolare avanti in silenzio.
+## G2-bis · Le righe 1 e 3 del nastro grande sono identiche e sincronizzate
 
-Da notare: lo shortcode `[gs_nastro_grande_sfogline]` **non è richiamato da nessun'altra
-parte nel plugin** — se Ennio non l'ha incollato a mano in una pagina, questo blocco
-oggi non gira. Verificare anche questo.
+**File:** `includes/nastro-vetrine.php:286-292` — VERIFICATO nel codice, **visibile nella
+schermata**
+
+```php
+$righe = array(
+    array( 'etichetta' => 'sx' ),
+    array( 'etichetta' => 'dx' ),
+    array( 'etichetta' => 'sx' ),   // ← stessa direzione e stesso contenuto della prima
+);
+```
+
+Tutte e tre le righe stampano **lo stesso array `$sfogline`, nello stesso ordine, con la
+stessa `animation-duration:150s`**. La seconda scorre al contrario, quindi si distingue.
+La prima e la terza no: stessa direzione, stesso contenuto, stessa durata, partite nello
+stesso istante — **sono copie perfettamente sovrapposte**.
+
+Nella schermata si vede chiaramente: riga 1 e riga 3 mostrano *"…Bellini · Elena Marchetti
+· Paola Ricci · Ann…"* nelle identiche posizioni. Non sembra un effetto voluto: sembra la
+pagina che si è disegnata due volte.
+
+**Correzione:** dare alla terza riga uno sfasamento, non un contenuto diverso — basta un
+ritardo negativo sull'animazione, che la fa partire a metà giro:
+
+```php
+$sfasamento = ( 2 === $i ) ? ';animation-delay:-75s' : '';   // metà di 150s
+$out .= '<div class="gs-nastro-grande-pista' . $classe_verso . '" style="animation-duration:150s' . $sfasamento . '">';
+```
+
+(serve `foreach ( $righe as $i => $r )` invece di `foreach ( $righe as $r )`.)
+
+**Attenzione:** `gaming.js` (`gsAllineaVelocitaNastroGrande`) riscrive
+`animation-duration` misurando la larghezza vera. Se tocchi anche `animation-delay`,
+verifica su Local che il JS non lo azzeri — in tal caso lo sfasamento va messo lì, non
+nel PHP. **Priorità bassa: è un difetto estetico, non funzionale.** Da fare solo dopo G2,
+perché togliendo gli otto nomi finti l'elenco si accorcia e il problema potrebbe
+diventare più o meno evidente.
+
+Da notare: lo shortcode `[gs_nastro_grande_sfogline]` non è richiamato da nessuna parte
+nel plugin — **Ennio l'ha incollato a mano nella pagina «Le Sfogline»**, come confermato
+dalla schermata. Non cercarlo nel codice: è contenuto della pagina, non del plugin.
 
 ## G3 · Chiavi usermeta che si accumulano per sempre
 
@@ -1156,7 +1289,8 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 |---|---|---|---|---|
 | A1 | Chiusura mese non idempotente → sconti doppi | `buono-sfoglia.php:69` | **Critico** | Verificato |
 | A2 | Doppio clic brucia due livelli corso | `sconto-corsi.php:112` | **Alto** | Verificato · nuovo |
-| A3 | Scansione utenti a ogni pagina del sito | `nastro-vetrine.php:44` | **Alto** | Verificato · nuovo |
+| **A3** | **Scansione utenti a ogni pagina del sito** | `nastro-vetrine.php:44` | **CRITICO** | **Confermato acceso** |
+| A3-bis | Su /le-sfogline/ la scansione si fa due volte | `gaming.css:2174` | Alto | Verificato · nuovo |
 | A4 | Classifica: `nopriv`, tutti gli utenti ogni 20 s | `classifica-mensile.php:65` | **Alto** | Verificato |
 | A5 | 2 query/pagina + 5 polling a 15 s | `gaming-sfogline.php:576` | **Alto** | Verificato · nuovo |
 | B1 | Premi di sfida assegnati due volte | `voting.php:631` | Alto | Verificato · nuovo |
@@ -1183,26 +1317,46 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 | F3 | `.htaccess` inutile su nginx | `media-backup.php:113` | ? | **Da verificare** |
 | F4 | Contatore Aeroplanino gonfiabile | `volo-notifiche.php:821` | Basso | Verificato · nuovo |
 | G1 | 10 funzioni mai chiamate | vari | Basso | Verificato |
-| G2 | 8 nomi inventati sul sito pubblico | `nastro-vetrine.php:260` | — | **Domanda a Ennio** |
+| **G2** | **48 pillole con 8 nomi inventati, in vetrina** | `nastro-vetrine.php:260` | **CRITICO** | **Visto in produzione** |
+| G2-bis | Righe 1 e 3 del nastro grande identiche | `nastro-vetrine.php:286` | Basso | Verificato · nuovo |
 | G3 | Usermeta che si accumulano | `points.php:76` | Basso | Verificato · nuovo |
 | G4 | 72 classi CSS candidate orfane | `gaming.css` | Basso | **Da verificare** |
 
 ---
 
-# Le cinque domande da fare a Ennio prima di scrivere codice
+# Domande e risposte
 
-1. **A3** — Il **Nastro delle Vetrine** è acceso sul sito vero? (`caroselli.nastro_attivo`)
-   Se sì, A3 diventa la prima cosa da correggere di tutto il documento.
-2. **A2** — Dopo il marcatore sulla prenotazione, il gestore che sbaglia persona come
+## Già risposte da Ennio (22/08/2026)
+
+- **Il Nastro delle Vetrine è acceso?** **Sì**, in modalità a **corsia singola**, confermato
+  a voce e da schermata. → A3 passa da "problema potenziale" a **prima correzione in assoluto**.
+  Ricorda: la corsia singola **non ha ridotto il costo sul server** (vedi A3), solo l'HTML.
+- **Gli otto nomi inventati si tolgono?** La schermata di `/le-sfogline/` li mostra come la
+  cosa più visibile della pagina. → G2 diventa **la prima cosa da fare in assoluto**, prima
+  ancora di A3: è una cancellazione di sei righe che non può rompere niente.
+
+## Ancora aperte — servono prima di scrivere il codice
+
+1. **A2** — Dopo il marcatore sulla prenotazione, il gestore che sbaglia persona come
    annulla lo sconto applicato? Pulsante dedicato o correzione a mano dalla scheda?
-3. **A5** — Va bene che palloncini e aeroplanini possano comparire fino a mezzo minuto
+2. **A5** — Va bene che palloncini e aeroplanini possano comparire fino a mezzo minuto
    dopo l'invio, invece di quindici secondi?
-4. **F1** — Che tetto mettere ai punti guadagnabili in un giorno, ora che 2.500 punti
+3. **F1** — Che tetto mettere ai punti guadagnabili in un giorno, ora che 2.500 punti
    in un mese valgono uno sconto vero su un corso?
-5. **F2 / G2** — Quanto è davvero privata la foto de "Il Tavolo di Lavoro"?
-   E gli otto nomi inventati nel Nastro si tolgono adesso?
+4. **F2** — Quanto è davvero privata la foto de "Il Tavolo di Lavoro"? (Da questa risposta
+   dipende se serve un lavoro grosso o solo cambiare due parole nei testi.)
+5. **F3** — Su che web server gira il sito, Apache o nginx? Decide se i backup sono
+   davvero protetti.
 
----
+## Ordine rivisto dopo le conferme del 22/08/2026
+
+| Priorità | Voce | Perché |
+|---|---|---|
+| **0** | G2 | Nomi finti in vetrina, adesso. Sei righe da cancellare, nessun rischio. |
+| **1** | A3 + A3-bis | Costo pagato a ogni visita, confermato acceso. |
+| 2 | A1 | Errore contabile, ma scatta solo il 1° del mese. |
+| 3 | A2, A5, B1, B2, B5 | Soldi e carico. |
+| 4 | il resto, nell'ordine del documento | |
 
 # Limiti di questa analisi
 
@@ -1210,6 +1364,12 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
   carico (180 scansioni/ora in A4, 1.200-1.440 richieste/ora in A5) sono **calcolati
   dagli intervalli dichiarati nel codice**, non osservati su un sito vero. Se serve
   certezza, vanno misurati su Local con Query Monitor.
+- **Il sito vero non è stato visitato**: il proxy di rete blocca `accademiadellasfoglia.it`.
+  Le uniche osservazioni dirette sono **due schermate mandate da Ennio il 22/08/2026**, che
+  documentano: il nastro piccolo acceso a corsia singola sotto il menu (con le pillole
+  «Mulino Marino · Partner» ripetute tra un nome e l'altro, e sfogline vere come Bruno
+  Cingolani e Giuseppe Govoni), e la pagina `/le-sfogline/` con il nastro grande a tre righe
+  pieno dei nomi di `$nomi_demo`. Tutto il resto di questo documento viene dal codice.
 - **Le otto correzioni della revisione precedente non sono state ricontrollate**: la
   revisione del 22/08/2026 le aveva verificate riga per riga e le dà tutte per corrette.
 - L'analisi copre l'intero albero dei file (102 PHP, `gaming.js`, `gaming.css`) per gli
