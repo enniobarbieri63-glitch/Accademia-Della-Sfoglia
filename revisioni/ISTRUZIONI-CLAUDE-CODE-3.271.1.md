@@ -216,7 +216,7 @@ voce completa con file, righe, codice e compromessi.
 | **2** | A1, C1, C2 | La chiusura del mese può raddoppiare gli sconti, e può non scattare mai |
 | **3** | A2, E4 | Un doppio clic brucia due livelli corso |
 | **4** | A5, E5 | Cinque richieste ogni 15 secondi per ogni scheda aperta |
-| **5** | B1, B2, B5, B6, B3, B4 | Premi, token e messaggi consegnati due volte |
+| **5** | B1, B2, B5, B6, B3, B4, **E7** | Premi e token consegnati due volte; eliminazioni che colpiscono la riga sbagliata |
 | **6** | F1, F3, testi di F2, poi D ed E | Punti coltivabili, backup, interruttori morti |
 
 **Regole che valgono per tutti i giri:**
@@ -1156,6 +1156,97 @@ accetti l'avviso di Excel: severità bassa, correzione da tre righe.
 
 ---
 
+## E7 · Eliminare un messaggio può colpire quello sbagliato — le risposte non hanno un identificativo
+
+**File:** `includes/messaggi.php:240` (`gs_msg_risposta_aggiungi()`),
+`includes/messaggi.php:264-267` (`gs_ajax_msg_risposta_toggle()`),
+`includes/moderazione.php:179-250` (`gs_mod_elimina()`)
+**Stato:** VERIFICATO — **segnalato dalla sessione di lavoro il 22/08/2026, diagnosi
+corretta a metà**
+
+### Il rilievo com'è arrivato, e cosa manca
+
+La sessione che applica le correzioni ha segnalato che due sistemi eliminano gli stessi
+messaggi in modo diverso — l'etichetta `gs_eliminato` (in `conversazioni.php` e
+`messaggi.php`) e la rimozione fisica con cestino gemello (in `moderazione.php`) — e ha
+proposto di **togliere il primo**. La segnalazione è giusta e andava fatta.
+**La causa individuata però non è quella, e la soluzione proposta non risolve il problema.**
+
+### La causa vera
+
+Il pericolo non nasce dal fatto che i sistemi siano due: nasce dal fatto che
+**le risposte nei Messaggi sono indirizzate per posizione e non hanno un identificativo.**
+
+```php
+// messaggi.php:240 — la risposta nasce senza id
+$tutte[ $thread_uid ][] = array( 'autore' => $autore_uid, 'testo' => $testo, 'data' => current_time( 'mysql' ) );
+
+// messaggi.php:267 — e viene indirizzata per indice
+$tutte[ $thread ][ $i ]['gs_eliminato'] = ( 'elimina' === $azione );
+```
+
+Qualunque cosa rinumeri l'array fa puntare i pulsanti già disegnati alla riga sbagliata.
+**E ci sono due sorgenti di rinumerazione, non una:**
+
+1. **`moderazione.php`** — `unset()` seguito da `array_values()` (righe 187-188, 204-206,
+   219-220, 232-233, 245-246): toglie l'elemento **e rinumera tutti quelli dopo**.
+2. **`messaggi.php:241`, e questa è indipendente da tutto** —
+   `if ( count( ... ) > 100 ) { $tutte[ $thread_uid ] = array_slice( $tutte[ $thread_uid ], -100 ); }`.
+   **Superate le 100 risposte, ogni nuova risposta scarta la più vecchia e rinumera
+   l'intero thread da sola**, senza che nessuno abbia moderato niente.
+
+Su un thread lungo, quindi, il difetto si presenta **anche con un solo sistema attivo e
+un solo gestore al lavoro.** Togliere uno dei due sistemi non lo elimina.
+
+### Perché la soluzione proposta va rifiutata
+
+**1 · Non risolve.** `moderazione.php` continua a rinumerare con `array_values()`, e la
+sua stessa lista è costruita per indice (`gs_mod_elimina( $sistema, $post_id, $indice )`).
+Resterebbe vulnerabile esattamente allo stesso errore, con due gestori al lavoro o una
+scheda lasciata aperta.
+
+**2 · Ha un effetto collaterale non dichiarato.** `gs_eliminato` è rispettato **solo** da
+`conversazioni.php` e `messaggi.php` (verificato: nessun altro file lo legge). La 3.271.0
+è installata e in uso: se ci sono messaggi già nascosti con quell'etichetta, **togliendo
+il sistema quei messaggi tornano visibili.** Nessuno se ne accorgerebbe finché non
+ricompare in chiaro qualcosa che era stato tolto apposta.
+
+**3 · Toglie l'eliminazione dal posto giusto.** Cancellare un messaggio dentro la
+conversazione, vedendolo nel suo contesto, è **più sicuro** che cancellarlo da un elenco
+di sette sistemi mescolati dove il contesto non c'è.
+
+### La correzione giusta, quando sarà il momento
+
+Non scegliere fra i due sistemi: **dare un identificativo alle risposte e indirizzarle
+con quello.** In Conversazioni **esiste già** — `'id' => uniqid( 'm' )`,
+`conversazioni.php:99` — quindi lì il lavoro è solo di indirizzamento.
+
+1. In `gs_msg_risposta_aggiungi()`, aggiungere `'id' => uniqid( 'r' )` alla risposta,
+   come è già fatto per i messaggi delle Conversazioni e per le risposte degli Esperti
+   (`esperti.php:479`).
+2. Far cercare a `gs_ajax_msg_risposta_toggle()` e a `gs_mod_elimina()` **la risposta con
+   quell'id**, invece di usare la posizione. Se non la trovano, rispondere «questa
+   risposta non c'è più» — che è la verità — invece di agire su un'altra.
+3. Per le risposte già esistenti, che un id non ce l'hanno: **non migrarle.** Ricadere
+   sull'indice quando l'id manca, e lasciare che le nuove nascano con l'id. Il difetto si
+   esaurisce da solo con il ricambio dei messaggi, senza toccare i dati in produzione.
+
+Fatto questo, **i due sistemi possono convivere senza rischio** e la scelta torna a essere
+solo di comodità: quale dei due pannelli piace di più a Ennio. Nessuno dei due va tolto
+per motivi tecnici.
+
+**Compromesso da dichiarare:** finché il punto 3 è attivo, i thread vecchi restano
+indirizzati per posizione e quindi ancora esposti. È accettabile perché il caso richiede
+un thread sopra le 100 risposte o due gestori simultanei, ma **va detto invece che
+nascosto**.
+
+### Priorità
+
+**Media, e non adesso.** Perché scatti serve un thread con più di 100 risposte, oppure due
+gestori che moderano nello stesso momento, oppure una pagina lasciata aperta durante una
+moderazione. Nel frattempo A1 può raddoppiare sconti veri il 1° del mese e A3 costa a ogni
+visita. **Va nel Giro 5, con gli altri difetti di correttezza. Non toccare nulla prima.**
+
 # BLOCCO F — Sicurezza sfruttabile: cosa è stato verificato
 
 Il briefing chiedeva la catena completa per ogni segnalazione, e di dire chiaramente
@@ -1726,6 +1817,7 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
 | E4 | Buono applicato due volte sporca il log | `buono-sfoglia.php:196` | Basso | Verificato |
 | E5 | Nonce scaduto = polling muto | `gaming.js` (6 punti) | Medio | Verificato · nuovo |
 | E6 | CSV senza protezione formule | `export-dati.php:133` | Basso | Verificato · nuovo |
+| **E7** | **Eliminare un messaggio può colpire quello sbagliato** | `messaggi.php:240` | Medio | Verificato · **segnalato 22/08** |
 | **F1** | **Punti coltivabili scrivendo → Buono** | `forms.php:56,125` | **Alto** | Verificato · **deciso** |
 | F2 | Foto raggiungibili da fuori | `media-msg.php:45` | — | **Chiuso: non sono riservate** |
 | F3 | Nome del backup indovinabile | `media-backup.php:143` | Medio | Verificato · **deciso** |
