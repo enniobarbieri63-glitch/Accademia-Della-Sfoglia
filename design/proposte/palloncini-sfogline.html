@@ -755,7 +755,7 @@
       n:{F:[300,1650,2700,3400],t:"nas",d:0.070},
       N:{F:[300,2100,2900,3500],t:"nas",d:0.080},
       l:{F:[400,1400,2900,3800],t:"liq",d:0.060},
-      L:{F:[350,2400,3000,3900],t:"liq",d:0.070},
+      L:{F:[280,2650,3300,4000],t:"liq",d:0.105},
       r:{F:[500,1400,2700,3600],t:"tap",d:0.045},
       v:{F:[350,1200,2400,3400],t:"fri",d:0.070,rumore:0.10,banda:[1400,1.2]},
       f:{F:[350,1200,2400,3400],t:"fri",d:0.090,rumore:0.19,banda:[1800,1.0],sordo:1},
@@ -785,7 +785,11 @@
         else if (c === "c") f = "k";
         else if (c === "g" && d === "h") { f = "g"; salta = 2; }
         else if (c === "g" && d === "n") { f = "N"; salta = 2; }
-        else if (c === "g" && d === "l" && e === "i") { f = "L"; salta = 3; }
+        else if (c === "g" && d === "l" && e === "i") {
+          out.push({ p: "L" });                 /* la gl di "sfoglia" */
+          f = "j";                              /* col guizzo che la fa sentire */
+          salta = 3;
+        }
         else if (c === "g" && (d === "i" || d === "e")) { f = "G"; salta = (d === "i" && eVocale(e)) ? 2 : 1; }
         else if (c === "g") f = "g";
         else if (c === "s" && d === "c" && (e === "i" || e === "e")) { f = "S"; salta = (e === "i" && eVocale(s.charAt(i + 3))) ? 3 : 2; }
@@ -829,143 +833,238 @@
       return out;
     }
 
+    /* Il cuore: bersagli interpolati.
+       Ogni suono ha il suo punto d arrivo, piazzato al centro della sua
+       durata; fra un centro e l altro formanti, voce e apertura scivolano
+       con una curva morbida. Nessun gradino da smussare dopo: il gesto
+       nasce continuo, come la bocca che si muove davvero.
+       Le occlusive e le fricative si aggiungono sopra come eventi, con le
+       loro rampe, senza spezzare la linea. */
     function costruisciFrase(testo, vc) {
       var sr = ctx.sampleRate;
       var seq = leggi(testo);
       if (!seq.length) return null;
 
+      var i, j, k;
+
       /* accento sulla penultima vocale di ogni parola */
       var parola = [];
-      for (var q = 0; q <= seq.length; q++) {
-        var x = seq[q];
+      for (k = 0; k <= seq.length; k++) {
+        var x = seq[k];
         if (!x || x.p === " ") {
           var voc = [];
-          for (var z = 0; z < parola.length; z++) if (SUONI[parola[z].p].t === "voc") voc.push(parola[z]);
+          for (j = 0; j < parola.length; j++) if (SUONI[parola[j].p].t === "voc") voc.push(parola[j]);
           if (voc.length) voc[Math.max(0, voc.length - 2)].accento = true;
           parola = [];
         } else parola.push(x);
       }
 
-      var segs = [], totale = 0.14, i, j, k;   /* i primi 14 centesimi sono il respiro */
-      for (i = 0; i < seq.length; i++) {
-        var su = SUONI[seq[i].p], dd = su.d;
-        if (seq[i].lunga) dd = 0.16 + 0.12 * Math.min(5, seq[i].lunga);
-        else if (seq[i].accento) dd *= 1.5;
-        if (seq[i].doppia) dd *= 1.8;
-        dd *= vc.ritmo;
-        segs.push({ s: su, d: dd, accento: !!seq[i].accento, lunga: seq[i].lunga || 0, inizio: totale });
-        totale += dd;
+      /* durate e centri */
+      var respiro = 0.12;
+      var segs = [], t = respiro;
+      for (k = 0; k < seq.length; k++) {
+        var su = SUONI[seq[k].p], d = su.d;
+        if (seq[k].lunga) d = 0.16 + 0.12 * Math.min(5, seq[k].lunga);
+        else if (su.t === "voc") d *= seq[k].accento ? 1.45 : 0.92;
+        else if (su.t === "pausa") d = 0.05;
+        else d *= 0.86;
+        if (seq[k].doppia) d *= 1.7;
+        d *= vc.ritmo;
+        segs.push({
+          s: su, d: d, inizio: t, centro: t + d / 2,
+          accento: !!seq[k].accento, lunga: seq[k].lunga || 0
+        });
+        t += d;
       }
-      totale += 0.28;
-
-      /* ogni consonante prende un po' del colore della vocale che le sta
-         accanto: e' la coarticolazione, quello che rende il parlato unito */
-      for (k = 0; k < segs.length; k++) {
-        var tk = segs[k].s.t;
-        if (tk === "voc" || tk === "sem" || tk === "pausa") continue;
-        var vicina = null;
-        for (j = k + 1; j < segs.length; j++) {
-          if (segs[j].s.t === "pausa") break;
-          if (segs[j].s.t === "voc") { vicina = segs[j].s; break; }
-        }
-        if (!vicina) {
-          for (j = k - 1; j >= 0; j--) {
-            if (segs[j].s.t === "pausa") break;
-            if (segs[j].s.t === "voc") { vicina = segs[j].s; break; }
-          }
-        }
-        segs[k].vicina = vicina;
-      }
-
+      var fine = t, totale = t + 0.3;
       var n = Math.ceil(sr * totale);
       var buf = ctx.createBuffer(1, n, sr);
       var out = buf.getChannelData(0);
-      var F0a = new Float32Array(n), F1a = new Float32Array(n), F2a = new Float32Array(n), F3a = new Float32Array(n);
-      var amp = new Float32Array(n), voz = new Float32Array(n), nas = new Float32Array(n);
-      var rum = new Float32Array(n), scop = new Float32Array(n);
-      var bF = new Float32Array(n), bQ = new Float32Array(n), tono = new Float32Array(n);
 
-      var esclama = /evviva|ohh/.test(testo.toLowerCase());
-      var partenza = esclama ? 1.09 : 1.04, calo = esclama ? 0.26 : 0.2;
-      for (i = 0; i < n; i++) tono[i] = vc.f0 * (partenza - calo * (i / n));
-
-      /* il fiato prima di parlare */
-      var resp = Math.floor(0.12 * sr);
-      for (i = 0; i < resp && i < n; i++) {
-        var ur = i / resp;
-        rum[i] = 0.05 * Math.sin(Math.PI * ur);
-        bF[i] = 1500;
-        bQ[i] = 0.9;
+      /* coarticolazione: la consonante prende meta' del colore della
+         vocale accanto, poi l interpolazione fa il resto */
+      for (k = 0; k < segs.length; k++) {
+        var tk = segs[k].s.t;
+        var F = [segs[k].s.F[0], segs[k].s.F[1], segs[k].s.F[2], segs[k].s.F[3]];
+        if (tk !== "voc" && tk !== "sem" && tk !== "pausa") {
+          var vic = null;
+          for (j = k + 1; j < segs.length && !vic; j++) {
+            if (segs[j].s.t === "pausa") break;
+            if (segs[j].s.t === "voc") vic = segs[j].s;
+          }
+          for (j = k - 1; j >= 0 && !vic; j--) {
+            if (segs[j].s.t === "pausa") break;
+            if (segs[j].s.t === "voc") vic = segs[j].s;
+          }
+          if (vic) { F[1] = F[1] * 0.5 + vic.F[1] * 0.5; F[2] = F[2] * 0.5 + vic.F[2] * 0.5; }
+        }
+        segs[k].bF = F;
+        /* quanto suona e quanto e' aperta la bocca, al centro del suono */
+        if (tk === "voc") { segs[k].amp = segs[k].accento ? 1 : 0.86; segs[k].voz = 1; segs[k].nas = 0; }
+        else if (tk === "sem") { segs[k].amp = 0.8; segs[k].voz = 1; segs[k].nas = 0; }
+        else if (tk === "nas") { segs[k].amp = 0.6; segs[k].voz = 1; segs[k].nas = 1; }
+        else if (tk === "liq") { segs[k].amp = 0.72; segs[k].voz = 1; segs[k].nas = 0; }
+        else if (tk === "tap") { segs[k].amp = 0.5; segs[k].voz = 1; segs[k].nas = 0; }
+        else if (tk === "fri") { segs[k].amp = segs[k].s.sordo ? 0.12 : 0.45; segs[k].voz = segs[k].s.sordo ? 0.1 : 1; segs[k].nas = 0; }
+        else if (tk === "pausa") { segs[k].amp = 0.12; segs[k].voz = 0.5; segs[k].nas = 0; }
+        else { segs[k].amp = 0.3; segs[k].voz = segs[k].s.sordo ? 0.15 : 0.8; segs[k].nas = 0; }
       }
 
+      var F1 = new Float32Array(n), F2 = new Float32Array(n), F3 = new Float32Array(n), F4 = new Float32Array(n);
+      var amp = new Float32Array(n), voz = new Float32Array(n), nas = new Float32Array(n);
+      var rum = new Float32Array(n), bF = new Float32Array(n), bQ = new Float32Array(n);
+      var tono = new Float32Array(n);
+
+      /* --- le tracce: interpolazione morbida fra i centri --- */
+      var kk = 0;
+      for (i = 0; i < n; i++) {
+        var tempo = i / sr;
+        while (kk < segs.length - 1 && tempo > segs[kk + 1].centro) kk++;
+        var a = segs[kk], b = segs[Math.min(kk + 1, segs.length - 1)];
+        var u;
+        if (tempo <= segs[0].centro) { a = b = segs[0]; u = 0; }
+        else if (tempo >= segs[segs.length - 1].centro) { a = b = segs[segs.length - 1]; u = 0; }
+        else u = (tempo - a.centro) / Math.max(1e-6, b.centro - a.centro);
+        var w = 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, u)));
+        F1[i] = (a.bF[0] + (b.bF[0] - a.bF[0]) * w) * vc.tratto;
+        F2[i] = (a.bF[1] + (b.bF[1] - a.bF[1]) * w) * vc.tratto;
+        F3[i] = (a.bF[2] + (b.bF[2] - a.bF[2]) * w) * vc.tratto;
+        F4[i] = (a.bF[3] + (b.bF[3] - a.bF[3]) * w) * vc.tratto;
+        amp[i] = a.amp + (b.amp - a.amp) * w;
+        voz[i] = a.voz + (b.voz - a.voz) * w;
+        nas[i] = a.nas + (b.nas - a.nas) * w;
+      }
+
+      /* --- la linea del tono: una curva sola per tutta la frase --- */
+      var esclama = /evviva|ohh/.test(testo.toLowerCase());
+      var partenza = esclama ? 1.1 : 1.05, calo = esclama ? 0.28 : 0.22;
+      for (i = 0; i < n; i++) {
+        var uf = Math.min(1, (i / sr) / Math.max(0.2, fine));
+        tono[i] = vc.f0 * (partenza - calo * uf);
+      }
       for (k = 0; k < segs.length; k++) {
-        var sg = segs[k], i0 = Math.floor(sg.inizio * sr), len = Math.max(1, Math.floor(sg.d * sr));
-        var tp = sg.s.t;
-        for (i = 0; i < len && i0 + i < n; i++) {
-          var idx = i0 + i, u = i / len;
-          var mix = sg.vicina ? 0.5 : 0;
-          F0a[idx] = sg.s.F[0] * vc.tratto;
-          F1a[idx] = (sg.s.F[1] * (1 - mix) + (sg.vicina ? sg.vicina.F[1] : 0) * mix) * vc.tratto;
-          F2a[idx] = (sg.s.F[2] * (1 - mix) + (sg.vicina ? sg.vicina.F[2] : 0) * mix) * vc.tratto;
-          F3a[idx] = sg.s.F[3] * vc.tratto;
-          if (sg.lunga) tono[idx] *= 1 + 0.12 * Math.sin(Math.PI * Math.min(1, u * 1.15)) - 0.14 * u * u;
-          else if (sg.accento) tono[idx] *= 1 + (esclama ? 0.17 : 0.1) * Math.sin(Math.PI * u);
-          if (tp === "voc") { amp[idx] = sg.accento ? 1 : 0.9; voz[idx] = 1; }
-          else if (tp === "sem") { amp[idx] = 0.75; voz[idx] = 1; }
-          else if (tp === "nas") { amp[idx] = 0.55; voz[idx] = 1; nas[idx] = 1; }
-          else if (tp === "liq") { amp[idx] = 0.7; voz[idx] = 1; }
-          else if (tp === "tap") { amp[idx] = 0.35 + 0.8 * Math.abs(u - 0.5); voz[idx] = 1; }
-          else if (tp === "fri") {
-            amp[idx] = sg.s.sordo ? 0 : 0.35;
-            voz[idx] = sg.s.sordo ? 0 : 1;
-            rum[idx] = sg.s.rumore; bF[idx] = sg.s.banda[0]; bQ[idx] = sg.s.banda[1];
-          } else if (tp === "occ" || tp === "aff") {
-            var chiusa = tp === "occ" ? 0.72 : 0.45;
-            if (u < chiusa) { amp[idx] = sg.s.sordo ? 0 : 0.12; voz[idx] = sg.s.sordo ? 0 : 1; }
-            else if (u < chiusa + 0.12) { scop[idx] = sg.s.scoppio[1]; bF[idx] = sg.s.scoppio[0]; bQ[idx] = 1.4; }
-            else if (tp === "aff") { rum[idx] = sg.s.rumore; bF[idx] = sg.s.banda[0]; bQ[idx] = sg.s.banda[1]; amp[idx] = sg.s.sordo ? 0 : 0.3; voz[idx] = sg.s.sordo ? 0 : 1; }
-            else { amp[idx] = 0.1; voz[idx] = sg.s.sordo ? 0 : 0.4; }
+        var sg = segs[k];
+        if (!sg.accento && !sg.lunga) continue;
+        var largo = sg.lunga ? sg.d * 0.9 : Math.max(0.16, sg.d * 1.6);
+        var quanto = sg.lunga ? (esclama ? 0.16 : 0.13) : (esclama ? 0.15 : 0.09);
+        var c0 = Math.floor((sg.centro - largo / 2) * sr), len = Math.floor(largo * sr);
+        for (i = 0; i < len; i++) {
+          var idx = c0 + i;
+          if (idx < 0 || idx >= n) continue;
+          var uc = i / len;
+          /* gobba a coseno: sale e scende senza spigoli */
+          tono[idx] *= 1 + quanto * (0.5 - 0.5 * Math.cos(2 * Math.PI * uc));
+        }
+      }
+
+      /* --- eventi sopra la linea: chiusure, scoppi, fruscii --- */
+
+      for (k = 0; k < segs.length; k++) {
+        var sg2 = segs[k], tp = sg2.s.t;
+        var i0 = Math.floor(sg2.inizio * sr), len2 = Math.max(1, Math.floor(sg2.d * sr));
+        if (tp === "occ" || tp === "aff") {
+          var chiusa = tp === "occ" ? 0.7 : 0.45;
+          var fondo = sg2.s.sordo ? 0.04 : 0.2;
+          var iC = Math.floor(len2 * chiusa);
+          var ramp = Math.max(1, Math.min(Math.floor(0.020 * sr), Math.floor(iC / 2)));
+          for (i = 0; i < iC; i++) {
+            var idx2 = i0 + i;
+            if (idx2 < 0 || idx2 >= n) continue;
+            /* aperto = 1, chiuso = 0: la bocca si chiude e si riapre scorrendo */
+            var aperto = 0;
+            if (i < ramp) aperto = 1 - (0.5 - 0.5 * Math.cos(Math.PI * (i / ramp)));
+            else if (i > iC - ramp) aperto = 1 - (0.5 - 0.5 * Math.cos(Math.PI * ((iC - i) / ramp)));
+            amp[idx2] *= fondo + (1 - fondo) * aperto;
+            if (sg2.s.sordo) voz[idx2] *= 0.15 + 0.85 * aperto;
+          }
+          /* lo scoppio */
+          var iS = i0 + iC, lenS = Math.floor(0.014 * sr);
+          for (i = 0; i < lenS; i++) {
+            var idx3 = iS + i;
+            if (idx3 < 0 || idx3 >= n) continue;
+            var us = i / lenS;
+            rum[idx3] += sg2.s.scoppio[1] * Math.pow(1 - us, 2);
+            bF[idx3] = sg2.s.scoppio[0];
+            bQ[idx3] = 1.4;
+          }
+          if (tp === "aff") {
+            var iA = iS + lenS, lenA = Math.floor(len2 * 0.4);
+            for (i = 0; i < lenA; i++) {
+              var idx4 = iA + i;
+              if (idx4 < 0 || idx4 >= n) continue;
+              rum[idx4] += sg2.s.rumore * Math.sin(Math.PI * Math.min(1, i / lenA + 0.1));
+              bF[idx4] = sg2.s.banda[0];
+              bQ[idx4] = sg2.s.banda[1];
+            }
+          }
+        } else if (tp === "fri") {
+          for (i = 0; i < len2; i++) {
+            var idx5 = i0 + i;
+            if (idx5 < 0 || idx5 >= n) continue;
+            var uu = i / len2;
+            rum[idx5] += sg2.s.rumore * Math.sin(Math.PI * Math.min(1, uu * 1.6));
+            bF[idx5] = sg2.s.banda[0];
+            bQ[idx5] = sg2.s.banda[1];
+            if (sg2.s.sordo) {
+              var dentro = Math.min(1, Math.min(i, len2 - i) / Math.max(1, 0.02 * sr));
+              voz[idx5] *= 1 - 0.88 * dentro;
+            }
           }
         }
       }
 
-      /* tutto scivola: e' questo che toglie gli scatti */
-      function lisc(arr, tau) {
-        var a = Math.exp(-1 / (tau * sr)), y = arr[0];
-        for (var q2 = 0; q2 < n; q2++) { y = a * y + (1 - a) * arr[q2]; arr[q2] = y; }
+      /* il fiato prima di parlare e la coda che si spegne */
+      var iR = Math.floor(respiro * sr);
+      for (i = 0; i < iR && i < n; i++) {
+        rum[i] += 0.05 * Math.sin(Math.PI * (i / iR));
+        if (!bF[i]) { bF[i] = 1500; bQ[i] = 0.9; }
+        amp[i] *= i / iR;
       }
-      lisc(F0a, 0.022); lisc(F1a, 0.022); lisc(F2a, 0.022); lisc(F3a, 0.022);
-      lisc(amp, 0.012); lisc(voz, 0.010); lisc(nas, 0.020);
-      lisc(bF, 0.006); lisc(bQ, 0.006); lisc(rum, 0.008);
+      var iF = Math.floor(fine * sr), lenF = n - iF;
+      for (i = 0; i < lenF; i++) {
+        var idx6 = iF + i;
+        if (idx6 >= n) break;
+        amp[idx6] *= Math.max(0, 1 - i / lenF);
+      }
 
+      /* una lisciata leggerissima solo dove restano spigoli di eventi */
+      function lisc(arr, tau) {
+        var aa = Math.exp(-1 / (tau * sr)), y = arr[0];
+        for (var q = 0; q < n; q++) { y = aa * y + (1 - aa) * arr[q]; arr[q] = y; }
+      }
+      lisc(amp, 0.009); lisc(voz, 0.011); lisc(rum, 0.004);
+      lisc(amp, 0.004); lisc(voz, 0.004);
+      lisc(bF, 0.004); lisc(bQ, 0.004);
+
+      /* --- sintesi --- */
       var poli = [{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0},{y1:0,y2:0}];
       var banda = { y1: 0, y2: 0 };
       var fase = 0, nn = 0, prec = 0, drift = 0, zx1 = 0, zx2 = 0;
       var a1 = [], a2 = [], A = [], gn = 0, thz = 0, ba1 = 0, ba2 = 0, bA = 0;
       for (i = 0; i < n; i++) {
-        if (i % 32 === 0) {
-          var Fs = [F0a[i], F1a[i], F2a[i], F3a[i], 1000 * vc.tratto];
-          var Bs = [95, 130, 180, 250, 120];
+        if (i % 24 === 0) {
+          var Fs = [F1[i], F2[i], F3[i], F4[i], 1000 * vc.tratto];
+          var Bs = [115, 155, 205, 280, 130];   /* bocca piccola: risonanze piu larghe */
           a1 = []; a2 = []; A = [];
           for (j = 0; j < 5; j++) {
-            var r = Math.exp(-Math.PI * Bs[j] / sr), th = 2 * Math.PI * Math.max(120, Fs[j]) / sr;
+            var r = Math.exp(-Math.PI * Bs[j] / sr), th = 2 * Math.PI * Math.max(150, Fs[j]) / sr;
             a1.push(2 * r * Math.cos(th)); a2.push(-r * r); A.push(1 - a1[j] - a2[j]);
           }
           gn = nas[i] * 0.6;
           thz = 2 * Math.PI * (820 * vc.tratto) / sr;
-          var bf = Math.max(300, bF[i]), bq = Math.max(0.6, bQ[i]);
+          var bf = Math.max(300, bF[i] || 1500), bq = Math.max(0.6, bQ[i] || 1);
           var rr = Math.exp(-Math.PI * (bf / bq) / sr), tt = 2 * Math.PI * bf / sr;
           ba1 = 2 * rr * Math.cos(tt); ba2 = -rr * rr; bA = 1 - ba1 - ba2;
         }
-        if (i % 200 === 0) drift = drift * 0.9 + gauss() * 0.006;
-        var f0 = tono[i] * (1 + drift + 0.012 * Math.sin(2 * Math.PI * 4.6 * i / sr));
-        if (fase <= 0) { fase = sr / f0 * (1 + gauss() * 0.012); nn = 0; }
+        if (i % 200 === 0) drift = drift * 0.9 + gauss() * 0.005;
+        var f0 = tono[i] * (1 + drift + 0.010 * Math.sin(2 * Math.PI * 4.6 * i / sr));
+        if (fase <= 0) { fase = sr / f0 * (1 + gauss() * 0.010); nn = 0; }
         var T1 = fase * 0.44, T2 = fase * 0.16, g = 0;
         if (nn < T1) g = 0.5 * (1 - Math.cos(Math.PI * nn / T1));
         else if (nn < T1 + T2) g = Math.cos(Math.PI * (nn - T1) / (2 * T2));
         nn++; fase--;
 
-        var x = g * voz[i] * amp[i] + (Math.random() * 2 - 1) * 0.028 * voz[i] * amp[i];
+        var x = (g + (Math.random() * 2 - 1) * 0.03) * voz[i] * amp[i];
         if (gn > 0) {
           var zz = x - 2 * 0.96 * Math.cos(thz) * zx1 + 0.9216 * zx2;
           zx2 = zx1; zx1 = x;
@@ -979,7 +1078,7 @@
         }
         var nsl = 0;
         if (gn > 0) { ff = poli[4]; nsl = A[4] * x + a1[4] * ff.y1 + a2[4] * ff.y2; ff.y2 = ff.y1; ff.y1 = nsl; }
-        var bianco = (Math.random() * 2 - 1) * (rum[i] + scop[i] * 1.2);
+        var bianco = (Math.random() * 2 - 1) * rum[i];
         var yb = bA * bianco + ba1 * banda.y1 + ba2 * banda.y2;
         banda.y2 = banda.y1; banda.y1 = yb;
         var somma = orale + nsl * gn * 0.6 + yb * 0.9;
@@ -994,9 +1093,9 @@
     }
 
     var VOCINE = [
-      { f0: 340, tratto: 1.00, ritmo: 1.1 },
-      { f0: 385, tratto: 1.06, ritmo: 1.05 },
-      { f0: 315, tratto: 0.95, ritmo: 1.15 }
+      { f0: 430, tratto: 1.22, ritmo: 1.02 },
+      { f0: 470, tratto: 1.28, ritmo: 0.98 },
+      { f0: 405, tratto: 1.18, ritmo: 1.08 }
     ];
     var fraseFatta = {};
 
