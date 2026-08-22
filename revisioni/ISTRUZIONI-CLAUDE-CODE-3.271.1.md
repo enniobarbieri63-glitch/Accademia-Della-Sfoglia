@@ -1614,23 +1614,41 @@ da mesi. **Consiglio: lasciare stare, e rimandare finché non c'è un motivo ver
   `volo-notifiche.php` (parti rilevanti), `forms.php`, `antispam.php`, `media-backup.php`,
   `export-dati.php`, più le parti di `calendario.php`, `voting.php`, `compleanni.php`,
   `conversazioni.php`, `messaggi.php` e `gaming.js` collegate.
-- **F2, F3 e G4 non sono conclusioni: sono verifiche da fare.** Non trattarle come difetti
-  accertati e non correggerle prima di aver risposto alle domande che pongono.
+- **F2 e F3 sono state chiuse da Ennio il 22/08/2026** e contengono decisioni, non più
+  domande: F2 dice esplicitamente di **non** fare la consegna protetta, F3 di **non** stare
+  ad accertare la configurazione del server. Rispettarle come sono scritte.
+- **G4 (classi CSS orfane) resta l'unica verifica non conclusa**, e il consiglio è di
+  lasciarla stare: l'elenco meccanico è pieno di falsi positivi perché il plugin compone i
+  nomi di classe a pezzi.
 
 ---
 
 # Cosa serve da Local
 
-Per confermare tre cose, e nient'altro:
+Cinque prove, e nient'altro. Tutto il resto si legge dal codice e non ha bisogno di
+essere eseguito.
 
-1. **A5 e A4** — Query Monitor su una pagina qualsiasi con un utente collegato: quante
-   query e quanti millisecondi consuma `gs_enqueue_assets()`, e quante ne consuma una
-   chiamata a `gs_conv_conteggio`. Serve a decidere se basta unificare gli endpoint o
+1. **A1 — la prova che conta più di tutte.** Su un Local con una ventina di utenti finti:
+   chiamare `gs_buono_sfoglia_chiudi_mese( '2026-07' )` a mano, **interromperla a metà**,
+   richiamarla, e verificare che **nessuno riceva il 2,5% due volte**. Senza questa prova
+   la correzione di A1 non è consegnabile.
+2. **A3 — che la memoria funzioni davvero.** Con Query Monitor: caricare una pagina
+   qualsiasi, annotare il numero di query; ricaricarla e verificare che il secondo
+   caricamento ne faccia **molte di meno** (il transient sta lavorando). Poi aspettare la
+   scadenza e controllare che si ricostruisca da solo.
+3. **A3-bis — che «Le Sfogline» non faccia più il conto due volte.** Sulla pagina Le
+   Sfogline, verificare con Query Monitor che dopo la correzione non ci sia più la
+   scansione del nastro piccolo, e che il nastro grande continui a comparire.
+4. **A4 e A5 — quanto costano davvero.** Query Monitor su una pagina con un utente
+   collegato: quante query e quanti millisecondi consuma `gs_enqueue_assets()`, e quante
+   una chiamata a `gs_conv_conteggio`. Serve a decidere se basta unificare gli endpoint o
    se va anche allungato l'intervallo.
-2. **A1** — Chiamare `gs_buono_sfoglia_chiudi_mese( '2026-07' )` a mano su un Local con
-   una ventina di utenti finti, interromperla a metà, richiamarla, e verificare che con
-   la correzione **nessuno riceva il 2,5% due volte**. È la prova che conta più di tutte.
-3. **E1** — Bloccare un corso dal pannello con `display_errors` acceso, e verificare che
-   la risposta JSON arrivi pulita.
+5. **F3 — che i backup restino scaricabili.** Dopo aver cambiato il nome del file:
+   creare un backup nuovo, verificare che compaia nell'elenco e che il pulsante «Scarica»
+   funzioni, **e che funzioni ancora anche per un backup vecchio** col nome di prima.
+   È il punto che si rompe più facilmente.
 
-Tutto il resto si legge dal codice e non ha bisogno di essere eseguito.
+Una prova rapida che non richiede Local, ma il sito vero:
+
+- **E1** — bloccare un corso dal pannello e verificare che il messaggio in Posta interna
+  arrivi con il **titolo del corso** e non con «Corso bloccato: » e basta.
