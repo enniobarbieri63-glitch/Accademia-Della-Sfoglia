@@ -148,7 +148,12 @@ ha nessuno — serve per il primo caricamento dopo ogni scadenza:
 	foreach ( get_users( array( 'orderby' => 'display_name', 'order' => 'ASC', 'number' => 500 ) ) as $u ) {
 ```
 
-### 1b — Non calcolare il nastro piccolo sulla pagina che non lo mostra
+### 1b — Non calcolare il nastro piccolo dove c'è già quello grande
+
+> **CORRETTO IL 22/08/2026.** La prima stesura diceva di agganciare il controllo all'id
+> della pagina (`get_option( 'gs_page_sfogline' )`). **Era sbagliato**, e la prova su guru2
+> lo ha mostrato: quella pagina è rimasta senza *nessun* nastro, perché lì il grande non
+> c'è. Se hai già applicato la versione con l'id, **sostituiscila** con quella qui sotto.
 
 Stesso file, funzione `gs_render_nastro_vetrine()` (riga 46). Oggi il nastro piccolo su
 «Le Sfogline» è nascosto **solo dal CSS**: il PHP lo calcola comunque e il browser lo
@@ -158,20 +163,32 @@ butta via.
 riga 57), e **prima** della riga `$voci = gs_nastro_raccogli_voci( ... );`, aggiungi:
 
 ```php
-	// Sulla pagina «Le Sfogline» c'è già il nastro grande dedicato, e il CSS
-	// nasconde questo. Ma nasconderlo con display:none non evita di calcolarlo:
-	// meglio non montarlo affatto (prima di questa riga la tabella utenti veniva
-	// scansionata due volte su quella pagina, una delle due per niente).
-	$pagina_sfogline = (int) get_option( 'gs_page_sfogline' );
-	if ( $pagina_sfogline && is_page( $pagina_sfogline ) ) {
-		return;
+	// Dove c'è già il nastro grande, non montare anche il piccolo: si
+	// sovrapporrebbero. Prima questo veniva evitato nascondendo il piccolo
+	// col CSS (gaming.css:2174, body.page-id-64342), che però lo faceva
+	// comunque calcolare — una scansione completa della tabella utenti
+	// buttata via a ogni visita di quella pagina.
+	// Il controllo guarda il CONTENUTO e non l'id della pagina: lo shortcode
+	// del nastro grande è incollato a mano, quindi può stare su qualunque
+	// pagina, e l'id cambia da un sito all'altro.
+	if ( is_singular() ) {
+		$post_corrente = get_post();
+		if ( $post_corrente && has_shortcode( (string) $post_corrente->post_content, 'gs_nastro_grande_sfogline' ) ) {
+			return;
+		}
 	}
 ```
 
-**Usa `get_option( 'gs_page_sfogline' )`, non il numero 64342.** Quell'id è
-l'identificativo della pagina sul sito vero e su Local è diverso: scriverlo a mano
-farebbe funzionare la correzione in produzione e non in prova, che è il modo peggiore di
-sbagliare.
+`has_shortcode()` è una funzione di WordPress: non serve aggiungere altro.
+
+**Perché guardare il contenuto e non l'id.** La pagina «Le Sfogline» del plugin
+(`gaming-sfogline.php:329`) nasce con dentro solo `[gs_sfogline]`. Il nastro grande
+**ce lo ha incollato a mano Ennio**, e non è detto che l'abbia incollato in quella pagina.
+Agganciandosi all'id si rischiano due errori insieme: sulla pagina che ha davvero il nastro
+grande il doppio calcolo resta, e sulla pagina del plugin sparisce il nastro piccolo senza
+che compaia nulla al suo posto. Guardando il contenuto, la domanda è quella vera —
+*«qui c'è già il nastro grande?»* — e la risposta resta corretta anche se Ennio domani
+sposta lo shortcode altrove.
 
 **Non togliere ancora la riga di CSS** `body.page-id-64342 #gs-nastro-fisso { display: none !important; }`
 (`assets/css/gaming.css:2174`). Diventa superflua, ma toglierla adesso significa che se il
@@ -489,20 +506,30 @@ E il nastro grande (`gs_sc_nastro_grande_sfogline()`, riga 247) fa **una seconda
 **Su `/le-sfogline/` la tabella utenti viene scansionata per intero due volte per ogni
 visita, e una delle due è interamente sprecata.**
 
-**Correzione (due righe, da fare insieme ad A3):** aggiungere il controllo di pagina nel
-PHP, all'inizio di `gs_render_nastro_vetrine()`, dopo il controllo sul blackout:
+**Correzione (da fare insieme ad A3):** aggiungere il controllo nel PHP, all'inizio di
+`gs_render_nastro_vetrine()`, dopo il controllo sul blackout — guardando **il contenuto**
+della pagina, non il suo id:
 
 ```php
-$pagina_sfogline = (int) get_option( 'gs_page_sfogline' );
-if ( $pagina_sfogline && is_page( $pagina_sfogline ) ) {
-    return; // lì c'è il nastro grande: non calcolare nemmeno quello piccolo
+if ( is_singular() ) {
+    $post_corrente = get_post();
+    if ( $post_corrente && has_shortcode( (string) $post_corrente->post_content, 'gs_nastro_grande_sfogline' ) ) {
+        return; // qui c'è già il nastro grande: non calcolare nemmeno il piccolo
+    }
 }
 ```
 
-Usare `get_option( 'gs_page_sfogline' )` e non il numero 64342 scritto a mano: l'id è
-diverso su Local e si romperebbe alla prima prova. Una volta fatto questo, **la riga CSS
-2174 diventa superflua** e si può togliere — ma toglila solo dopo aver verificato su
-Local che il controllo PHP funzioni, non prima.
+**Non agganciarlo all'id della pagina** — né al numero 64342 scritto a mano, né a
+`get_option( 'gs_page_sfogline' )`. La pagina «Le Sfogline» creata dal plugin
+(`gaming-sfogline.php:329`) nasce con dentro solo `[gs_sfogline]`: il nastro grande ce lo
+ha incollato a mano Ennio, e può stare su qualunque pagina. Agganciarsi all'id sbaglia due
+volte insieme — sulla pagina che ha davvero il nastro grande il doppio calcolo resta, e
+sulla pagina del plugin sparisce il nastro piccolo senza che compaia nulla al suo posto.
+*(Verificato sul campo il 22/08/2026: la prima stesura diceva di usare l'id, e su guru2 la
+pagina è rimasta senza nessun nastro.)*
+
+Una volta fatto questo, **la riga CSS 2174 diventa superflua** e si può togliere — ma
+toglila solo dopo aver verificato in produzione che il controllo PHP funzioni, non prima.
 
 ### Correzione minima
 
