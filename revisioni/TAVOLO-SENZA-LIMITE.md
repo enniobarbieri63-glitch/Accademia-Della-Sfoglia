@@ -28,9 +28,10 @@ Chi ne carica cinque le vede tutte e cinque, i maestri le commentano tutte e cin
 punti restano quelli di prima. **È quello che Ennio ha chiesto senza il difetto che si
 porterebbe dietro.**
 
-**Se invece Ennio vuole i punti a ogni foto**, è **una riga sola** da togliere — quella
-indicata al punto **b** qui sotto — e va detto a lui che così la soglia mensile diventa
-raggiungibile caricando foto. **Non deciderlo tu: la riga sta lì apposta, evidenziata.**
+**Ennio ha confermato, il 26/08/2026:** *«foto e punti su una sola foto, il numero di foto
+caricate non influisce sul punteggio»*. **La decisione è presa, non è più aperta:** i punti
+si prendono una volta al giorno, sulla prima foto, e caricarne altre non cambia il
+punteggio. Applica quello che segue senza varianti.
 
 ---
 
@@ -73,8 +74,8 @@ scrivere:
 	// alcun freno. Un contrassegno diretto non dipende da nessuna query e
 	// non può rompersi allo stesso modo.
 	//
-	// ►►► Se Ennio decide che ogni foto deve dare punti, si toglie il blocco
-	//     if/else qui sotto e resta la sola gs_add_points(). ◄◄◄
+	// Confermato da Ennio il 26/08/2026: "foto e punti su una sola foto, il
+	// numero di foto caricate non influisce sul punteggio".
 	$oggi_ymd = current_time( 'Y-m-d' );
 	if ( get_user_meta( $uid, 'gs_tavolo_punti_giorno', true ) !== $oggi_ymd ) {
 		update_user_meta( $uid, 'gs_tavolo_punti_giorno', $oggi_ymd );
@@ -221,8 +222,6 @@ diventa:
 
 > *«…Puoi caricarne quante vuoi: ogni foto avrà il suo commento. I punti del gioco si
 > prendono una volta al giorno, ma le foto no — carica pure quando ti va.»*
-
-(**Se Ennio sceglie i punti a ogni foto**, la seconda frase salta.)
 
 E in cima al file, il commento di intestazione (`tavolo.php:18-21`) dice ancora *«Una sola
 foto al giorno per sfoglina (stesso schema "confronta la data" di missions.php e
