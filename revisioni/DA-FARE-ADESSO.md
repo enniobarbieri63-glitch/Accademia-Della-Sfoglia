@@ -1,99 +1,90 @@
-# Cosa dare a Claude Code adesso — l'ordine di consegna
+# Cosa c'è da fare — aggiornato al 26/08/2026, sera
 
-Aggiornato al **26/08/2026**, dopo la 3.281.0. Sostituisce ogni elenco precedente.
-
-**Un documento è superato e non va consegnato**: vedi in fondo.
+**Sostituisce la versione precedente di questo file, che è di dieci giorni fa e non vale
+più.**
 
 ---
 
-## L'ordine
+## Prima una constatazione, senza rimproveri per nessuno
 
-| | Cosa | Documento | Perché in questa posizione |
+Negli ultimi giorni sono state chiuse **quindici voci** — C1-C5, T1-T3, P1-P7, L1-L5, V1-V3,
+G1-G2, M1, N1, il bug del tema in tredici punti, lo sfarfallio, le mail distanziate. **È
+tanto, ed è tutto lavoro buono e verificato.**
+
+**Ma tutte quelle voci avevano una cosa in comune: nessuna aveva una scadenza.**
+
+Le cose con una scadenza vera — quelle legate agli **inviti di settembre**, che sono fra
+pochi giorni — **non sono ancora cominciate.** Non è colpa di nessuno: ogni giro nasceva
+dalla verifica del giro prima, ed è così che si finisce a rifinire un nastro mentre il
+calendario corre.
+
+**Questo elenco serve a rimettere davanti quello che ha una data.**
+
+---
+
+# A · Con una scadenza vera: prima dei primi inviti
+
+| | Cosa | Dove sta scritto | Stato |
 |---|---|---|---|
-| **1** | **Lo sfarfallio** | `VERIFICA-3.281.0.md` § **C** | è l'unica cosa che Ennio vede rotta, e falsa ogni prova sul menu |
-| **2** | **La scelta manuale che non si disfa** | `MENU-DECISIONI-DI-ENNIO.md` § **4** | senza, il pulsante non funziona proprio dove è l'unica possibilità |
-| **3** | **Il pulsante solo dove serve + il nome nuovo** | `MENU-DECISIONI-DI-ENNIO.md` § **1, 2, 3** | dopo il 2, o si prova un pulsante che ancora si disfa |
-| **4** | **A1 + B1** — due difetti silenziosi | `VERIFICA-3.281.0.md` § **A1, B1** | due righe ciascuno, chiudono due modi di rompersi senza dirlo |
-| **5** | **Il Tavolo senza limite giornaliero** | `TAVOLO-SENZA-LIMITE.md` | decisione di Ennio già chiusa, non ci sono domande aperte |
-| **6** | **L'elenco degli utenti** (solo il Passo 1) | `RESET-RISPOSTE-DI-ENNIO.md` § **Passo 1** | non richiede decisioni e sblocca tutto il reset |
-| **7** | **A2, B2, B3** | `VERIFICA-3.281.0.md` | il resto della verifica, nessuna fretta |
-| **8** | **Il reset vero e proprio** | `RESET-PRIMA-DEL-1-OTTOBRE.md` + `RESET-RISPOSTE-DI-ENNIO.md` | dopo che Ennio ha guardato l'elenco del punto 6 |
+| **A1** | **Il reset** — Ennio guarda l'elenco, dice chi resta, si nasconde (mai cancellare) e si azzera | `RESET-RISPOSTE-DI-ENNIO.md` | elenco **già pronto** in Diagnostica; il resto **non iniziato** |
+| **A2** | **L'identificativo pubblico staccato dal nome utente** — su tutti gli account e a ogni nuova registrazione | `PREZZI-E-DATI-DI-ACCESSO.md` | **non iniziato** |
+| **A3** | **Il consenso nel modulo di iscrizione** | `MAIL-DI-BENVENUTO-E-30-GIORNI.md` | **non iniziato** |
+| **A4** | **I cinque testi che dicono «prima paghi, poi entri»** | `MAIL-DI-BENVENUTO-E-30-GIORNI.md` | **non iniziato** |
+| **A5** | **Il congelamento che congela davvero** — streak, resoconto del mese, promemoria lezioni | `TRENTA-GIORNI-E-PANNELLO-MAIL.md` | digest ✅ (3.283.0), **gli altri tre no** |
+| **A6** | **I trenta giorni**: data di approvazione, scadenza automatica, i 29 € | `TRENTA-GIORNI-E-PANNELLO-MAIL.md` | la data ✅ (3.284.1), **il resto no** |
 
-**Dal 9 in poi si torna al piano di prima**: i Giri 3-6 mai iniziati (A2 il doppio clic sui
-livelli, E4, A5, E5, B1-B6, E7, F1 il tetto ai punti giornalieri, F2, F3, D1-D3), e quello che
-esce dalla seconda lettura mentre va avanti.
+**A1 e A2 vanno fatte insieme**: sono l'unico momento in cui si passa su tutti gli account,
+e farlo due volte è lavoro doppio e rischio doppio.
 
----
+**A5 va prima di A6:** senza, la prima sfoglina che arriva al giorno 31 si vede azzerare lo
+streak e riceve il resoconto di un mese in cui non poteva entrare.
 
-## I quattro documenti da consegnare
+## E due decisioni ferme su Ennio, dentro A
 
-1. **`VERIFICA-3.281.0.md`** — sfarfallio (C), A1, A2, B1, B2, B3
-2. **`MENU-DECISIONI-DI-ENNIO.md`** — il pulsante «Fissa il menu in alto»
-3. **`TAVOLO-SENZA-LIMITE.md`** — foto libere, punti una volta al giorno
-4. **`RESET-RISPOSTE-DI-ENNIO.md`** — cosa si azzera e cosa no, e la procedura sugli account
-
-Più, come riferimento di sfondo se serve: `RESET-PRIMA-DEL-1-OTTOBRE.md`,
-`LETTURA-2-BLOCCO-3-PARTNER.md`, `LETTURA-2-BLOCCO-4-PERCORSI.md`.
+- **La prima approvazione è gratis?** — l'unica lettura compatibile con *«per entrare non si
+  paga»* è che sì, il bonifico serva solo per riaprire al giorno 31. **Una riga di conferma**,
+  e se è no la mail va riscritta da capo.
+- **Quali aree si chiudono davvero** al trentesimo giorno, confermate voce per voce.
 
 ---
 
-## ⛔ Non consegnare: `ORDINE-CON-GAMING-SPENTO.md`
+# B · Senza scadenza, ma già specificate
 
-**È superato.** Quel documento chiedeva di costruire `includes/diagnosi-author.php`, un file
-usa-e-getta per scoprire **se** il tema alterava le ricerche per autore anche in produzione.
-
-**Quella domanda ha già avuto risposta**: Claude Code ha trovato la causa
-(`the_newspaper_post_author_archive()`), l'ha corretta in 13 punti nella 3.281.0, e ha
-confermato gli effetti che c'erano in produzione. **Costruire adesso quella diagnosi
-sarebbe lavoro per rispondere a una domanda già chiusa.**
-
-Quello che di quel documento resta valido è **una cosa sola**, ed è già in coda come punto
-**7**: la riga in Diagnostica (**A2** della verifica 3.281.0), che è la versione permanente
-della stessa idea — accorgersi se un domani la correzione smette di servire.
+| | Cosa | Stato |
+|---|---|---|
+| **B1** | **N2** — le due metà del nastro identiche | due righe, **errore mio**, ultima cosa aperta di quel filone |
+| **B2** | **I 49 €** al posto dei token per la vetrina | conviene **subito dopo il reset**: nessuna migrazione da gestire |
+| **B3** | **Lo spareggio** per il pari merito — almeno la parte che se ne accorge e si ferma | senza, la prima parità dà 100 punti a caso e nessuno lo sa |
+| **B4** | **Il pannello delle mail** — le 5-6 dei trenta giorni | la strada è già aperta (`gs_invia_mail_template`) |
+| **B5** | **Le sfogline possono spegnere le proprie email** | il meccanismo c'è, manca il riquadro |
+| **B6** | **«La Mia Sfoglia» senza confusione** — le tre mosse | prima che arrivino le iscritte, se si fa in tempo |
 
 ---
 
-## Le tre decisioni ancora ferme su Ennio
+# C · Il mio lavoro, che non blocca nessuno
 
-Nessuna blocca i punti 1-8. Ma **nessuna delle tre può essere decisa da Claude Code**, e due
-sono ferme da parecchio.
+**Seconda lettura: restano 13 file che toccano punti o badge**, circa 4.400 righe.
+`sondaggi.php`, `madrina.php`, `indovina.php`, `piatti-estinzione.php`, `conversazioni.php`,
+`missions.php`, `badges.php`, `forms.php`, `year-prize.php`, `traguardi.php`,
+`mappa-squadre.php`, `riepilogo-anno.php`, `streak.php`.
 
-### a) Il campanello della Posta interna — ferma dal 24/08
+**Sono circa tre blocchi**, e **non servono prima di settembre**: a settembre il gaming è
+spento, e quei file non girano. **Servono prima che il gaming apra** — ottobre o novembre.
 
-Oggi in Posta interna arrivano le disdette con l'acconto da restituire e, da novembre, i
-rendiconti della chiusura del mese. **Non c'è nessun avviso**: né email, né aeroplanino, né
-un numero di non letti. La funzione per contarli (`gs_inbox_non_letti()`) è scritta e non
-collegata a niente.
-
-Tre opzioni, dalla più leggera: un numero accanto alla voce «Posta interna»; **una riga nello
-Stato Generale** (quella che consiglio); un aeroplanino solo per le disdette con acconto.
-
-**È diventata più urgente:** con il Tavolo senza limite, quella casella riceverà più roba, e
-con i partner (P4) c'è una vetrina pagata che aspetta.
-
-### b) P4 — la vetrina del partner che si spegne quando lui la modifica
-
-Dal blocco 3: oggi un partner che corregge un refuso **toglie da solo dal sito la vetrina
-che ha pagato**, finché Ennio non riapprova. E il testo del pannello gli dice il contrario.
-
-**Consiglio la strada 2** — la vetrina già approvata resta online mentre la modifica aspetta.
-In ogni caso **la frase del pannello va corretta**, perché oggi non è vera.
-
-### c) L'export delle opzioni del tema da produzione a guru2
-
-`D2` della verifica 3.281.0. Guru2 non ha il tema configurato come il sito vero — l'ha
-scritto Claude Code stesso nel changelog della 3.279. **È il tema che ha causato il difetto
-più grosso di tutto il progetto**, e finché i due siti non si somigliano, ogni prova che
-riguarda intestazione, nastro o scorrimento vale solo fino a prova contraria.
-
-Nel tema Newspaper c'è Import/Export nelle opzioni. Mezz'ora di Ennio.
+**E i Giri 3-6 del piano originale non sono mai stati fatti**: A2 (il doppio clic che brucia
+due livelli), E4, A5, E5, B1-B6, E7, F1 (il tetto ai punti giornalieri), F2, F3, D1-D3.
+**Anche quelli valgono per l'apertura del gaming, non per gli inviti.**
 
 ---
 
-## Cosa faccio io nel frattempo
+# In una riga
 
-`voting.php` e `giuria-turno.php` — le sfide e le giurie. Sono i primi due dei **diciassette
-file che toccano punti o badge**, cioè il gruppo dove, dopo L1 e L2, mi aspetto il resto.
+**Tutto quello che è stato fatto finora serve al gaming, che apre a ottobre o novembre.
+Quello che serve a settembre — il reset, i dati di accesso, il consenso, i testi, il
+congelamento, i trenta giorni — è ancora tutto da fare, e settembre è la settimana
+prossima.**
 
-**Non aspettate me per i punti 1-8**: sono lavori diversi e vanno in parallelo, come è stato
-finora.
+**Se una sola cosa deve partire domani, è A1 + A2.** Sono l'unica coppia che non si può
+recuperare dopo: quando la prima sfoglina ha scritto i suoi dati, il reset smette di essere
+un'operazione su dati di prova — e quando il primo link con dentro il nome utente è finito in
+rete, ci resta.
