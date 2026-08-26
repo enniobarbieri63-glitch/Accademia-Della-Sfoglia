@@ -150,23 +150,57 @@ distruggerli. **Mai `wp_delete_user( $id )` da solo.**
 
 ---
 
-# Una cosa che devi confermare tu, Ennio
+# 5. «Azzera i percorsi» — chiarito da Ennio, e vuol dire più di una chiave
 
-Hai scritto *«i contenuti tra messaggi degli utenti, e **i percorsi** e i punti acquisiti li
-puoi azzerare»*.
+Avevo chiesto quale delle due letture fosse quella giusta. **Ennio ha risposto il
+26/08/2026:**
 
-**«I percorsi» può voler dire due cose molto diverse**, e una delle due non si recupera:
+> *«i percorsi fatti dagli utenti nel gaming, non i percorsi studiati per realizzare il
+> gaming»*
 
-- **l'avanzamento delle sfogline nei percorsi** — quali lezioni hanno visto, quali badge
-  hanno preso. **Questo si azzera**, ed è quello che ho capito, perché l'hai messo in mezzo a
-  «messaggi degli utenti» e «punti acquisiti»;
-- **i Percorsi Guidati stessi** — «Dalla sfoglia ai tortellini» e gli altri, con le lezioni
-  video dentro, l'ordine, i livelli. **Quelli sono lavoro tuo**, non dati degli utenti.
+**Quindi:**
 
-**Ho scritto le istruzioni per la prima lettura**, e nel documento c'è scritto di **non
-toccare** i Percorsi Guidati e le Lezioni Video finché non lo confermi tu.
+| | |
+|---|---|
+| **Si azzera** | l'avanzamento delle sfogline: quali lezioni hanno visto, quali badge di percorso hanno preso, il Diploma Finale |
+| **Non si tocca** | i **Percorsi Guidati** costruiti da Ennio — «Dalla sfoglia ai tortellini» e gli altri — con dentro le lezioni video, l'ordine, i livelli, le finestre stagionali |
 
-Una riga di risposta basta.
+**`gs_percorso_lezioni` e `gs_lezione` restano dove sono.** Sono contenuto, non dati degli
+utenti: rifarli vorrebbe dire rifare mesi di lavoro. **La domanda è chiusa, non riaprirla.**
+
+## Cosa vuol dire «azzerare l'avanzamento», in pratica
+
+Non è una chiave sola, ed è il punto in cui un elenco scritto a mano sbaglia. L'avanzamento
+di una sfoglina in un percorso è sparso in **sei posti diversi**, e due di questi **sono
+appena stati creati** dalle correzioni L1 e L2:
+
+| Chiave | Cosa tiene |
+|---|---|
+| `gs_lezioni_viste` | l'elenco delle lezioni guardate — **è questo che decide se un percorso è completo** |
+| `gs_lezione_vista_<ID>` | **nuova (L1)**, una chiave per ogni lezione guardata |
+| `gs_badges` | contiene le voci `percorso_<ID>` e `percorsi_tutti_completi` |
+| `gs_badge_label_percorso_<ID>` | la scritta del badge, una per percorso |
+| `gs_badge_dato_<chiave>` | **nuova (L2)**, una per ogni badge assegnato |
+| `gs_badges_log` | quando ogni badge è stato preso |
+
+**Quattro di queste sei hanno il nome costruito al momento**, e cambiano a ogni percorso e a
+ogni lezione. **È esattamente la trappola già descritta**: un elenco di chiavi da cancellare,
+compilato leggendo il codice, ne mancherebbe la metà — e una sfoglina si ritroverebbe i
+badge di percorso addosso pur avendo l'avanzamento azzerato, oppure il contrario.
+
+**Vale la regola già fissata: cancellare per prefisso `gs_`, tenendo l'elenco corto delle
+eccezioni.** Fatto così, l'avanzamento sparisce tutto insieme senza doverlo elencare.
+
+## Una conseguenza da sapere
+
+I **certificati di percorso** e il **Diploma Finale** non sono file salvati: si generano al
+momento leggendo il badge (`gs_certificato_percorso_html()`,
+`gs_certificato_diploma_finale_html()`). **Azzerato il badge, il certificato non si apre
+più** — anche se qualcuno ne aveva salvato il collegamento.
+
+È corretto che sia così — un diploma di un percorso mai fatto non deve restare stampabile —
+ma se qualcuno l'ha già stampato e chiede perché il collegamento non funziona più, la
+risposta è questa.
 
 ---
 
@@ -179,7 +213,8 @@ Una riga di risposta basta.
 | Dati personali delle persone | 🚫 non toccare |
 | Account «oltre i sei» | ⚠️ **elencare → escludere → far vedere a Ennio → nascondere**, non cancellare |
 | Partner, lettori, amministratori | 🚫 **mai**, in nessuna forma |
-| Percorsi Guidati e Lezioni Video | ⏸ fermi finché Ennio non conferma |
+| Avanzamento nei percorsi (lezioni viste, badge, diploma) | ✅ si azzera — **sei chiavi, quattro col nome costruito: vedi il punto 5** |
+| Percorsi Guidati e Lezioni Video | 🚫 **non toccare**, sono contenuto di Ennio (confermato 26/08) |
 
 **La prima cosa da fare è il Passo 1: l'elenco.** Non richiede nessuna decisione e sblocca
 tutto il resto.
