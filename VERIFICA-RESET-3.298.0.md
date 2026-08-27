@@ -123,3 +123,27 @@ chi ha il Mac in mano:
 
 Poi: backup, Parte 2 (lo username), anteprima letta da Ennio, Reset, i sette account aperti a
 mano. Come dice il documento di partenza, che da qui non è cambiato.
+
+---
+
+# Seguito: la Parte 3 (i sedici test), e lo zip ricontrollato
+
+**27/08/2026, sera.**
+
+Il pacchetto rimandato è **identico** a quello già verificato: `diff -rq` fra i due zip
+3.298.2 non trova nessuna differenza. Niente è cambiato in silenzio sotto lo stesso numero di
+versione.
+
+**I sedici test che falliscono da prima: nessuno tocca il Reset.** La sessione che li ha
+guardati li ha elencati uno per uno, con cosa prova ciascuno, e ha attribuito i fallimenti a
+quattro cause estranee (un mock che non imposta il ruolo dell'utente finto, un refactor delle
+mail, una pagina «Newsletter» mancante, sette funzioni di pannello presenti in un solo pannello
+generale).
+
+Quella tabella non la posso verificare: i test stanno fuori dal pacchetto. **L'unica riga che
+riguardava il Reset l'ho controllata da qui, e torna**: `gs_pannello_reset()` è presente in
+tutti e due i pannelli generali (`control-panel.php:285`, `admin.php:290`) e registrato in
+`pannello-nuovo.php:70` — non è fra le sette funzioni scoperte.
+
+**Restano due cose, tutte e due sul Mac:** la prova nel browser su guru2 e i due comandi che
+cercano se ci sia altro scritto da Rina fra i tipi che il Reset cancella.

@@ -1,6 +1,7 @@
 # Istruzione: quello che resta del Reset
 
-**Per Claude Code Ennio — 27/08/2026, scritta su 3.298.2**
+**Per Claude Code Ennio — 27/08/2026, scritta su 3.298.2 · aggiornata il 27/08/2026 sera:
+la Parte 3 è stata fatta, restano la 1 e la 2.**
 **Sostituisce quello che restava aperto in `ISTRUZIONE-LA-PROVA-E-LE-QUATTRO-DECISIONI.md` e
 in `ISTRUZIONE-L-ECCEZIONE-DI-RINA.md`: quei due sono stati eseguiti, tranne le parti che
 ritrovi qui.**
@@ -17,8 +18,9 @@ Il Reset è finito dal lato del codice, e verificato pacchetto per pacchetto da 
   malinteso, è stata tolta;
 - `php -l`, `node --check`, e la suite dedicata a 51 controlli: verdi.
 
-**Non rimettere mano al codice del Reset.** Qui non c'è niente da correggere: ci sono tre cose
-da **guardare**, e una sola di queste può portare a una modifica.
+**Non rimettere mano al codice del Reset.** Qui non c'è niente da correggere: ci sono due cose
+da **guardare** (la terza è già stata fatta, la trovi in fondo), e possono portare a una
+modifica solo se salta fuori qualcosa.
 
 ---
 
@@ -104,36 +106,30 @@ Ennio, non tua, e non si prende «già che ci siamo».
 
 ---
 
-## PARTE 3 — I sedici test che falliscono da prima
+## PARTE 3 — I sedici test che falliscono da prima · FATTA, non rifarla
 
-Ogni consegna finisce con «stessi 16 file pre-esistenti, nessuna nuova rottura». È
-probabilmente vero, ma nessuno l'ha mai verificato: i test stanno fuori dal pacchetto, quindi
-chi verifica le consegne non li vede.
+Fatta il 27/08/2026. Risultato: **nessuno dei sedici tocca il Reset.**
 
-Serve solo una risposta, non una correzione:
+Quattro cause, tutte estranee: un mock di test che non imposta il ruolo dell'utente finto (la
+maggioranza dei casi), un refactor delle mail non ancora riflesso in un test, una pagina
+«Newsletter» mancante, e la scansione dei due pannelli generali che trova sette funzioni
+`gs_pannello_*()` presenti in uno solo dei due.
 
-```bash
-./run.sh 2>&1 | grep -i "fail\|error" | sort -u
-```
+Alcuni dei sedici richiedono file che il Reset usa anche lui — `sfogline-extra.php`,
+`calendario.php`, `piatti-estinzione.php` — ma sono richiami a helper condivisi, non controlli
+sulla sua logica.
 
-Scrivi **l'elenco dei 16 file** e, per ognuno, una riga: cosa prova, e se tocca il Reset
-(`reset.php`, `sfogline-extra.php`, `piatti-estinzione.php`, `calendario.php`) oppure no.
-
-- Se **nessuno** tocca il Reset: dillo, e il giro è chiuso.
-- Se **qualcuno** lo tocca: fermati lì e scrivi quale e cosa dice il messaggio d'errore. Non
-  correggerlo di tua iniziativa — un test rosso da prima può essere rosso per un motivo che
-  qualcuno conosce.
-
----
+Una sola riga di quella scansione riguardava il Reset, ed è a posto: `gs_pannello_reset()` è in
+**tutti e due** i pannelli generali (`control-panel.php:285` e `admin.php:290`, più la
+registrazione in `pannello-nuovo.php:70`), e non è fra le sette funzioni segnalate mancanti.
 
 ## Cosa riferire, alla fine
 
-Cinque righe bastano:
+Due righe bastano, ormai:
 
 1. La Parte 1 l'hai potuta fare, sì o no. Se sì, quale dei cinque punti non tornava (o
    «tornano tutti e cinque»).
 2. Il risultato dei due comandi della Parte 2.
-3. L'elenco dei 16, e se qualcuno tocca il Reset.
 
 ---
 
@@ -142,5 +138,5 @@ Cinque righe bastano:
 - **Non eseguire il Reset.** Né in produzione, né su guru2, né «per vedere se funziona». La
   prova a vuoto la legge Ennio, il backup lo fa lui, il pulsante lo preme lui.
 - **Non cancellare nessun utente**, per nessun motivo, in nessuno script.
-- **Non decidere niente al posto di Ennio.** Se una delle tre parti apre una domanda, si
+- **Non decidere niente al posto di Ennio.** Se una delle due parti apre una domanda, si
   scrive la domanda e ci si ferma.
