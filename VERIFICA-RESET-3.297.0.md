@@ -92,3 +92,34 @@ Una riga:
 La verifica dal vivo — l'anteprima aperta su guru2 con una sfoglina davvero sospesa dentro il
 Cestino — non si vede dal pacchetto. È la prova 1 delle cinque, ed è quella che conta: è
 l'unico modo per guardare da fuori la cosa che il Reset non perdona.
+
+---
+
+# Seguito: 3.297.1 — verificata
+
+**27/08/2026.** Tre file cambiati rispetto a 3.297.0 (`reset.php`, l'intestazione del plugin,
+`readme.txt`), nient'altro toccato.
+
+- **La scatola vuota**: corretta esattamente dov'era. Se dopo la ripulitura non resta nessuna
+  chiave, ora la chiave viene **tolta** con `delete_user_meta()` invece di essere riscritta
+  vuota, e il perché è scritto nel commento.
+- **`scatole_ripulite`** compare in tutti e due i posti: nel messaggio di fine reset (con
+  singolare e plurale) e nella cronologia del pannello. Nella cronologia c'è un `isset()` che
+  io non avevo chiesto e che serve davvero: le voci di log scritte prima di 3.297.0 quella
+  chiave non ce l'hanno.
+- Versione 3.297.1 nei tre punti, changelog che dice cosa sarebbe successo.
+- `php -l` e `node --check` puliti. Censimento rifatto da capo sul pacchetto nuovo: **36 tipi
+  registrati = 23 da tenere + 13 da cancellare-voluti**, nessuno scoperto; 37 chiavi
+  nell'elenco da tenere.
+
+`tests/` fuori dalla cartella del plugin è corretto: nello zip installabile non ci deve
+entrare.
+
+**Dal codice non resta niente da correggere.** Restano due cose, e nessuna delle due è codice:
+
+1. **La prova 1** — l'anteprima aperta su guru2, nel browser, con una sfoglina davvero sospesa
+   dentro il Cestino. Nessuna sessione l'ha ancora potuta fare (guru2 non è raggiungibile da
+   lì): va fatta a mano, ed è quella che guarda da fuori la cosa che non perdona.
+2. **Le quattro decisioni di Ennio** (Parte 3 di `ISTRUZIONE-LE-CORREZIONI-AL-RESET.md`): le
+   Cose da Fare, il Diario e i Consigli, gli errori didattici promossi, e i piatti che restano
+   adottati.
