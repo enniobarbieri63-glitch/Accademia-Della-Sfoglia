@@ -1,0 +1,278 @@
+<!doctype html><html><head><meta charset='utf-8'>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #F4EFE4; font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #8A5A2F; } a:hover { color: #5C4A34; }
+    .lab { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+    .riga { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 8px; background: #FFFDF8; border: 1px solid #EDE4D4; border-left: 3px solid #DACDB8; }
+    .nome { font-size: 14.5px; font-weight: 600; color: #3A2E24; line-height: 1.25; }
+    .sotto { font-size: 12.5px; color: #6B5B4C; line-height: 1.3; }
+    .quando { font-size: 11.5px; color: #9C8B77; white-space: nowrap; text-align: right; }
+    .btn { text-decoration: none; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 7px; white-space: nowrap; }
+    .btn-fa { background: #E3B24A; color: #3A2E24; }
+    .btn-si { background: #1F6E37; color: #FFFDF8; }
+    .btn-no { background: #F2EADC; color: #5C4A34; border: 1px solid #DFD2BC; }
+    .coda { background: #FBF7EE; border: 1px solid #E6DCC9; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 9px; }
+    .testa { display: flex; align-items: center; gap: 9px; margin-bottom: 3px; }
+    .pallino { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .conta { font-size: 12px; font-weight: 700; color: #FFFDF8; border-radius: 999px; padding: 1px 8px; }
+    .tasto { font-size: 11px; color: #9C8B77; border: 1px solid #E0D5C1; border-radius: 5px; padding: 1px 6px; }
+  </style>
+</head><body>
+
+<div style="width: 1600px; background: #F4EFE4; color: #3A2E24; padding: 0 0 40px;">
+
+  <!-- ======= TESTA: scura ma bassa, non un blocco ======= -->
+  <div style="background: #2B211A; padding: 0;">
+
+    <div style="display: flex; align-items: center; gap: 20px; padding: 14px 28px;">
+      <div style="font-family: Newsreader, Georgia, serif; font-size: 17px; font-weight: 500; color: #E3B24A; white-space: nowrap;">Accademia della Sfoglia</div>
+      <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px; background: #362A21; border: 1px solid #4A3B2E; border-radius: 8px; padding: 9px 14px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9C8B77" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span style="font-size: 13.5px; color: #9C8B77;">Cerca — una sfoglina, un pagamento, una delle 62 sezioni</span>
+        <span style="flex-grow: 1;"></span>
+        <span style="font-size: 11px; color: #7A6857; border: 1px solid #4A3B2E; border-radius: 5px; padding: 1px 6px;">⌘K</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #6FBE85;"></span>
+        <span style="font-size: 13px; color: #C8BBA8;">Gaming attivo</span>
+      </div>
+      <div style="width: 28px; height: 28px; border-radius: 50%; background: #8A5A2F;"></div>
+    </div>
+
+    <!-- ADESSO — la cosa sola sopra tutte (la tua idea migliore) -->
+    <div style="display: flex; align-items: center; gap: 22px; padding: 16px 28px; background: #241B15; border-top: 1px solid #3A2E24;">
+      <div class="lab" style="color: #E3B24A;">Adesso</div>
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px;">
+        <div style="font-family: Newsreader, Georgia, serif; font-size: 24px; font-weight: 500; color: #F5EDE0; line-height: 1.15;">Corso del 14 settembre</div>
+        <div style="font-size: 13.5px; color: #A3937F;">Mancano 2 acconti e la lista della spesa · fra 19 giorni</div>
+      </div>
+      <a href="#" style="background: transparent; color: #C8BBA8; text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 9px 18px; border-radius: 7px; border: 1px solid #4A3B2E;">Dopo</a>
+      <a href="#" style="background: #E3B24A; color: #241B15; text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 9px 20px; border-radius: 7px;">Apri</a>
+    </div>
+
+    <!-- IL POLSO — striscia sottile, non quattro riquadroni -->
+    <div style="display: flex; align-items: center; gap: 0; padding: 11px 28px; background: #1F1812; border-top: 1px solid #33281F;">
+      <div style="display: flex; align-items: baseline; gap: 7px; padding-right: 26px;">
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; color: #F5EDE0;">148</span><span style="font-size: 12.5px; color: #8A7A67;">sfogline</span>
+      </div>
+      <div style="width: 1px; height: 16px; background: #3A2E24;"></div>
+      <div style="display: flex; align-items: baseline; gap: 7px; padding: 0 26px;">
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; color: #E88B7E;">4</span><span style="font-size: 12.5px; color: #8A7A67;">prove scadono entro 7 giorni</span>
+      </div>
+      <div style="width: 1px; height: 16px; background: #3A2E24;"></div>
+      <div style="display: flex; align-items: baseline; gap: 7px; padding: 0 26px;">
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; color: #E88B7E;">1</span><span style="font-size: 12.5px; color: #8A7A67;">sponsor scaduto</span>
+      </div>
+      <div style="width: 1px; height: 16px; background: #3A2E24;"></div>
+      <div style="display: flex; align-items: baseline; gap: 7px; padding: 0 26px;">
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; color: #F5EDE0;">12</span><span style="font-size: 12.5px; color: #8A7A67;">sfoglie nella sfida, chiude fra 3 giorni</span>
+      </div>
+      <span style="flex-grow: 1;"></span>
+      <span style="font-size: 12.5px; color: #6E5F4E;">sabato 26 agosto</span>
+    </div>
+  </div>
+
+  <!-- ======= LE SEI CODE ======= -->
+  <div style="padding: 22px 28px 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;">
+
+    <!-- 1 -->
+    <div class="coda">
+      <div class="testa">
+        <span class="pallino" style="background: #C23B3B;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Cose da fare oggi</span>
+        <span class="conta" style="background: #C23B3B;">4</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">1</span>
+      </div>
+      <div class="riga" style="border-left-color: #C23B3B;">
+        <div style="flex-grow: 1;"><div class="nome">Novità in home</div><div class="sotto">L'ultimo articolo è di metà agosto</div></div>
+        <div class="quando" style="color: #C23B3B; font-weight: 600;">ferma da<br>11 giorni</div>
+        <a href="#" class="btn btn-fa">Scrivi</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Buono Sfoglia del mese</div><div class="sotto">Non ancora assegnato a nessuna sfoglina</div></div>
+        <div class="quando">entro il 31</div>
+        <a href="#" class="btn btn-fa">Assegna</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Sfida d'agosto</div><div class="sotto">5 elaborati ancora da valutare</div></div>
+        <div class="quando">chiude fra<br>2 giorni</div>
+        <a href="#" class="btn btn-fa">Valuta</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Corso del 14 settembre</div><div class="sotto">Mancano 2 acconti e la lista della spesa</div></div>
+        <div class="quando">fra 19 giorni</div>
+        <a href="#" class="btn btn-no">Apri</a>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="coda">
+      <div class="testa">
+        <span class="pallino" style="background: #CD8B0C;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Iscritti</span>
+        <span class="conta" style="background: #CD8B0C;">3</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">2</span>
+      </div>
+      <div class="riga" style="border-left-color: #C23B3B;">
+        <div style="flex-grow: 1;"><div class="nome">Rosa Camilli</div><div class="sotto">Iscritta ma non ha mai caricato niente</div></div>
+        <div class="quando" style="color: #C23B3B; font-weight: 600;">da 3 mesi</div>
+        <a href="#" class="btn btn-fa">Scrivi</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Lucia Manzoni</div><div class="sotto">Abbonamento scaduto, nessun rinnovo</div></div>
+        <div class="quando">da 6 giorni</div>
+        <a href="#" class="btn btn-fa">Sollecita</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Anna Ruggeri</div><div class="sotto">Ha compilato la biografia, da rileggere</div></div>
+        <div class="quando">ieri</div>
+        <a href="#" class="btn btn-no">Leggi</a>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="coda">
+      <div class="testa">
+        <span class="pallino" style="background: #C23B3B;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Richieste di iscrizione</span>
+        <span class="conta" style="background: #C23B3B;">2</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">3</span>
+      </div>
+      <div class="riga" style="border-left-color: #C23B3B;">
+        <div style="flex-grow: 1;"><div class="nome">Carla Neri</div><div class="sotto">Faenza · nessuna presentazione</div></div>
+        <div class="quando" style="color: #C23B3B; font-weight: 600;">aspetta da<br>3 giorni</div>
+        <a href="#" class="btn btn-si">Approva</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Elena Fabbri</div><div class="sotto">Imola · ha scritto una presentazione</div></div>
+        <div class="quando">ieri sera</div>
+        <a href="#" class="btn btn-si">Approva</a>
+      </div>
+      <div style="margin-top: auto; padding-top: 8px; font-size: 12.5px; color: #9C8B77;">Approvando parte la mail di benvenuto e i suoi trenta giorni di prova.</div>
+    </div>
+
+    <!-- 4 -->
+    <div class="coda">
+      <div class="testa">
+        <span class="pallino" style="background: #C23B3B;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Pagamenti</span>
+        <span class="conta" style="background: #C23B3B;">3</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">4</span>
+      </div>
+      <div class="riga" style="border-left-color: #C23B3B;">
+        <div style="flex-grow: 1;"><div class="nome">Marisa Tonelli</div><div class="sotto">Ricevuta da mandare · 60 €</div></div>
+        <div class="quando" style="color: #C23B3B; font-weight: 600;">da 4 giorni</div>
+        <a href="#" class="btn btn-fa">Invia</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Anna Ruggeri</div><div class="sotto">Acconto corso 14 settembre · 40 €</div></div>
+        <div class="quando">ieri</div>
+        <a href="#" class="btn btn-si">Conferma</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Luisa Bergonzoni</div><div class="sotto">Acconto corso 14 settembre · 40 €</div></div>
+        <div class="quando">stamattina</div>
+        <a href="#" class="btn btn-si">Conferma</a>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="coda">
+      <div class="testa">
+        <span class="pallino" style="background: #C23B3B;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Mail</span>
+        <span class="conta" style="background: #C23B3B;">3</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">5</span>
+      </div>
+      <div class="riga" style="border-left-color: #CD8B0C;">
+        <div style="flex-grow: 1;"><div class="nome">Anna Ruggeri</div><div class="sotto">Ringrazia per la lezione, allega una foto</div></div>
+        <div class="quando">ieri, 09:12</div>
+        <a href="#" class="btn btn-no">Rispondi</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Marisa Tonelli</div><div class="sotto">La sua foto non compare nel diario dell'impasto</div></div>
+        <div class="quando">ieri, 18:40</div>
+        <a href="#" class="btn btn-fa">Rispondi</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Giovanna Belfiore</div><div class="sotto">Chiede se il corso di settembre ha ancora posti</div></div>
+        <div class="quando">2 ore fa</div>
+        <a href="#" class="btn btn-fa">Rispondi</a>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="coda">
+      <div class="testa">
+        <span class="pallino" style="background: #CD8B0C;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Sito e Gaming</span>
+        <span class="conta" style="background: #CD8B0C;">2</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">6</span>
+      </div>
+      <div class="riga" style="border-left-color: #C23B3B;">
+        <div style="flex-grow: 1;"><div class="nome">Vetrina di casa</div><div class="sotto">Mostra ancora la sfida di luglio</div></div>
+        <div class="quando" style="color: #C23B3B; font-weight: 600;">da 11 giorni</div>
+        <a href="#" class="btn btn-fa">Cambia</a>
+      </div>
+      <div class="riga">
+        <div style="flex-grow: 1;"><div class="nome">Classifica</div><div class="sotto">I punti di agosto non sono stati ricalcolati</div></div>
+        <div class="quando">ferma</div>
+        <a href="#" class="btn btn-fa">Ricalcola</a>
+      </div>
+      <div class="riga" style="border-left-color: #6B8E4E; opacity: .75;">
+        <div style="flex-grow: 1;"><div class="nome">Pagina Corsi</div><div class="sotto">Pubblicata, 6 corsi visibili</div></div>
+        <div class="quando">a posto</div>
+        <a href="#" class="btn btn-no">Vedi</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======= TUTTO IL RESTO ======= -->
+  <div style="padding: 26px 28px 0;">
+    <div style="background: #EFE8DA; border: 1px solid #E0D5C1; border-radius: 12px; padding: 18px 22px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+        <span class="pallino" style="background: #9C8B77;"></span>
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 19px; font-weight: 500;">Tutto il resto</span>
+        <span style="font-size: 13.5px; color: #8C7A66;">62 sezioni, raggruppate per quanto spesso le apri</span>
+        <span style="flex-grow: 1;"></span>
+        <span class="tasto">7</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div class="lab" style="color: #8C7A66;">Ogni giorno · 4</div>
+          <div style="font-size: 13.5px; color: #5C4A34; line-height: 1.6;">Moderazione chat · Cerca sfoglina · Ricettario · Biografie</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div class="lab" style="color: #8C7A66;">Ogni settimana · 8</div>
+          <div style="font-size: 13.5px; color: #5C4A34; line-height: 1.6;">Le Sfide · Calendario · Abbonamenti · Giuria · Sondaggi · Token · Mail · Sponsor</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div class="lab" style="color: #8C7A66;">Ogni tanto · 41</div>
+          <div style="font-size: 13.5px; color: #8C7A66; line-height: 1.6;">Lezioni · Percorsi · Premi · Locandine · Piatti · FAQ · Madrine · Premio di fine anno…</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div class="lab" style="color: #8C7A66;">Si imposta e basta · 9</div>
+          <div style="font-size: 13.5px; color: #9C8B77; line-height: 1.6;">Impostazioni · Permessi · Collaboratori · Menu · Caroselli · Backup · Diagnostica…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 18px 28px 0; display: flex; align-items: center;">
+    <span style="font-size: 13px; color: #8C7A66;"><strong style="color: #3A2E24;">17</strong> cose aperte · la più vecchia aspetta da <strong style="color: #C23B3B;">3 mesi</strong></span>
+    <span style="flex-grow: 1;"></span>
+    <a href="#" style="font-size: 13px; text-decoration: none; color: #8A5A2F;">Registro attività</a>
+  </div>
+
+</div>
+</body></html>
