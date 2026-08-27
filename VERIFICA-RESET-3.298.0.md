@@ -65,3 +65,36 @@ commenti numerati sono fuori ordine. Solo estetica, il codice fa la cosa giusta.
 La prova nel browser su guru2, con una sfoglina vera nel Cestino — l'unica che nessuna sessione
 può fare al posto di Ennio, e ora c'è un secondo motivo per farla: guardare che il numero dei
 piatti che restano a Rina sia quello che ci si aspetta.
+
+---
+
+# Seguito: 3.298.1 — verificata
+
+**27/08/2026.** Quattro file cambiati (`reset.php`, `gaming.js`, l'intestazione, `readme.txt`),
+nient'altro toccato.
+
+- **L'eccezione è sparita davvero**: `gs_e_rina_poletti()` non esiste più e
+  `grep -rn "rina_poletti"` nel codice non trova più niente — zero riferimenti, né in PHP né
+  nel JS. Il blocco `3d` non ha più il ramo speciale, e i commenti sono tornati in ordine
+  `3a → 3b → 3c → 3d`.
+- **L'anteprima dice quanti piatti tornano liberi.** `gs_reset_conteggio_piatti_da_liberare()`
+  conta con gli stessi stati (`any` + `trash`) che usa il Reset per liberarli: il numero
+  dell'anteprima e quello del log non possono divergere.
+- `php -l` e `node --check` puliti. Censimento rifatto: **36 tipi = 26 da tenere + 10 da
+  cancellare-voluti**, nessuno scoperto. Versione 3.298.1 nei tre punti, changelog che dice
+  perché l'eccezione è stata tolta.
+
+## Una cosa da correggere, ed è mia
+
+La riga nuova dell'anteprima non concorda al plurale — con più di un piatto scrive
+«3 piatti in via d'estinzione **tornerà libero**». L'errore era nello snippet che avevo scritto
+io, copiato fedelmente. È la pagina che si legge prima di premere il pulsante che non si
+annulla, quindi vale la pena sistemarla: la correzione è in
+`ISTRUZIONE-LA-RIGA-DEI-PIATTI.md`.
+
+## Resta, e ora è tutto quello che resta
+
+1. **La prova nel browser su guru2**, con una sfoglina vera nel Cestino.
+2. **Il controllo della Parte 3** — se ci sia altro scritto da Rina fra i tipi che il Reset
+   cancella (il Matterello Parlante, `gs_voce`, parla di «ricordi e consigli registrati a
+   voce»). Due comandi, in `ISTRUZIONE-L-ECCEZIONE-DI-RINA.md`.
