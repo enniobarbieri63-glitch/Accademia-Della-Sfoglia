@@ -1,158 +1,127 @@
-# Istruzione: rendere visibile l'eccezione di Rina sui piatti
+# Istruzione: togliere l'eccezione di Rina sui piatti
 
 **Per Claude Code Ennio — 27/08/2026, scritta su 3.298.0**
+**Sostituisce la versione precedente di questo file: la domanda che poneva ha avuto risposta.**
 
 In 3.298.0 il Reset libera il custode di tutti i piatti in via d'estinzione **tranne** quelli
-adottati da Rina Poletti, che restano suoi (decisione di Ennio). La regola è giusta e il codice
-la applica. Il problema è un altro: **quella regola non si vede da nessuna parte prima di
-premere, e può fallire in silenzio.**
+adottati da Rina Poletti. Quell'eccezione è nata dalla frase di Ennio *«cancella tutto, tranne
+i consigli di Rina Poletti»*, interpretata come «i piatti che ha adottato lei».
 
-`gs_e_rina_poletti()` confronta il nome così:
+**Ennio ha chiarito: intendeva i Consigli scritti da lei.**
 
-```php
-return $u && 'Rina Poletti' === trim( $u->display_name );
-```
+E quelli **sono già tenuti**, senza fare niente: la decisione 2 tiene il tipo `gs_consiglio`
+per intero, e i Consigli si scrivono sia dalle sfogline sia dal titolare in wp-admin (c'è la
+voce di menu «Consigli» in `admin.php:46`). Quello che Ennio ha chiesto è già in 3.298.0.
 
-Confronto esatto, maiuscole comprese, un solo spazio. Se l'account si chiama `RINA POLETTI`,
-`Rina`, `Rina Poletti – Accademia`, o ha due spazi, o uno spazio unificatore arrivato da un
-copia-incolla, la funzione risponde **falso** e il Reset libera anche i piatti di Rina. Non dà
-errore. Non compare nell'anteprima, che dei piatti non parla affatto. Si scopre dopo.
-
-Tre modifiche, tutte in `includes/reset.php` tranne l'ultima.
+Quindi l'eccezione sui piatti è una regola in più, mai chiesta, su un'operazione che non si
+annulla. **Va tolta**, e i piatti tornano tutti liberi come nella proposta approvata.
 
 ---
 
-## 1. Il confronto non deve dipendere da maiuscole e spazi
+## PARTE 1 — Togliere l'eccezione
 
-Sostituisci tutta `gs_e_rina_poletti()` con queste due funzioni:
+Tutto in `includes/reset.php`. `gs_e_rina_poletti()` non è usata da nessun'altra parte del
+plugin: l'ho verificato su tutti i file del pacchetto, la definizione e l'unica chiamata sono
+tutte e due in questo file.
+
+**1a — Cancella la funzione** `gs_e_rina_poletti()` per intero (nel pacchetto 3.298.0 sta poco
+sopra `gs_reset_meta_da_tenere()`), commento compreso.
+
+**1b — Semplifica il blocco `3d`** dentro `gs_reset_esegui()`: il ramo che risparmiava i suoi
+piatti sparisce.
 
 ```php
-/**
- * Riconosce l'account di Rina Poletti per nome visualizzato, non per ID: un
- * ID utente non è portabile fra guru2 e il sito vero, un nome sì. Usata solo
- * dall'eccezione sui piatti in via d'estinzione (decisione di Ennio,
- * 27/08/2026).
- *
- * Il confronto è tollerante su maiuscole e spazi di proposito: se fosse
- * esatto, un account scritto "RINA POLETTI" o con due spazi in mezzo
- * risponderebbe NO in silenzio, e il Reset le libererebbe tutti i piatti
- * senza che niente lo dica. Il nome vero sta in gs_rina_nome(), in un
- * punto solo: se un giorno l'account si chiamasse diversamente, si cambia lì.
- */
-function gs_rina_nome() {
-	return 'Rina Poletti';
-}
-
-function gs_e_rina_poletti( $uid ) {
-	$uid = (int) $uid;
-	if ( ! $uid ) { return false; }
-	$u = get_userdata( $uid );
-	if ( ! $u ) { return false; }
-	$normalizza = function ( $s ) {
-		$s = function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $s, 'UTF-8' ) : strtolower( (string) $s );
-		// \s in modalità unicode prende anche lo spazio unificatore (U+00A0),
-		// quello che arriva incollato da Word o da una pagina web.
-		return trim( preg_replace( '/\s+/u', ' ', $s ) );
-	};
-	return $normalizza( $u->display_name ) === $normalizza( gs_rina_nome() );
-}
-
-/**
- * L'ID dell'account di Rina, se un account con quel nome esiste davvero.
- * Serve all'anteprima per dire subito «quel nome non trova nessuno», che è
- * il modo in cui questa eccezione può fallire senza farsi notare.
- */
-function gs_rina_poletti_uid() {
-	foreach ( get_users( array( 'fields' => 'ID' ) ) as $uid ) {
-		if ( gs_e_rina_poletti( $uid ) ) { return (int) $uid; }
+	// 3d — i piatti restano (sono catalogo), ma il custode è stato di gioco:
+	// senza svuotarlo i piatti ripartono già adottati da sfogline che non
+	// hanno più niente, e nessuna nuova sfoglina può più adottarli — lo
+	// stesso motivo per cui si svuotano i voti dentro i sondaggi
+	// (decisione di Ennio, 27/08/2026).
+	//
+	// Nessuna eccezione per nessuno: la 3.298.0 ne aveva una per i piatti di
+	// Rina Poletti, nata da una frase interpretata male. Ennio ha chiarito il
+	// 27/08/2026 che parlava dei Consigli scritti da lei — che si tengono
+	// tutti per conto loro, perché gs_consiglio è nell'elenco dei tipi da
+	// tenere. Un'eccezione basata sul nome visualizzato di un account, per
+	// giunta, sarebbe fallita in silenzio a ogni piccola differenza di
+	// maiuscole o di spazi.
+	$piatti_liberati = 0;
+	if ( post_type_exists( 'gs_piatto' ) ) {
+		foreach ( get_posts( array( 'post_type' => 'gs_piatto', 'post_status' => $stati_da_cancellare, 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
+			if ( ! get_post_meta( $pid, 'gs_custode_tipo', true ) ) { continue; }
+			delete_post_meta( $pid, 'gs_custode_tipo' );
+			delete_post_meta( $pid, 'gs_custode_id' );
+			delete_post_meta( $pid, 'gs_custode_team' );
+			$piatti_liberati++;
+		}
 	}
-	return 0;
-}
 ```
 
-## 2. L'anteprima deve dire quanti piatti restano suoi
+**1c — Rimetti i commenti in ordine.** Nel pacchetto 3.298.0 il blocco `3d` sta fisicamente
+*prima* del `3c` (le tre opzioni segnaposto). Sposta il `3d` dopo il `3c`, o rinumerali: è solo
+estetica, ma chi legge questo file fra un anno segue i numeri.
 
-Aggiungi la funzione, accanto alle altre del riepilogo:
+**1d — `piatti_liberati` resta com'è**, nel log, nel messaggio di fine reset e nella cronologia
+del pannello. Quella parte va bene ed è utile.
+
+**1e — Controlla che non sia rimasto niente**: `grep -rn "rina_poletti" gaming-sfogline/` non
+deve trovare più nulla.
+
+## PARTE 2 — Quello che l'anteprima deve dire dei piatti
+
+Questa parte va fatta lo stesso, anche senza eccezione: il Reset libera dei piatti, ed è una
+cosa irreversibile che oggi l'anteprima non nomina affatto. Si guarda prima di premere, non
+dopo nel log.
 
 ```php
 /**
- * I piatti in via d'estinzione: quanti tornano liberi e quanti restano a
- * Rina. Una regola che decide qualcosa di irreversibile va guardata PRIMA
- * di premere, non letta dopo nel log — stesso motivo per cui l'anteprima
+ * Quanti piatti in via d'estinzione tornerebbero liberi. Il Reset tiene i
+ * piatti (sono catalogo) ma svuota il custode: chi legge l'anteprima deve
+ * vederlo prima, non scoprirlo dopo — stesso motivo per cui l'anteprima
  * mostra le sfogline nel Cestino.
  */
-function gs_reset_riepilogo_piatti() {
-	$out = array(
-		'liberati'      => 0,
-		'restano_rina'  => 0,
-		'rina_trovata'  => (bool) gs_rina_poletti_uid(),
-		'nome_cercato'  => gs_rina_nome(),
-	);
-	if ( ! post_type_exists( 'gs_piatto' ) ) { return $out; }
+function gs_reset_conteggio_piatti_da_liberare() {
+	if ( ! post_type_exists( 'gs_piatto' ) ) { return 0; }
+	$n = 0;
 	foreach ( get_posts( array( 'post_type' => 'gs_piatto', 'post_status' => array( 'any', 'trash' ), 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $pid ) {
-		$tipo = get_post_meta( $pid, 'gs_custode_tipo', true );
-		if ( ! $tipo ) { continue; }
-		if ( 'sfoglina' === $tipo && gs_e_rina_poletti( (int) get_post_meta( $pid, 'gs_custode_id', true ) ) ) {
-			$out['restano_rina']++;
-		} else {
-			$out['liberati']++;
-		}
+		if ( get_post_meta( $pid, 'gs_custode_tipo', true ) ) { $n++; }
 	}
-	return $out;
+	return $n;
 }
 ```
 
-e in `gs_reset_anteprima()`, accanto alle altre voci:
+In `gs_reset_anteprima()`: `'piatti_da_liberare' => gs_reset_conteggio_piatti_da_liberare(),`
 
-```php
-		'piatti'           => gs_reset_riepilogo_piatti(),
-```
-
-## 3. Il riquadro nell'anteprima, con l'avviso
-
-In `assets/js/gaming.js`, dentro `gsRenderResetAnteprima( d )`, subito **dopo** la tabella delle
-sfogline nel Cestino:
+In `assets/js/gaming.js`, dentro `gsRenderResetAnteprima( d )`, dopo la tabella delle sfogline
+nel Cestino:
 
 ```js
-		if ( d.piatti && ( d.piatti.liberati || d.piatti.restano_rina ) ) {
-			out += '<h5>Piatti in via d\'estinzione</h5><ul>';
-			out += '<li>' + gsEsc( d.piatti.liberati ) + ' tornano liberi: chiunque potrà adottarli</li>';
-			out += '<li>' + gsEsc( d.piatti.restano_rina ) + ' restano a ' + gsEsc( d.piatti.nome_cercato ) + '</li>';
-			out += '</ul>';
-			if ( ! d.piatti.rina_trovata ) {
-				out += '<p style="color:#b03a2e"><strong>Attenzione:</strong> nessun account si chiama "'
-					+ gsEsc( d.piatti.nome_cercato ) + '". L\'eccezione non risparmierebbe nessun piatto: '
-					+ 'controlla il nome visualizzato dell\'account prima di procedere.</p>';
-			}
+		if ( d.piatti_da_liberare ) {
+			out += '<p>' + gsEsc( d.piatti_da_liberare ) + ' piatt' + ( 1 === d.piatti_da_liberare ? 'o' : 'i' )
+				+ ' in via d\'estinzione tornerà libero: il piatto resta, la custode di prima no, '
+				+ 'e chiunque potrà adottarlo di nuovo.</p>';
 		}
 ```
 
----
+## PARTE 3 — Una cosa da controllare, non da decidere
 
-## Quello che NON devi decidere tu
+Ennio parlava dei Consigli, e quelli sono salvi. Ma vale la pena guardare, una volta sola, se
+c'è **altro** scritto da lei che il Reset porterebbe via — per esempio nel Matterello Parlante
+(`gs_voce`), che nella sua stessa intestazione si descrive come «archivio vocale di ricordi e
+**consigli** registrati a voce», ed è fra i tipi che si cancellano.
 
-**Una sola cosa, e va confermata prima di considerare chiusa la decisione 4.**
+Da fare su guru2, con la shell del sito, e **solo per guardare**:
 
-Ennio ha scritto: *«cancella tutto, tranne i consigli di Rina Poletti»*. Quella frase è stata
-tradotta in codice come **«i piatti adottati da Rina restano suoi»**. Ma «i consigli di Rina
-Poletti» può voler dire anche, più alla lettera, **i Consigli** — il tipo di contenuto
-`gs_consiglio` — scritti da lei.
+```bash
+# 1) trovare il suo account
+wp eval 'foreach ( get_users( array( "fields" => array( "ID", "display_name" ) ) ) as $u ) { if ( false !== stripos( $u->display_name, "rina" ) ) { echo $u->ID . "  " . $u->display_name . "\n"; } }'
 
-Se voleva dire quelli, **è già coperto**: la decisione 2 tiene tutti i Consigli, i suoi
-compresi. In quel caso l'eccezione sui piatti è una regola in più, che Ennio potrebbe non aver
-chiesto — e una regola in più su un'operazione irreversibile va confermata, non lasciata lì
-perché nel frattempo è stata scritta.
+# 2) cosa perderebbe, per tipo (metti l'ID trovato sopra al posto di <ID>)
+wp eval 'foreach ( gs_reset_tipi_da_cancellare() as $t ) { $ids = get_posts( array( "post_type" => $t, "post_status" => array( "any", "trash" ), "author" => <ID>, "posts_per_page" => -1, "fields" => "ids" ) ); if ( $ids ) { echo $t . ": " . count( $ids ) . "\n"; } }'
+```
 
-**Chiediglielo in una riga**, e riporta la risposta:
-
-> *«Quando hai detto "tranne i consigli di Rina Poletti": intendevi i Consigli scritti da lei
-> (che restano comunque, li teniamo tutti), o i piatti in via d'estinzione che ha adottato
-> lei?»*
-
-Se la risposta è «i Consigli», togli l'eccezione: `gs_e_rina_poletti()`, `gs_rina_nome()`,
-`gs_rina_poletti_uid()` e il ramo `continue` dentro il punto 3d, e i piatti si liberano tutti
-come nella proposta originale. Se è «i piatti», resta tutto e questo documento è già la sua
-correzione.
+Se il secondo comando non stampa niente, è finita lì: non c'è altro di suo da salvare.
+Se stampa qualcosa, **scrivi cosa hai trovato e fermati**: che si tenga o no è una decisione di
+Ennio, non tua.
 
 ---
 
@@ -160,22 +129,24 @@ correzione.
 
 Nel test dedicato, con dati veri:
 
-1. Un piatto adottato da un account chiamato **`rina poletti`** (minuscolo) → dopo il Reset
-   **resta suo**. Con il confronto di oggi si libererebbe: è la prova che serve.
-2. Un piatto adottato da un account chiamato **`Rina  Poletti`** (due spazi) → resta suo.
-3. Nessun account chiamato Rina, un piatto adottato da un'altra sfoglina → l'anteprima
-   restituisce `rina_trovata = false`, e il piatto si libera.
-4. `gs_reset_riepilogo_piatti()` conta giusto: un piatto di Rina, uno di un'altra sfoglina, uno
-   di una squadra → `restano_rina = 1`, `liberati = 2`.
-5. Nel browser su guru2: l'anteprima mostra il riquadro dei piatti, e se rinomini
-   temporaneamente l'account di Rina compare l'avviso rosso.
+1. Un piatto adottato da una sfoglina, uno adottato da una squadra e uno adottato da un account
+   chiamato «Rina Poletti» → dopo il Reset **tutti e tre** risultano liberi, e
+   `piatti_liberati` vale 3.
+2. Un piatto senza custode → non viene contato.
+3. `gs_reset_conteggio_piatti_da_liberare()` conta gli stessi piatti che il Reset poi libera:
+   il numero dell'anteprima e quello del log devono coincidere.
+4. Un Consiglio scritto dal titolare e uno scritto da una sfoglina → dopo il Reset ci sono
+   **tutti e due**: è la verifica della richiesta di Ennio, e va scritta come test, non
+   verificata a mente.
+5. Nel browser su guru2: l'anteprima mostra la riga dei piatti, e il numero è quello vero.
 
 ## La consegna
 
 `php -l` sui file toccati, graffe bilanciate nel JS. Versione **3.298.1** nei tre punti.
-Changelog che dica **cosa sarebbe successo**: che un nome scritto con una maiuscola diversa
-avrebbe fatto perdere a Rina tutti i suoi piatti, senza un errore e senza una riga
-nell'anteprima.
+Changelog che dica **perché** l'eccezione è stata tolta: era nata da una frase interpretata
+male, Ennio ha chiarito che parlava dei Consigli — che erano già tenuti tutti — e una regola
+mai chiesta su un'operazione irreversibile non resta lì solo perché nel frattempo è stata
+scritta.
 
 ## Una cosa da non fare
 
