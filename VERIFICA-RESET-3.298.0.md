@@ -98,3 +98,28 @@ annulla, quindi vale la pena sistemarla: la correzione è in
 2. **Il controllo della Parte 3** — se ci sia altro scritto da Rina fra i tipi che il Reset
    cancella (il Matterello Parlante, `gs_voce`, parla di «ricordi e consigli registrati a
    voce»). Due comandi, in `ISTRUZIONE-L-ECCEZIONE-DI-RINA.md`.
+
+---
+
+# Seguito: 3.298.2 — verificata, e chiude il giro
+
+**27/08/2026.** Tre file: `gaming.js`, l'intestazione, `readme.txt`. Solo la frase.
+
+Non l'ho letta: ho **eseguito il blocco consegnato** con `d.piatti_da_liberare` a 1, 3 e 0.
+
+- `1` → «1 piatto in via d'estinzione tornerà libero: il piatto resta, la sua custode no, e chiunque potrà adottarlo di nuovo.»
+- `3` → «3 piatti in via d'estinzione torneranno liberi: i piatti restano, le custodi di prima no, e chiunque potrà adottarli di nuovo.»
+- `0` → la riga non compare.
+
+`node --check` pulito, versione 3.298.2 nei tre punti, changelog che dice cosa si leggeva prima.
+
+**Dal codice non resta niente.** Restano le due cose che nessuna sessione può fare al posto di
+chi ha il Mac in mano:
+
+1. **La prova nel browser su guru2**, con una sfoglina vera nel Cestino — i passi sono in
+   `ISTRUZIONE-LA-PROVA-E-LE-QUATTRO-DECISIONI.md`.
+2. **I due comandi della Parte 3** — se ci sia altro scritto da Rina fra i tipi che il Reset
+   cancella, in `ISTRUZIONE-L-ECCEZIONE-DI-RINA.md`.
+
+Poi: backup, Parte 2 (lo username), anteprima letta da Ennio, Reset, i sette account aperti a
+mano. Come dice il documento di partenza, che da qui non è cambiato.
