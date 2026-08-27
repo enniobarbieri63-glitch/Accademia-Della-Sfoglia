@@ -1,6 +1,6 @@
 # La mappa di tutto — cosa resta da fare, in ordine
 
-**26/08/2026 — stato verificato su 3.292.0**
+**27/08/2026 — stato verificato su 3.295.0**
 
 In questa cartella ci sono **63 documenti**. Questo è l'unico che serve leggere per sapere dove siamo: ogni voce dice cosa manca, quanto costa e **in quale documento sta il dettaglio**.
 
@@ -18,6 +18,8 @@ Non per compiacersi: perché nessuno lo rifaccia.
 | **Il modulo Newsletter tolto** | zero orfani, verificato con due metodi |
 | **Il cancello dei trenta giorni**, metà: lo stato `gs_sfoglina_congelata()`, i 30 giorni scritti all'approvazione, il cancello dei punti, 25 pagine, 38 handler AJAX con 9 eccezioni, il pannello Abbonamenti | |
 | **La batteria di prove** in `revisioni/prove/` — sintassi, funzioni mancanti, JavaScript ↔ PHP, ricorsione | si rilancia con `./prova.sh` |
+| **Il pannello delle mail, tappa 1** — 9 mail su registro modificabile, le tre di scadenza comprese; il pannello era già generico | 3.293.0-3.295.0 |
+| **P3 nella scadenza** — mail e cancello contavano i giorni in modo diverso e si contraddicevano il giorno stesso della scadenza | 3.294.0, provato sul confine |
 
 ---
 
@@ -46,11 +48,12 @@ Tutto specificato, niente di sorprendente rimasto.
 | | cosa | dove | quanto |
 |---|---|---|---|
 | **B1** | I due pannelli dei partner ancora chiusi a un artigiano che è anche socio | `CANCELLO-DUE-PORTE-DI-TROPPO.md` | **due righe** |
-| **B2** | Le email di scadenza riscritte — **adesso sono l'unico posto dove una congelata legge come rientrare**, perché «La Mia Sfoglia» si chiude | `TRENTA-GIORNI-IL-CANCELLO.md` §A6.5 | mezza giornata |
+| ~~B2~~ | ~~Le email di scadenza riscritte~~ | ✅ **fatto in 3.293.0** — le tre fasi vivono nel registro, e la fase «scaduto» scrive anche alla sfoglina | — |
 | **B3** | I quattordici agganci del cron: streak che si azzera, «hai fatto 0 punti», promemoria di lezioni chiuse | `TRENTA-GIORNI-IL-CANCELLO.md` §A5 | mezza giornata |
 | **B4** | Gli undici testi «prima paghi, poi entri» | `TRENTA-GIORNI-IL-CANCELLO.md` §A4 | mezza giornata |
-| **B5** | La mail di benvenuto finale, con le due date della prova | `TRENTA-GIORNI-IL-CANCELLO.md` | un'ora |
+| ~~B5~~ | ~~La mail di benvenuto finale~~ | ✅ **fatto in 3.293.0** — con `{{DATA_INIZIO}}` e `{{DATA_FINE}}` prese dai meta veri | — |
 | **B6** | `gs_msg_non_partecipa()` — la frase di rifiuto in un posto solo invece di quaranta | `ISTRUZIONE-GUARDA-E-COMMENTA.md` §2 | mezz'ora |
+| **B7** | La **tappa 2** del pannello mail: le ~31 mail che restano fuori dal registro | `IL-PANNELLO-DELLE-MAIL.md` | mezza giornata |
 
 **B1 e B6 conviene farli subito**: B1 perché è un difetto e sono due righe, B6 perché il momento buono per accorpare una frase ripetuta quaranta volte è quando le quaranta sono appena state toccate.
 

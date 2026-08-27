@@ -97,3 +97,15 @@ Segnaposto usati in questa mail: {{NOME}}, {{DATA_INIZIO}}, {{DATA_FINE}}
 **Il pacchetto si installa.** La cosa che contava — mail e cancello che si contraddicono il giorno della scadenza — è chiusa e provata sul confine esatto.
 
 Resta una riga cosmetica nel pannello delle mail: non blocca niente, si sistema quando ci tornate.
+
+---
+
+## Poscritto — 3.295.0
+
+La riga cosmetica è chiusa. `mail-area-riservata.php:859`: `esc_html` applicato a **ogni voce** e poi unite, con il commento che spiega cosa succedeva prima.
+
+```
+a schermo: Segnaposto usati in questa mail: {{NOME}}, {{DATA_INIZIO}}, {{DATA_FINE}}.
+```
+
+Batteria pulita su tutti e quattro i controlli. **Non resta niente in sospeso su questa serie di pacchetti.**
