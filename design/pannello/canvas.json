@@ -1,70 +1,115 @@
 {
   "artboards": [
     {
-      "file": "Insieme.dc.html",
+      "file": "Piano.dc.html",
       "x": 0,
-      "y": -1300,
+      "y": 0,
       "w": 1600,
       "h": 1120,
-      "title": "I due messi insieme"
+      "title": "Il Piano di Lavoro — chiaro",
+      "page": "page-1"
+    },
+    {
+      "file": "PianoScuro.dc.html",
+      "x": 1720,
+      "y": 0,
+      "w": 1600,
+      "h": 1120,
+      "title": "Il Piano di Lavoro — scuro",
+      "page": "page-1"
+    },
+    {
+      "file": "Insieme.dc.html",
+      "x": 0,
+      "y": 100,
+      "w": 1600,
+      "h": 1120,
+      "title": "I due messi insieme",
+      "page": "page-2"
     },
     {
       "file": "Main.dc.html",
       "x": 0,
-      "y": 0,
+      "y": 1400,
       "w": 1440,
       "h": 1560,
-      "title": "La proposta — chiaro"
+      "title": "La proposta — chiaro",
+      "page": "page-2"
     },
     {
       "file": "Scuro.dc.html",
       "x": 1560,
-      "y": 0,
+      "y": 1400,
       "w": 1440,
       "h": 980,
-      "title": "La proposta — scuro"
+      "title": "La proposta — scuro",
+      "page": "page-2"
     },
     {
       "file": "DirezioneB.dc.html",
       "x": 1560,
-      "y": 1120,
+      "y": 2520,
       "w": 1080,
       "h": 900,
-      "title": "Direzione B — La Plancia"
+      "title": "Direzione B — La Plancia",
+      "page": "page-2"
     },
     {
       "file": "DirezioneC.dc.html",
       "x": 2760,
-      "y": 1120,
+      "y": 2520,
       "w": 1080,
       "h": 760,
-      "title": "Direzione C — Una cosa alla volta"
+      "title": "Direzione C — Una cosa alla volta",
+      "page": "page-2"
     }
   ],
   "annotations": [
     {
       "id": "nota-principio",
       "x": 0,
-      "y": -190,
+      "y": 1210,
       "w": 620,
-      "text": "Il principio: il pannello di oggi e' ordinato per ARGOMENTO (sfide, messaggi, contenuti).\nQui e' ordinato per QUANDO SERVE: prima cio' che aspetta te, poi il polso, poi gli strumenti\nraggruppati per quanto spesso li apri.\n\nColori presi dal plugin vero (#CD8B0C, #1F6E37, #8A5A2F, #C23B3B), non inventati."
+      "text": "Il principio: il pannello di oggi e' ordinato per ARGOMENTO (sfide, messaggi, contenuti).\nQui e' ordinato per QUANDO SERVE: prima cio' che aspetta te, poi il polso, poi gli strumenti\nraggruppati per quanto spesso li apri.\n\nColori presi dal plugin vero (#CD8B0C, #1F6E37, #8A5A2F, #C23B3B), non inventati.",
+      "page": "page-2"
     },
     {
       "id": "nota-numeri",
       "x": 1560,
-      "y": -190,
+      "y": 1210,
       "w": 520,
-      "text": "I numeri delle code esistono gia' nel codice: iscrizioni, ricette, biografie,\ntestimonianze, conversazioni, vetrine partner, messaggi senza risposta.\nOggi sono sparsi fra 73 riquadri — qui sono una lista sola, in ordine di attesa."
+      "text": "I numeri delle code esistono gia' nel codice: iscrizioni, ricette, biografie,\ntestimonianze, conversazioni, vetrine partner, messaggi senza risposta.\nOggi sono sparsi fra 73 riquadri — qui sono una lista sola, in ordine di attesa.",
+      "page": "page-2"
     },
     {
       "id": "nota-insieme",
       "x": 1720,
-      "y": -1300,
+      "y": 100,
       "w": 560,
-      "text": "Da Ennio: le sei code affiancate, un VERBO diverso su ogni pulsante,\nil verde solo per cio' che porta avanti, la barra ADESSO, i numeri 1-6 con la ricerca.\n\nDa qui: l'ordine per attesa dentro ogni coda (la piu' vecchia in cima),\nla striscia del polso, la testa scura piu' bassa, le 62 sezioni per frequenza."
+      "text": "Da Ennio: le sei code affiancate, un VERBO diverso su ogni pulsante,\nil verde solo per cio' che porta avanti, la barra ADESSO, i numeri 1-6 con la ricerca.\n\nDa qui: l'ordine per attesa dentro ogni coda (la piu' vecchia in cima),\nla striscia del polso, la testa scura piu' bassa, le 62 sezioni per frequenza.",
+      "page": "page-2"
+    },
+    {
+      "id": "nota-piano",
+      "x": 0,
+      "y": -230,
+      "w": 760,
+      "page": "page-1",
+      "text": "Da Ennio: le sei code affiancate, un verbo diverso su ogni pulsante, il verde solo per cio' che porta avanti, la barra ADESSO, i numeri con la ricerca.\nDa qui: l'ordine per attesa, il polso in una riga, le 62 sezioni per frequenza.\nNuovo: UN SOLO pulsante acceso per coda (il piu' vecchio) — sei punti gialli in tutto lo schermo, non venti.\nE la pastiglia «e altre 2 cose sue»: la stessa persona compare in tre code, e adesso si vede."
     }
   ],
   "launch": {
-    "view": "canvas"
-  }
+    "view": "canvas",
+    "page": "page-1"
+  },
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "La proposta"
+    },
+    {
+      "id": "page-2",
+      "name": "Le prime prove"
+    }
+  ]
 }
