@@ -1,0 +1,13 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",       "x": 0,    "y": 0,    "w": 1440, "h": 1560, "title": "La proposta — chiaro" },
+    { "file": "Scuro.dc.html",      "x": 1560, "y": 0,    "w": 1440, "h": 980,  "title": "La proposta — scuro" },
+    { "file": "DirezioneB.dc.html", "x": 1560, "y": 1120, "w": 1080, "h": 900,  "title": "Direzione B — La Plancia" },
+    { "file": "DirezioneC.dc.html", "x": 2760, "y": 1120, "w": 1080, "h": 760,  "title": "Direzione C — Una cosa alla volta" }
+  ],
+  "annotations": [
+    { "id": "nota-principio", "x": 0, "y": -190, "w": 620, "text": "Il principio: il pannello di oggi e' ordinato per ARGOMENTO (sfide, messaggi, contenuti).\nQui e' ordinato per QUANDO SERVE: prima cio' che aspetta te, poi il polso, poi gli strumenti\nraggruppati per quanto spesso li apri.\n\nColori presi dal plugin vero (#CD8B0C, #1F6E37, #8A5A2F, #C23B3B), non inventati." },
+    { "id": "nota-numeri", "x": 1560, "y": -190, "w": 520, "text": "I numeri delle code esistono gia' nel codice: iscrizioni, ricette, biografie,\ntestimonianze, conversazioni, vetrine partner, messaggi senza risposta.\nOggi sono sparsi fra 73 riquadri — qui sono una lista sola, in ordine di attesa." }
+  ],
+  "launch": { "view": "canvas" }
+}
