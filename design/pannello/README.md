@@ -45,3 +45,26 @@ La proposta lo ordina **per quando serve**:
 Si modificano i `.dc.html`, si riseminA il pacchetto e si ripubblica allo
 stesso indirizzo. Il file `pannello-accademia.html` è generato: non va
 modificato a mano.
+
+## Anteprime come immagini
+
+`anteprime/` contiene le quattro tavole rese in PNG, per guardarle senza
+aprire la tela. Si rifanno così (serve solo il Chromium già presente):
+
+```bash
+cd design/pannello
+python3 - <<'PY'
+import re, pathlib
+for f in ["Main","Scuro","DirezioneB","DirezioneC"]:
+    src = pathlib.Path(f"{f}.dc.html").read_text()
+    helmet = re.search(r"<helmet>(.*?)</helmet>", src, re.S).group(1)
+    body   = re.search(r"</helmet>(.*?)</x-dc>", src, re.S).group(1)
+    pathlib.Path(f"anteprime/{f}.html").write_text(
+        f"<!doctype html><html><head><meta charset='utf-8'>{helmet}</head><body>{body}</body></html>")
+PY
+```
+
+poi uno screenshot per pagina con `--force-device-scale-factor=2`.
+I `.dc.html` non si aprono da soli: il `<script src="./support.js">` è
+sostituito dall'editor al momento del disegno, quindi per l'anteprima si
+estrae il markup e lo si mette in una pagina normale.
