@@ -1,192 +1,290 @@
-# Istruzione: il Pannello «Piano di Lavoro»
+# Istruzione: il Piano di Lavoro — il nuovo pannello generale
 
-**Per Claude Code Ennio 2 — 27/08/2026, scritta su 3.292.0**
+**Per Claude Code Ennio 2 — 28/08/2026**
 
-Ennio ha approvato la proposta grafica. Disegno e anteprime:
-**https://claude.ai/code/artifact/7bd9b363-938e-463e-8c9e-c778c13fa088**
-(pagina «La proposta», tavole chiara e scura). Nel repository: `design/pannello/`.
+Ennio ha chiesto un pannello «veramente funzionale, ben leggibile, che non
+stanca gli occhi, intuitivo anche per chi non conosce i meccanismi, con le cose
+da fare del giorno e tutto quello che serve **in una sola schermata**».
 
-**Questo non è un lavoro con una scadenza.** Viene dopo il reset, lo username fuori dalla rete, e le quattro voci dei trenta giorni. È scritto adesso perché la decisione è fresca, non perché vada fatto adesso.
+Ha fatto quattro esperimenti suoi, io ne ho fatti altri, e ne e uscito un
+disegno solo. Il disegno e nel repository:
+
+```
+design/pannello/anteprime/Piano.png          <- guardalo prima di leggere oltre
+design/pannello/anteprime/PianoScuro.png
+design/pannello/Piano.dc.html                <- il codice del disegno
+```
+
+**Guarda il PNG prima di continuare.** Quello che segue spiega *perche* e
+fatto cosi e *cosa serve nel codice* per farlo funzionare; senza avere
+davanti l'immagine, meta delle frasi non si capiscono.
 
 ---
 
 ## Le eccezioni, dette prima
 
-Una parte di questo lavoro tocca **sei punti uguali in un file solo**, ed è la forma che ci ha morso tre volte. Quindi, prima delle istruzioni:
+**Questo lavoro non tocca niente di quello che esiste.**
 
-- **Non si tocca nessun pannello esistente.** Le 73 zone restano dove sono, con le loro funzioni: il Piano di Lavoro è **una schermata nuova che sta davanti**, non una riscrittura.
-- **Non si tocca `gs_riepilogo_dati()`.** Serve ancora al cartellino della Plancia in `admin.php`, che si aggancia alle sue chiavi. Si aggiunge accanto, non al posto.
-- **Non si toccano i permessi**: chi vede cosa continua a passare da `gs_sez_zona_ok()`. Una coda che il collaboratore non può gestire non deve comparirgli.
-- **Se trovate un punto che vi sembra un'eccezione e non è qui, fermatevi e chiedete.** Probabilmente ho dimenticato qualcosa: è successo tre volte in due giorni.
+- **Il pannello di oggi resta dov'e, intero e funzionante.** Il Piano di
+  Lavoro e una pagina **nuova e in piu**. Non si cancella `pannello-nuovo.php`,
+  non si spostano riquadri, non si tocca nessun `add_menu_page` esistente.
+  Quando Ennio avra usato il nuovo per un mese e dira che va, allora si
+  decidera cosa fare del vecchio. Non prima, e non da soli.
+- **Nessuna logica di gioco cambia.** Questo e un lavoro di lettura e di
+  presentazione. Se durante il lavoro ti accorgi che una funzione che leggi
+  ha un difetto, **scrivilo e basta**: si corregge a parte, non dentro
+  questo lavoro.
+- **Niente query nuove sul database finche non e dimostrato che servono.**
+  Il motivo e nel paragrafo «La cosa che puo andare storta».
 
 ---
 
-## La cosa da capire prima di tutto
+## Cosa c'e oggi, misurato
 
-`gs_riepilogo_dati()` (`control-panel.php:539`) fa questo, quattordici volte:
+Il pannello di oggi (`pannello-nuovo.php`) e **73 riquadri in 10 gruppi**,
+ordinati **per argomento**: le sfide di qua, i messaggi di la, i contenuti
+piu sotto, le impostazioni in fondo.
+
+Ordinare per argomento e comodo per chi ha scritto il codice, perche
+rispecchia i file. Non e comodo per Ennio, perche la sua domanda alle otto
+del mattino non e «dove sono le sfide»: e **«cosa devo fare oggi»**. E per
+rispondere a quella domanda, oggi, deve aprire sette riquadri diversi in
+quattro gruppi diversi e ricordarsi a mente cosa ha visto.
+
+### E qui c'e la scoperta che rende tutto il resto facile
+
+`includes/control-panel.php`, funzione `gs_riepilogo_dati()`, riga ~539:
 
 ```php
 $ricette = count( gs_ricette_in_attesa() );
-$testim  = count( gs_testim_in_attesa() );
 $bio     = count( gs_bio_in_attesa() );
 ```
 
-**Il pannello ha già le cose in mano, le conta, e le butta via.** Tiene il numero.
+**Il pannello carica le cose che aspettano, le conta, e poi le butta via.**
+Tiene solo il numero. Lo fa **quattordici volte**, per quattordici code
+diverse.
 
-Tutto quello che serve al Piano di Lavoro — l'ordine per attesa, il pulsante acceso sul più vecchio, la pastiglia «e altre 2 cose sue» — **esce da quelle stesse funzioni**, se invece di contarle si guarda cosa contengono.
+Vuol dire che il lavoro piu costoso — andare a cercare nel database chi
+aspetta — **e gia fatto oggi, ad ogni caricamento del pannello**. Quello che
+manca non e la fatica: e non buttare via il risultato.
 
-Questo è il lavoro. Il resto è disegno.
-
----
-
-## 1. Una forma sola per tutte le code
-
-```php
-/**
- * Le voci di una coda, tutte con la stessa forma. È il pezzo su cui sta in
- * piedi tutto il Piano di Lavoro: l'ordine per attesa, il pulsante acceso
- * sul più vecchio e la pastiglia "e altre cose sue" non sono tre funzioni
- * diverse — sono tre modi di leggere QUESTA.
- *
- * Le funzioni che producono le voci esistono già tutte
- * (gs_get_pending_users, gs_ricette_in_attesa, gs_bio_in_attesa…):
- * gs_riepilogo_dati() le chiama, le conta e getta via il contenuto.
- * Qui il contenuto si tiene.
- */
-function gs_coda_voci( $coda ) {
-    // ritorna un array di:
-    // array(
-    //   'chi'    => (int) uid della sfoglina, o 0 se la voce non è di nessuno
-    //   'titolo' => 'Rosa Camilli'            // il nome, o la cosa
-    //   'sotto'  => 'Iscritta ma non ha mai caricato niente'
-    //   'da'     => (int) timestamp di quando ha cominciato ad aspettare
-    //   'verbo'  => 'Scrivi'                  // cosa fa il pulsante
-    //   'tipo'   => 'avanti' | 'normale'      // 'avanti' = verde (Approva, Conferma)
-    //   'vai'    => '#gs-box-iscrizioni'      // dove si va al clic
-    // )
-}
-```
-
-**`chi` e `da` sono i due campi che oggi non esistono da nessuna parte**, e sono quelli che fanno la differenza fra questo pannello e quello di adesso.
-
-## 2. Da dove viene «da quanto aspetta» — e le tre code dove non c'è
-
-Questa è la parte da guardare **prima di cominciare**, o se ne accorgerete a metà.
-
-| coda | da dove | |
-|---|---|---|
-| Richieste di iscrizione | `$user->user_registered` | ✅ c'è |
-| Ricette | `post_modified` del `gs_ricetta` | ✅ c'è — **`post_modified`, non `post_date`**: ogni modifica rimette in attesa, quindi conta l'ultima |
-| Testimonianze | `post_modified` | ✅ c'è |
-| Conversazioni in attesa | `post_date` del `gs_conversazione` | ✅ c'è |
-| Messaggi senza risposta | `post_date` | ✅ c'è |
-| Abbonamenti scaduti | `gs_abbonamento_scadenza` | ✅ c'è |
-| **Biografie della Vetrina** | `gs_bio_stato = 'in_attesa'` | ❌ **nessuna data** |
-| **Vetrine Artigiani** | `gs_art_stato = 'in_attesa'` | ❌ **nessuna data** |
-| **Vetrine Scuole** | `gs_scu_stato = 'in_attesa'` | ❌ **nessuna data** |
-
-Le ultime tre sono uno stato senza un quando: si sa **che** aspettano, non **da quando**.
-
-### Come si aggiunge, e perché è la parte delicata
-
-Ogni volta che lo stato diventa `'in_attesa'`, va scritta anche la data. **In `biografia.php` questo succede in sei punti** (righe 56, 78, 105, 284, 398 e una nel salvataggio dal pannello), in `artigiani.php` in due, in `scuole-cucina.php` in due.
-
-```php
-// Non basta lo stato: serve sapere DA QUANDO aspetta, o il Piano di Lavoro
-// non può metterla in ordine né dire "da 3 giorni". Si scrive qui, insieme
-// allo stato, e mai altrove — se le due scritture si separano, prima o poi
-// una voce resta senza data e sparisce dall'ordinamento in silenzio.
-update_user_meta( $uid, 'gs_bio_stato', 'in_attesa' );
-update_user_meta( $uid, 'gs_bio_stato_da', current_time( 'timestamp' ) );
-```
-
-**Dieci punti in tre file, tutti uguali.** È esattamente la forma che ha prodotto la ricorsione: **non fatelo con una sostituzione in blocco.** Uno alla volta, e alla fine `prova.sh`.
-
-**Per le voci già in attesa oggi** che non hanno la data: mostrate «in attesa» senza numero di giorni e mettetele **in fondo**, non in cima. Una voce senza data non deve fingere di essere nuova né di essere vecchia.
-
-## 3. Le tre regole che escono gratis
-
-Con `gs_coda_voci()` in mano, le tre cose nuove del disegno sono tre righe:
-
-**L'ordine.** `usort` su `da`, crescente. La più vecchia in cima, sempre, in ogni coda.
-
-**Il pulsante acceso — uno solo per coda.**
-
-```php
-// Solo la PRIMA voce di ogni coda ha il pulsante ambra: è la più vecchia.
-// Se sono ambra tutti, l'ambra non vuol più dire niente e l'occhio non sa
-// dove posarsi — è il difetto delle due bozze da cui questo disegno nasce.
-// Sei pulsanti accesi in tutto lo schermo, uno per coda.
-$acceso = ( 0 === $i );
-```
-
-Eccezione: le voci `'tipo' => 'avanti'` (Approva, Conferma) restano **verdi sempre**, anche quando non sono le prime. Il verde non è "guardami", è "questo porta avanti".
-
-**La pastiglia «e altre 2 cose sue».**
-
-```php
-// Una sfoglina compare spesso in più code — nelle bozze di Ennio, Anna
-// Ruggeri stava in tre (iscritti, pagamenti, mail) e nessuno lo diceva:
-// tre righe in tre posti, e la si scrive tre volte o la si ignora tre volte.
-// Si contano gli uid su TUTTE le code, una volta per pagina.
-$quante = array_count_values( array_column( $tutte_le_voci, 'chi' ) );
-```
-
-Sulla voce si mostra la pastiglia solo se `$quante[$chi] > 1`, e al clic si aprono **le sue cose insieme**.
-
-## 4. La schermata
-
-Segue la tavola. Le misure che contano:
-
-- **larghezza 1600**, tre colonne. Con 1280 i pulsanti a destra escono dal riquadro — è successo in tre delle quattro bozze di Ennio.
-- **la barra scura è solo la barra**: identità, ricerca, stato del gaming. ADESSO sta sul piano chiaro. Un blocco scuro alto sopra un corpo chiaro è il contrasto che stanca, ed era la richiesta di partenza.
-- **i riquadri non hanno bordo**: fondo chiaro e un'ombra morbida. Meno righe sullo schermo, meno rumore.
-- **i nomi in Newsreader**, il carattere del titolo: fa somigliare il pannello al registro di un'accademia invece che a un gestionale.
-- **⌘K sulla ricerca**, i numeri 1-7 accanto alle code per saltarci con la tastiera.
-
-**ADESSO** è la cosa sola sopra tutte — la scadenza più vicina che richiede una mano. Da dove viene va deciso: il corso più prossimo con qualcosa di incompleto è un buon candidato, ma **prendetela come domanda per Ennio**, non decidetela voi.
-
-## 5. «Tutto il resto» — dove vive la classificazione
-
-Le 62 sezioni vanno raggruppate per **quanto spesso si aprono**: ogni giorno · ogni settimana · ogni tanto · si imposta e basta.
-
-Quel raggruppamento è **una scelta, non un dato**: va in un campo nuovo del registro delle sezioni (`sezioni.php`, `gs_sez_registry()`), accanto a `livello` e `zona`:
-
-```php
-'ricettario' => array( …, 'uso' => 'giorno' ),
-'backup'     => array( …, 'uso' => 'mai' ),
-```
-
-Chi non ce l'ha finisce in «ogni tanto». **Il primo giro lo fate voi leggendo i nomi; Ennio lo correggerà usandolo**, ed è giusto così — solo lui sa cosa apre davvero.
+Questa e la chiave dell'intero lavoro. Tutto il resto e disegno.
 
 ---
 
-## Cosa NON fare
+## Il principio, in una riga
 
-- **Non sostituire il pannello di oggi.** Il Piano di Lavoro è la schermata che si apre per prima; da lì si arriva a tutto il resto, che resta identico. Se un giorno il nuovo non basta, il vecchio è ancora lì.
-- **Non fare le azioni "da qui" al primo giro.** Nel disegno i pulsanti portano alla sezione giusta. Farli agire sul posto (approva → la riga sparisce) è meglio, ma è un secondo giro: prima si vede se l'ordine e la scelta delle code funzionano davvero.
-- **Non salvare i conteggi da nessuna parte.** Si calcolano quando si apre. Un numero salvato ieri racconta una cosa falsa oggi.
-- **Non aggiungere code nuove.** Sei più «tutto il resto». Se ne servisse una settima, va tolta un'altra: sette code sono già il limite di quello che si guarda in un colpo.
+> Il pannello di oggi e ordinato **per argomento**.
+> Il Piano di Lavoro e ordinato **per quando serve**.
 
-## Come si prova
+Tre fasce, dall'alto:
 
-1. Una ricetta in attesa da tre giorni e una da ieri → **la vecchia è in cima**, e ha lei il pulsante ambra.
-2. Una biografia messa in attesa oggi → mostra «oggi», non «in attesa» senza data.
-3. Una biografia già in attesa da prima dell'aggiornamento → mostra «in attesa» e sta **in fondo**.
-4. La stessa sfoglina con una ricetta e un pagamento aperti → **la pastiglia compare su tutte e due**, e dice il numero giusto.
-5. Approvare la ricetta → **la pastiglia sull'altra voce sparisce** (adesso è sola).
-6. Un collaboratore che non gestisce i pagamenti → **quella coda non gli compare.**
-7. Svuotare una coda → il riquadro resta con «niente da fare qui», non sparisce: uno spazio vuoto che cambia posizione ogni giorno disorienta.
-8. `prova.sh`.
+1. **Cosa ti aspetta** — le sei code, affiancate, con dentro i nomi veri e
+   da quanti giorni aspettano.
+2. **Il polso** — una riga sola: sfogline attive, prove in scadenza, sponsor
+   scaduti, sfida in corso.
+3. **Tutto il resto** — le 62 sezioni, raggruppate non per argomento ma per
+   **quanto spesso le apri**: ogni giorno / ogni settimana / ogni tanto /
+   si imposta una volta e basta (questi ultimi chiusi, si aprono cliccando).
 
-## Il conto
+---
 
-| | |
+## TAPPA 1 — Non buttare via quello che hai gia in mano
+
+**E l'unica tappa che tocca il codice esistente, ed e piccola.**
+
+`gs_riepilogo_dati()` oggi restituisce numeri. Deve restituire **anche** gli
+elenchi che ha gia caricato. Non al posto dei numeri: **in piu**, cosi
+nessuna delle 73 caselle di oggi si accorge del cambiamento.
+
+```php
+// PRIMA
+$ricette = count( gs_ricette_in_attesa() );
+
+// DOPO
+$lista_ricette = gs_ricette_in_attesa();
+$ricette       = count( $lista_ricette );   // il vecchio numero, identico
+// ...e in fondo, dentro l'array restituito:
+'liste' => array(
+    'ricette' => $lista_ricette,
+    'bio'     => $lista_bio,
+    // ...tutte e quattordici
+),
+```
+
+**Verifica obbligatoria dopo questa tappa:** apri il pannello vecchio e
+controlla che **tutti i numeri siano identici a prima**. Se uno solo e
+cambiato, hai spostato una chiamata di posto e va rimesso. Questa e la sola
+tappa che puo rompere qualcosa di esistente, ed e per questo che si fa da
+sola, si prova, e poi si va avanti.
+
+---
+
+## TAPPA 2 — Da quanti giorni aspetta
+
+Il disegno mostra, su ogni riga, **da quanti giorni quella cosa e li**. E la
+differenza fra «hai 6 ricette» e «una ricetta aspetta da 11 giorni».
+
+Per le cose che sono **contenuti** (ricette, testimonianze, biografie come
+post) la data c'e gia: e `post_date`. Nessun lavoro.
+
+**Per tre code la data non esiste.** Sono quelle tenute come dato dell'utente,
+non come contenuto: quando l'utente entra nello stato «in attesa» non viene
+scritto da nessuna parte *quando*.
+
+**Non inventare una data.** Non usare la data di registrazione, non usare
+l'ultimo accesso, non stimare. Si fa cosi:
+
+1. **Da adesso in poi**, nel punto in cui la cosa entra in attesa, si scrive
+   anche il momento: `gs_in_attesa_dal` (un timestamp).
+2. **Per le cose gia in attesa oggi**, nella colonna dei giorni si scrive
+   **«—»**, non un numero.
+
+Una lineetta e onesta e non costa niente. Un numero inventato invece verra
+letto come vero, e fra due mesi Ennio prendera una decisione basandosi su un
+dato che nessuno ha mai misurato.
+
+**Ordinamento:** dentro ogni coda, **il piu vecchio in cima**. Le righe senza
+data («—») vanno **in fondo**, non in cima: non sappiamo quanto aspettano, e
+mettere in testa una cosa che non sappiamo misurare sposta l'attenzione sul
+posto sbagliato.
+
+---
+
+## TAPPA 3 — Un solo pulsante acceso per coda
+
+Questa e una scelta di disegno, e va rispettata anche se sembra strana.
+
+In ogni coda, **un solo pulsante e colorato**: quello della riga piu in alto,
+cioe la cosa che aspetta da piu tempo. Tutte le altre righe hanno il pulsante
+in grigio chiaro — funzionano, si possono premere, ma non tirano l'occhio.
+
+**Sei punti colorati in tutto lo schermo, non venti.**
+
+Il motivo detto semplice: se tutto e urgente, niente e urgente. Un pannello
+con venti pulsanti accesi si guarda per due secondi e si chiude. Uno con sei
+si legge.
+
+**Un verbo diverso su ogni pulsante** — e un'idea di Ennio, ed e giusta:
+
+| coda | pulsante |
 |---|---|
-| `gs_coda_voci()` per le sei code | una giornata |
-| Le date mancanti nelle tre code (dieci punti, uno alla volta) | mezza giornata |
-| La schermata | una giornata |
-| Il campo `uso` sulle 62 sezioni | due ore |
-| ADESSO | mezza giornata, **dopo** che Ennio ha detto cosa ci va |
+| iscrizioni | **Approva** |
+| ricette | **Leggi** |
+| biografie | **Controlla** |
+| testimonianze | **Leggi** |
+| conversazioni | **Rispondi** |
+| vetrine partner | **Verifica** |
 
-**Circa tre giornate.** Ma la prima è quella che conta: fatta `gs_coda_voci()`, il resto è disegno, e il disegno c'è già.
+Non sei volte «Vai». La parola dice gia cosa succede dopo, e chi non conosce
+i meccanismi non deve indovinare.
+
+**Il verde solo per cio che porta avanti il lavoro** (l'altra idea di Ennio):
+approva, pubblica, conferma. Mai per «annulla», mai per «torna indietro»,
+mai per decorazione.
+
+---
+
+## TAPPA 4 — «e altre 2 cose sue»
+
+La parte che nei disegni di Ennio non c'era, e che secondo me e la piu utile.
+
+**La stessa persona compare in piu code contemporaneamente.** Ha mandato una
+ricetta, aspetta l'approvazione della biografia, e ti ha scritto un
+messaggio. Oggi la incontri tre volte in tre punti diversi del pannello e
+non ti accorgi che e la stessa.
+
+Nel disegno, accanto al nome c'e una pastiglia piccola: **«e altre 2 cose
+sue»**. Ci si clicca e si vedono tutte insieme, e si sbrigano in una volta.
+
+Nel codice e facile, **perche le liste ce le hai gia in mano dalla Tappa 1**:
+si raccolgono gli ID utente di tutte e quattordici le liste, si contano, e
+chi compare piu di una volta si segna.
+
+```php
+// Le liste sono gia caricate: qui non si tocca il database.
+$conta = array();
+foreach ( $liste as $coda => $righe ) {
+    foreach ( $righe as $r ) { $conta[ $r->user_id ][] = $coda;  }
+}
+// $conta[ 42 ] = array( 'ricette', 'bio', 'messaggi' )  ->  «e altre 2 cose sue»
+```
+
+**Nessuna query in piu.** E il motivo per cui la Tappa 1 viene prima di
+tutto: una volta che le liste non si buttano via, questa cosa costa dieci
+righe.
+
+---
+
+## Come deve essere fatto, graficamente
+
+Sono le richieste di Ennio, tradotte in numeri. Nel disegno ci sono gia;
+qui sono scritte perche non si perdano nel rifacimento.
+
+- **Colori presi dal plugin vero**, non inventati:
+  `#CD8B0C` (oro), `#1F6E37` (verde), `#8A5A2F` (marrone), `#C23B3B` (rosso),
+  `#8C4A7A` (viola), `#2B7A9E` (azzurro). Sono gia quelli che il sito usa:
+  un pannello con colori suoi sembrerebbe un altro programma.
+- **Fondo color farina** `#F4EFE4`, non bianco pieno. Testo marrone scuro,
+  non nero. E la richiesta «non deve stancare gli occhi»: il bianco puro con
+  il nero puro e la combinazione che stanca di piu.
+- **Testo grande davvero**: le righe delle code a **19px**, non a 13. Ennio
+  legge questo pannello tutti i giorni.
+- **Niente emoji.** Cambiano faccia su ogni dispositivo, e a schermo grande
+  sembrano appiccicate. Disegni SVG, tutti nello stesso stile, tutti dello
+  stesso spessore di linea.
+- **Versione scura** compresa (`PianoScuro.png`). Non e un vezzo: Ennio
+  lavora anche di sera.
+
+---
+
+## La cosa che puo andare storta
+
+**Il pannello che diventa lento.**
+
+Oggi quelle quattordici chiamate caricano gia tutto, quindi mostrare i primi
+tre nomi di ogni coda **non costa niente in piu**. Ma se qualcuno, per fare
+la pastiglia o l'ordinamento, aggiunge una `get_user_meta()` dentro un ciclo
+su ogni riga, con duecento sfogline si arriva a centinaia di letture per ogni
+apertura del pannello.
+
+**La regola:** dentro i cicli che disegnano le righe, **nessuna chiamata al
+database**. Tutto quello che serve si prende dalle liste gia caricate.
+
+**Come si prova, senza dover indovinare:** WordPress conta le query da solo.
+Si stampa `get_num_queries()` in fondo alla pagina, si apre il pannello
+vecchio e si segna il numero; poi si apre il Piano di Lavoro e si guarda.
+**Deve essere dello stesso ordine.** Se e il doppio, c'e una query in un
+ciclo, e va trovata prima di andare avanti.
+
+---
+
+## L'ordine di lavoro
+
+1. **Tappa 1** (le liste restituite) — e la sola che tocca codice esistente.
+   Poi: apri il pannello vecchio, controlla che i 73 riquadri mostrino gli
+   stessi numeri di prima. Zip.
+2. **La pagina nuova**, vuota, in una voce di menu nuova. Zip.
+3. **Le sei code** con i nomi, i verbi, il pulsante acceso solo sul primo.
+   Ancora senza i giorni. Zip: a questo punto Ennio la puo gia guardare e
+   dire se la direzione va bene, **prima** che tu abbia fatto il resto.
+4. **Tappa 2** (i giorni di attesa, e la lineetta dove non si sa).
+5. **Tappa 4** (la pastiglia).
+6. **Il polso** e le **62 sezioni per frequenza**.
+7. `prova.sh`, e il conteggio delle query.
+
+**Fermati al punto 3 e manda lo zip.** Se la direzione non e quella giusta,
+e meglio scoprirlo li che alla fine.
+
+---
+
+## Una cosa da non fare
+
+**Non spegnere il pannello vecchio, e non spostare le sue voci di menu.**
+
+Ennio ci lavora tutti i giorni e sa dove sono le cose. Un pannello nuovo che
+arriva togliendo il vecchio non e un miglioramento: e un pannello nuovo piu
+un giorno perso a ritrovare tutto.
+
+I due convivono. Poi decide lui, quando avra usato il nuovo abbastanza da
+sapere se gli serve davvero.
