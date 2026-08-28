@@ -2,7 +2,7 @@
 # Batteria di prove per un pacchetto del plugin.
 #   ./prova.sh /percorso/alla/cartella/che/contiene/gaming-sfogline
 # Serve solo PHP da riga di comando. Non serve WordPress, non serve un database.
-D="${1:?uso: ./prova.sh <cartella che contiene gaming-sfogline>}"
+D="$(cd "${1:?uso: ./prova.sh <cartella che contiene gaming-sfogline>}" && pwd)"
 cd "$(dirname "$0")"
 echo "═══ 1. Sintassi PHP di ogni file ═══"
 ./test_sintassi.sh "$D/gaming-sfogline"
