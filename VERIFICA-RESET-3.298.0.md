@@ -147,3 +147,33 @@ tutti e due i pannelli generali (`control-panel.php:285`, `admin.php:290`) e reg
 
 **Restano due cose, tutte e due sul Mac:** la prova nel browser su guru2 e i due comandi che
 cercano se ci sia altro scritto da Rina fra i tipi che il Reset cancella.
+
+---
+
+# Chiusura: le due prove sul Mac sono state fatte
+
+**27/08/2026, sera.** Lo zip è arrivato una terza volta: stesso `md5` dei due precedenti, byte
+per byte. Non c'è nessuna versione nuova da verificare — il codice è fermo a 3.298.2, quello già
+controllato riga per riga.
+
+Quello che è cambiato è **fuori** dal pacchetto, ed è la parte che mancava:
+
+- **La prova nel browser su guru2: fatta, tutti e cinque i punti.** È la sola cosa di tutto
+  questo giro che non potevo controllare io, e ora c'è. Resta una cosa riferita, non verificata
+  da qui: il pacchetto non porta traccia di una sessione di browser.
+- **L'altro contenuto di Rina: non esiste.** Non ha pubblicato niente come sfoglina, quindi il
+  Reset non le porta via niente. Nessuna decisione da prendere, nessuna riga da cambiare.
+- **I dodici account `test_b1_rifiuto_…` nel Cestino** sono dati di prova di uno script del
+  14/08/2026, non qualcosa successo in questi giorni.
+
+**Il Reset è chiuso: codice verificato pacchetto per pacchetto da 3.296.0 a 3.298.2, 51
+controlli verdi, e ora anche la prova dal vivo.**
+
+Una cosa da ricordare il giorno vero, e non è un difetto: quei dodici account di prova
+**compariranno** nella tabella «Sfogline nel Cestino» dell'anteprima. È il comportamento
+giusto — il Reset non cancella nessun utente, mai, nemmeno quelli finti. Se danno fastidio si
+tolgono a mano, guardando i nomi uno per uno.
+
+Da qui in avanti l'ordine è quello del documento di partenza, e non è cambiato: **backup**,
+Parte 2 (lo username fuori dalla rete), **anteprima letta da Ennio**, Reset, e i sette account
+aperti a mano.

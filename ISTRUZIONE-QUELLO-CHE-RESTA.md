@@ -1,7 +1,10 @@
 # Istruzione: quello che resta del Reset
 
-**Per Claude Code Ennio — 27/08/2026, scritta su 3.298.2 · aggiornata il 27/08/2026 sera:
-la Parte 3 è stata fatta, restano la 1 e la 2.**
+**Per Claude Code Ennio — 27/08/2026, scritta su 3.298.2.**
+
+> **CHIUSA il 27/08/2026 sera: tutte e tre le parti sono state fatte. Questo documento resta
+> come traccia di cosa è stato controllato e come — non c'è più niente da eseguire qui
+> dentro.** I risultati sono in fondo a ogni parte.
 **Sostituisce quello che restava aperto in `ISTRUZIONE-LA-PROVA-E-LE-QUATTRO-DECISIONI.md` e
 in `ISTRUZIONE-L-ECCEZIONE-DI-RINA.md`: quei due sono stati eseguiti, tranne le parti che
 ritrovi qui.**
@@ -24,7 +27,10 @@ modifica solo se salta fuori qualcosa.
 
 ---
 
-## PARTE 1 — La prova nel browser, su guru2
+## PARTE 1 — La prova nel browser, su guru2 · FATTA
+
+**Fatta il 27/08/2026 sera, su guru2: tutti e cinque i punti tornano.** Quello che segue è
+come è stata fatta, per la prossima volta.
 
 È l'unica prova che nessuna sessione ha ancora potuto fare, ed è quella che conta: guarda da
 fuori la cosa che il Reset non perdona. Se il tuo ambiente raggiunge il sito di Local, falla.
@@ -81,7 +87,11 @@ e ricontrolla che la sfoglina si ritrovi scadenza e token.
 
 ---
 
-## PARTE 2 — C'è altro di Rina che il Reset porterebbe via?
+## PARTE 2 — C'è altro di Rina che il Reset porterebbe via? · FATTA
+
+**Fatta il 27/08/2026 sera. Risposta: no.** Rina non ha pubblicato niente come sfoglina — né
+nel Matterello Parlante né altrove — quindi il Reset non le porta via niente, e i suoi Consigli
+restano perché `gs_consiglio` si tiene per intero. Nessuna modifica al codice.
 
 Ennio ha chiesto di tenere i Consigli scritti da lei, e quelli sono salvi: `gs_consiglio` è fra
 i tipi da tenere, chiunque li scriva. Ma vale la pena guardare, **una volta sola**, se c'è
@@ -123,13 +133,19 @@ Una sola riga di quella scansione riguardava il Reset, ed è a posto: `gs_pannel
 **tutti e due** i pannelli generali (`control-panel.php:285` e `admin.php:290`, più la
 registrazione in `pannello-nuovo.php:70`), e non è fra le sette funzioni segnalate mancanti.
 
-## Cosa riferire, alla fine
+## Com'è finita
 
-Due righe bastano, ormai:
+Tutte e tre le parti fatte il 27/08/2026:
 
-1. La Parte 1 l'hai potuta fare, sì o no. Se sì, quale dei cinque punti non tornava (o
-   «tornano tutti e cinque»).
-2. Il risultato dei due comandi della Parte 2.
+1. **La prova nel browser su guru2**: tutti e cinque i punti tornano.
+2. **L'altro contenuto di Rina**: non ce n'è. Niente da decidere, niente da cambiare.
+3. **I sedici test**: nessuno tocca il Reset.
+
+Una cosa vista strada facendo, e va saputa **prima** di aprire l'anteprima il giorno vero: nel
+Cestino ci sono una dozzina di account `test_b1_rifiuto_…`, dati di prova lasciati da uno
+script il 14/08/2026. Compariranno nella tabella «Sfogline nel Cestino» dell'anteprima, ed è
+giusto così: il Reset non cancella nessun utente, mai. Se danno fastidio, si tolgono a mano —
+guardando i nomi, una alla volta, e non con uno script.
 
 ---
 
