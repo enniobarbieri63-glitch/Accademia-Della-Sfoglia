@@ -58,3 +58,55 @@ di Ennio.
 
 La chiave `importo_quota` (`helpers.php:159`) resta com'è: è il nome interno di un'opzione già
 salvata: rinominarla perderebbe il valore. L'etichetta mostrata è già stata corretta.
+
+---
+
+# Seguito: 3.299.2 e 3.299.3 — verificate
+
+**28/08/2026.** La 3.299.2 non è passata da qui, quindi ho verificato le due insieme contro
+3.299.1. Otto file cambiati.
+
+## 3.299.2 — la quota nei testi
+
+**Corrette tutte e sei le copie**, comprese le due coppie gemelle che erano la trappola di
+questo lavoro (`letture.php` + `spiegazioni.php`, `abbonamenti.php` + `token.php`): nessuna è
+rimasta indietro. Le frasi nuove non nominano più una quota che non c'è —
+«(dà accesso solo ai commenti delle Letture, non al resto del percorso)» e «versamenti
+volontari, separati da tutto il resto».
+
+Censimento rifatto da capo: **«quota associativa» non compare più da nessuna parte** nel
+codice. Restano tre occorrenze della sola parola «quota», tutte legittime: il prezzo di un
+corso nel calendario e nel generatore di locandine, e «a quota 50» come soglia di un badge.
+
+**La pagina Supporter è rimasta intatta**, ed è la cosa giusta: la domanda sui due importi da
+29 € è nel changelog e aspetta la risposta di Ennio, non è stata decisa strada facendo.
+
+## 3.299.3 — «📄 Scarica PDF» nel pannello delle mail
+
+Codice nuovo, quindi l'ho letto come si legge il codice nuovo:
+
+- **Il permesso c'è** (`current_user_can( 'manage_options' )`) **e il nonce anche**
+  (`check_admin_referer`), su una pagina che si apre da un indirizzo — cioè il posto dove è
+  più facile dimenticarli.
+- La chiave arriva da `sanitize_key()` e viene cercata nel registro delle mail, con `wp_die()`
+  se non esiste: non si può farsi stampare qualcosa che non sia una di quelle mail.
+- Il corpo esce senza `esc_html()`, ed è **giusto così**: è l'HTML del modello, lo stesso che
+  `wp_mail()` manda davvero, e chi può vederlo è la stessa persona che può modificarlo.
+- L'utente finto (`display_name` = «Prova», niente `->ID`) è gestito: `gs_mail_template_render()`
+  controlla `isset( $user->ID )` prima di leggere i meta, e per le date e il link di conferma
+  usa valori finti ma realistici. Nessun avviso PHP, nessun segnaposto vuoto.
+
+**Ho controllato la cosa che avrebbe reso la funzione inutile**: la pagina stampa l'oggetto da
+`$def['oggetto']` mentre il corpo lo prende da `gs_mail_template_corpo_attivo()`, cioè da
+quello eventualmente modificato. Se gli oggetti fossero modificabili, si stamperebbe un oggetto
+diverso da quello spedito — e si controllerebbe una mail che non esiste. **Non lo sono**: il
+pannello mostra l'oggetto in sola lettura e `wp_mail()` spedisce lo stesso `$def['oggetto']`.
+Quindi oggi è corretto.
+
+> **Da ricordare se un giorno si rendono modificabili gli oggetti delle mail**: va aggiornata
+> anche questa pagina, o inizierà a stampare l'oggetto sbagliato in silenzio.
+
+`php -l` pulito sui sei file toccati. Versione 3.299.3 nei tre punti, changelog che racconta
+cosa leggeva una persona.
+
+**Niente da correggere.** Resta aperta la sola domanda dei due importi da 29 €.
