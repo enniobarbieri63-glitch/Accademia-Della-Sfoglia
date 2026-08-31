@@ -1,0 +1,926 @@
+<title>La Scala Senza Corrimano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Archivo:wght@400;500;600;700&family=Martian+Mono:wght@500;600&display=swap">
+
+<style>
+:root{
+  --farina:#FAF5EC;
+  --tagliere:#FFFDF7;
+  --inchiostro:#2A1F17;
+  --tenue:#6B5A4C;
+  --rame:#A93B27;
+  --ottone:#8F6410;
+  --erba:#4F6B3C;
+  --erba-velo:#E9EEE2;
+  --riga:#E2D6C0;
+  --riga-forte:#2A1F17;
+  --rame-velo:#F6E7E1;
+  --ottone-velo:#F7EDD5;
+  --ombra:0 1px 1px rgba(42,31,23,.05), 0 10px 30px -18px rgba(42,31,23,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --farina:#17120E;
+    --tagliere:#201913;
+    --inchiostro:#F0E6D4;
+    --tenue:#AC9B85;
+    --rame:#E07257;
+    --ottone:#E2B85A;
+    --erba:#93B47B;
+    --erba-velo:#1E2619;
+    --riga:#3B3126;
+    --riga-forte:#6E5C46;
+    --rame-velo:#2E1C17;
+    --ottone-velo:#2C2312;
+    --ombra:0 1px 1px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --farina:#17120E;
+  --tagliere:#201913;
+  --inchiostro:#F0E6D4;
+  --tenue:#AC9B85;
+  --rame:#E07257;
+  --ottone:#E2B85A;
+  --erba:#93B47B;
+  --erba-velo:#1E2619;
+  --riga:#3B3126;
+  --riga-forte:#6E5C46;
+  --rame-velo:#2E1C17;
+  --ottone-velo:#2C2312;
+  --ombra:0 1px 1px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--farina);
+  color:var(--inchiostro);
+  font-family:Archivo,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:16.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--rame); outline-offset:3px;}
+
+.foglio{max-width:1020px; margin:0 auto; padding:0 22px 120px;}
+
+/* ---- testata ---- */
+.testata{padding:56px 0 0;}
+.marchio{display:flex; align-items:center; gap:11px; margin-bottom:40px;}
+.marchio .nome{font-family:"Bodoni Moda",Didot,Georgia,serif; font-size:18px; font-weight:700;}
+.marchio .sep{flex:1; height:1px; background:var(--riga);}
+.marchio .meta{font-family:"Martian Mono",ui-monospace,monospace; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--tenue);}
+.occhiello{font-family:"Martian Mono",ui-monospace,monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--rame); font-weight:600;}
+.testata h1{
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-weight:400; font-size:clamp(3rem,8.5vw,5.6rem); line-height:.94;
+  letter-spacing:-.02em; margin:20px 0 0; text-wrap:balance;
+}
+.testata h1 em{font-style:italic; color:var(--rame);}
+.sommario{max-width:34em; font-size:1.16rem; line-height:1.55; color:var(--tenue); margin:26px 0 0;}
+.regola-doppia{height:2px; background:var(--riga-forte); margin-top:46px;}
+.regola-doppia + .regola-sottile{height:1px; background:var(--riga-forte); margin-top:3px;}
+
+/* ---- indice ---- */
+.indice{margin:38px 0 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:2px 30px;}
+.indice a{
+  display:flex; gap:11px; align-items:baseline;
+  color:var(--inchiostro); text-decoration:none;
+  font-size:14.5px; padding:5px 0; border-bottom:1px solid var(--riga);
+}
+.indice a:hover,.indice a:focus-visible{color:var(--rame);}
+.indice .n{font-family:"Martian Mono",ui-monospace,monospace; font-size:10px; color:var(--ottone); letter-spacing:.06em;}
+
+/* ---- sezioni ---- */
+section{
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr);
+  gap:0 26px;
+  margin:82px 0 0;
+  scroll-margin-top:20px;
+}
+section > *{grid-column:2;}
+.cifra{
+  grid-column:1; grid-row:span 2;
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-size:3.1rem; line-height:.8; color:var(--ottone);
+  font-weight:400; padding-top:4px;
+}
+section h2{
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-weight:400; font-size:2.1rem; line-height:1.08; letter-spacing:-.015em;
+  margin:0 0 6px; text-wrap:balance;
+}
+section h2 em{font-style:italic; color:var(--rame);}
+.etichetta{font-family:"Martian Mono",ui-monospace,monospace; font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--tenue); margin-bottom:12px;}
+h3{
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-weight:700; font-size:1.24rem; margin:34px 0 8px; letter-spacing:-.005em;
+}
+h4{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:10px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--rame); font-weight:600; margin:26px 0 8px;
+}
+p{margin:0 0 15px; max-width:66ch;}
+.guida{font-size:1.05rem; color:var(--tenue); max-width:60ch;}
+strong{font-weight:600;}
+ul,ol{margin:0 0 16px; padding-left:20px; max-width:64ch;}
+li{margin-bottom:7px;}
+li::marker{color:var(--ottone);}
+a{color:var(--rame);}
+.cod{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:.78em; letter-spacing:-.01em;
+  background:var(--ottone-velo); padding:.14em .42em; border-radius:3px;
+  white-space:nowrap;
+}
+.num{font-variant-numeric:tabular-nums;}
+
+/* larghezza piena dentro la sezione */
+.largo{grid-column:1 / -1;}
+
+/* ---- schede ---- */
+.scheda{
+  background:var(--tagliere);
+  border:1px solid var(--riga);
+  border-radius:2px;
+  padding:24px 26px;
+  margin:22px 0;
+  box-shadow:var(--ombra);
+}
+.scheda > :last-child{margin-bottom:0;}
+.scheda .titolo{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--erba); font-weight:600; margin-bottom:12px;
+  display:flex; align-items:center; gap:10px;
+}
+.scheda .titolo::after{content:""; flex:1; height:1px; background:var(--riga);}
+
+.diavolo{
+  background:var(--rame-velo);
+  border:1px solid var(--riga);
+  border-left:3px solid var(--rame);
+  border-radius:2px;
+  padding:20px 24px;
+  margin:22px 0;
+}
+.diavolo > :last-child{margin-bottom:0;}
+.diavolo .titolo{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--rame); font-weight:600; margin-bottom:11px;
+}
+.diavolo p,.diavolo li{max-width:64ch;}
+
+.citazione{
+  border-left:3px solid var(--ottone);
+  padding:4px 0 4px 20px; margin:20px 0;
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-size:1.12rem; line-height:1.5; font-style:italic;
+}
+.citazione .firma{
+  display:block; margin-top:10px;
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9.5px; letter-spacing:.12em; text-transform:uppercase;
+  font-style:normal; color:var(--tenue);
+}
+
+/* ---- tabelle ---- */
+.tabella{overflow-x:auto; margin:20px 0; border:1px solid var(--riga); border-radius:2px; background:var(--tagliere);}
+table{width:100%; border-collapse:collapse; font-size:14.2px; min-width:520px;}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--riga); vertical-align:top;}
+thead th{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9px; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--tenue); font-weight:600; background:var(--ottone-velo);
+  border-bottom:1px solid var(--riga);
+}
+tbody tr:last-child td{border-bottom:none;}
+td.chiave{font-weight:600; white-space:nowrap;}
+td.n,th.n{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+tfoot td{font-weight:600; background:var(--erba-velo); border-top:1px solid var(--riga);}
+
+/* ---- figure ---- */
+figure{margin:26px 0; }
+figure svg{display:block; width:100%; height:auto; max-width:920px; color:var(--inchiostro);}
+figcaption{
+  margin-top:12px; font-size:13.5px; color:var(--tenue); max-width:62ch;
+  border-top:1px solid var(--riga); padding-top:9px;
+}
+figcaption b{color:var(--inchiostro); font-weight:600;}
+
+/* ---- gradini ---- */
+.gradini{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:16px; margin:22px 0;}
+.gradino{
+  background:var(--tagliere); border:1px solid var(--riga);
+  border-top:3px solid var(--ottone); border-radius:2px;
+  padding:18px 18px 16px; display:flex; flex-direction:column;
+}
+.gradino.g0{border-top-color:var(--erba);}
+.gradino.g3{border-top-color:var(--rame);}
+.gradino .t{font-family:"Martian Mono",ui-monospace,monospace; font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:var(--tenue);}
+.gradino .nome{font-family:"Bodoni Moda",Didot,Georgia,serif; font-size:1.35rem; margin:6px 0 2px;}
+.gradino .prezzo{font-family:"Martian Mono",ui-monospace,monospace; font-size:12px; color:var(--rame); margin-bottom:12px;}
+.gradino ul{padding-left:16px; margin:0; font-size:13.6px;}
+.gradino li{margin-bottom:5px;}
+
+/* ---- pastiglie ---- */
+.pastiglia{
+  display:inline-block; font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 8px; border-radius:2px; font-weight:600;
+}
+.p-si{background:var(--erba-velo); color:var(--erba);}
+.p-no{background:var(--rame-velo); color:var(--rame);}
+.p-forse{background:var(--ottone-velo); color:var(--ottone);}
+
+/* ---- punteggio ---- */
+.punteggio{display:grid; gap:9px; margin:18px 0;}
+.riga-p{display:grid; grid-template-columns:150px 1fr 58px; gap:12px; align-items:center; font-size:13.5px;}
+.barra{height:9px; background:var(--riga); border-radius:1px; overflow:hidden;}
+.barra i{display:block; height:100%; background:var(--ottone);}
+.riga-p .v{font-family:"Martian Mono",ui-monospace,monospace; font-size:11px; text-align:right; font-variant-numeric:tabular-nums;}
+.totale{border-top:1px solid var(--riga-forte); padding-top:10px; margin-top:4px;}
+.totale .v{color:var(--rame); font-weight:600;}
+
+/* ---- chiusura ---- */
+.chiusura{
+  background:linear-gradient(180deg,var(--erba-velo),var(--tagliere));
+  border:1px solid var(--riga); border-radius:2px; padding:28px 30px;
+}
+.chiusura ol{margin:14px 0 0; padding-left:22px;}
+.chiusura li{margin-bottom:11px;}
+
+footer{
+  margin-top:96px; padding-top:20px;
+  border-top:2px solid var(--riga-forte);
+  font-size:13px; color:var(--tenue); max-width:66ch;
+}
+footer .sotto{height:1px; background:var(--riga-forte); margin:3px 0 20px;}
+
+@media (max-width:760px){
+  section{grid-template-columns:1fr;}
+  section > *{grid-column:1;}
+  .cifra{grid-row:auto; font-size:2.2rem; margin-bottom:4px;}
+  .riga-p{grid-template-columns:110px 1fr 52px;}
+  .foglio{padding:0 18px 90px;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+</style>
+
+<div class="foglio">
+
+<header class="testata">
+  <div class="marchio">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true" style="color:var(--rame)">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M4.6 9.2h14.8M4.6 14.8h14.8M9.2 3.4v17.2M14.8 3.4v17.2"></path>
+    </svg>
+    <span class="nome">Accademia della Sfoglia</span>
+    <span class="sep"></span>
+    <span class="meta">Piano percorsi &middot; v3 &middot; sul plugin 3.321.30</span>
+  </div>
+  <span class="occhiello">Avvocato del diavolo &middot; letto nel codice, non ipotizzato</span>
+  <h1>La scala<br>senza <em>corrimano</em></h1>
+  <p class="sommario">I gradini ci sono già tutti e sono cinque: pagine in chiaro, prova di trenta giorni, contributo, token per il maestro, Area Professionale col diploma. Quello che non c'è è il corrimano — niente dice a una sfoglina che il gradino dopo esiste. E in fondo alla scala si sta accumulando un magazzino di persone congelate a cui nessuno parla più.</p>
+  <div class="regola-doppia"></div>
+  <div class="regola-sottile"></div>
+  <nav class="indice" aria-label="Indice">
+    <a href="#errore"><span class="n">01</span><span>Dove il piano v2 sbagliava</span></a>
+    <a href="#scala"><span class="n">02</span><span>La scala che c'è già</span></a>
+    <a href="#congelate"><span class="n">03</span><span>Le congelate</span></a>
+    <a href="#gradino"><span class="n">04</span><span>Allargare il primo gradino</span></a>
+    <a href="#corrimano"><span class="n">05</span><span>Il corrimano che manca</span></a>
+    <a href="#foglio"><span class="n">06</span><span>Il Foglio di Prova</span></a>
+    <a href="#maestro"><span class="n">07</span><span>Il Maestro del Mese</span></a>
+    <a href="#madrine"><span class="n">08</span><span>Dalle diplomate alle Madrine</span></a>
+    <a href="#conti"><span class="n">09</span><span>I conti, rifatti</span></a>
+    <a href="#nonfare"><span class="n">10</span><span>Cosa non fare</span></a>
+    <a href="#tecnico"><span class="n">11</span><span>Il piano tecnico</span></a>
+    <a href="#passi"><span class="n">12</span><span>Decisioni, in ordine</span></a>
+  </nav>
+</header>
+
+<section id="errore">
+  <div class="cifra">01</div>
+  <div class="etichetta">Perché questo documento sostituisce il precedente</div>
+  <h2>Dove il piano v2 <em>sbagliava</em></h2>
+  <p class="guida">Il piano precedente l'ho scritto senza il plugin sotto gli occhi, dichiarandolo. Adesso il codice c'è: 103 moduli, versione 3.321.30. Sei delle idee che presentavo come nuove erano già costruite, e una premessa era proprio sbagliata.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Cosa proponevo</th><th>Cosa c'è davvero</th><th>Dove</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Congelare i punti a fine prova</td><td>Fatto, e in tre punti invece di uno: pagine, scritture, punti</td><td><span class="cod">abbonamenti.php</span></td></tr>
+        <tr><td class="chiave">Il «Gettone di Bottega»</td><td>I token: saldo, storico, valore in euro, rimborso automatico se il maestro non risponde entro 7 giorni</td><td><span class="cod">token.php</span></td></tr>
+        <tr><td class="chiave">«La Tavola»: percorso col maestro e diploma</td><td>L'Area Professionale: corso privato con docente, compiti giornalieri, feedback, Diploma col nome del docente vero</td><td><span class="cod">area-pro.php</span></td></tr>
+        <tr><td class="chiave">Misurare la sfoglia con un numero</td><td>La Sfoglia Misurata: spessore in mm, tempo, grammi per uovo; modi «vince il minore», «il maggiore», «il più vicino al target»</td><td><span class="cod">sfoglia-misurata.php</span></td></tr>
+        <tr><td class="chiave">Una «quinta gamba» fuori dal portale</td><td>Artigiani della Pasta e Scuole di Cucina: partner paganti con scadenza e storico bonifici, riferimento 150 €/anno</td><td><span class="cod">artigiani.php</span><br><span class="cod">scuole-cucina.php</span></td></tr>
+        <tr><td class="chiave">Prevendita online con soglia</td><td>Nessun incasso online, per scelta esplicita: tutto per bonifico, accreditato a mano</td><td><span class="cod">token.php</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>L'errore vero</h3>
+  <p>Il piano v2 poggiava su una frase: <em>partecipare è gratis, vincere è a pagamento.</em> Nel codice non è così. Passati i trenta giorni non è il punteggio a fermarsi: <strong>è tutto</strong>. Le pagine si chiudono, le scritture si bloccano, i punti non si accreditano.</p>
+  <p>E non è una dimenticanza da correggere: è una tua decisione del 26 agosto, scritta nel codice alla lettera — «vedono solo le pagine in chiaro». La Fontana che avevo disegnato l'avrebbe ribaltata quattro giorni dopo che l'avevi presa.</p>
+
+  <div class="diavolo">
+    <div class="titolo">Una nota di metodo</div>
+    <p>Tre delle sei sovrapposizioni qui sopra erano <em>migliori</em> nel codice di quanto le avessi proposte io. Il rimborso automatico dei token dopo sette giorni di silenzio del maestro non l'avevo pensato, e risolve il problema che nel v2 chiamavo «la moneta è un debito». Il congelamento chiude anche gli handler AJAX, che è la falla che avrei lasciato aperta. <strong>Il plugin è più avanti del piano</strong>, e il piano deve smettere di disegnare e cominciare a collegare.</p>
+    <p>Una regola di linguaggio che avevo violato ovunque: mai «costo» o «prezzo», sempre «contributo associativo» — tua richiesta del 30 luglio. In questo documento è corretta.</p>
+  </div>
+</section>
+
+<section id="scala">
+  <div class="cifra">02</div>
+  <div class="etichetta">Ricostruita leggendo i moduli</div>
+  <h2>La scala che c'è già</h2>
+  <p class="guida">Nessuno l'ha mai disegnata tutta insieme, ed è il motivo per cui sembrava mancare. I gradini sono cinque, e fra il secondo e il terzo c'è un muro con tre serrature.</p>
+
+  <figure class="largo">
+    <svg viewBox="0 0 880 430" role="img" aria-label="I cinque gradini esistenti: pagine in chiaro senza login, prova di trenta giorni, contributo di 29 euro, token da 5 euro per l'Esperto Risponde, Area Professionale col diploma. Fra la prova e il contributo c'è il muro del giorno trenta, chiuso da tre funzioni: gs_gate_riservato per le pagine, gs_puo_partecipare per le scritture, gs_add_points per i punti.">
+      <defs>
+        <marker id="s1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+
+      <text x="20" y="20" font-family="Martian Mono, monospace" font-size="10" opacity=".6" letter-spacing="1">SENZA LOGIN</text>
+      <rect x="20" y="30" width="150" height="96" fill="none" stroke="var(--erba)" stroke-width="1.6"></rect>
+      <text x="32" y="54" font-family="Bodoni Moda, serif" font-size="16">Pagine in chiaro</text>
+      <text x="32" y="76" font-family="Archivo, sans-serif" font-size="12" opacity=".78">Vetrina · Registro</text>
+      <text x="32" y="93" font-family="Archivo, sans-serif" font-size="12" opacity=".78">Ultimi Traguardi</text>
+      <text x="32" y="110" font-family="Archivo, sans-serif" font-size="12" opacity=".78">Percorsi pubblici</text>
+
+      <line x1="170" y1="78" x2="198" y2="78" stroke="currentColor" stroke-width="1.2" marker-end="url(#s1)"></line>
+
+      <text x="206" y="20" font-family="Martian Mono, monospace" font-size="10" opacity=".6" letter-spacing="1">30 GIORNI, IN REGALO</text>
+      <rect x="206" y="30" width="150" height="96" fill="none" stroke="currentColor" stroke-width="1.4"></rect>
+      <text x="218" y="54" font-family="Bodoni Moda, serif" font-size="16">La prova</text>
+      <text x="218" y="76" font-family="Archivo, sans-serif" font-size="12" opacity=".78">tutto aperto</text>
+      <text x="218" y="93" font-family="Archivo, sans-serif" font-size="12" opacity=".78">i punti contano</text>
+      <text x="218" y="110" font-family="Martian Mono, monospace" font-size="10" opacity=".6">+30gg all'approvazione</text>
+
+      <text x="392" y="20" font-family="Martian Mono, monospace" font-size="10" fill="var(--rame)" letter-spacing="1">IL MURO DEL GIORNO 30</text>
+      <line x1="386" y1="28" x2="386" y2="240" stroke="var(--rame)" stroke-width="2.4"></line>
+      <rect x="392" y="30" width="180" height="26" fill="none" stroke="var(--rame)" stroke-width="1"></rect>
+      <text x="402" y="47" font-family="Martian Mono, monospace" font-size="10.5" fill="var(--rame)">gs_gate_riservato()</text>
+      <text x="578" y="47" font-family="Archivo, sans-serif" font-size="11.5" opacity=".78">le pagine</text>
+      <rect x="392" y="62" width="180" height="26" fill="none" stroke="var(--rame)" stroke-width="1"></rect>
+      <text x="402" y="79" font-family="Martian Mono, monospace" font-size="10.5" fill="var(--rame)">gs_puo_partecipare()</text>
+      <text x="578" y="79" font-family="Archivo, sans-serif" font-size="11.5" opacity=".78">le scritture</text>
+      <rect x="392" y="94" width="180" height="26" fill="none" stroke="var(--rame)" stroke-width="1"></rect>
+      <text x="402" y="111" font-family="Martian Mono, monospace" font-size="10.5" fill="var(--rame)">gs_add_points()</text>
+      <text x="578" y="111" font-family="Archivo, sans-serif" font-size="11.5" opacity=".78">i punti</text>
+      <text x="392" y="140" font-family="Archivo, sans-serif" font-size="12" opacity=".72">Tutte e tre leggono gs_sfoglina_congelata().</text>
+      <text x="392" y="157" font-family="Archivo, sans-serif" font-size="12" opacity=".72">Chi non passa torna al primo gradino.</text>
+
+      <path d="M386 200 L300 200 L300 140" fill="none" stroke="var(--rame)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#s1)"></path>
+      <text x="110" y="224" font-family="Archivo, sans-serif" font-size="12" fill="var(--rame)">chi non contribuisce, torna qui</text>
+      <path d="M300 200 L96 200 L96 132" fill="none" stroke="var(--rame)" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#s1)"></path>
+
+      <line x1="20" y1="262" x2="860" y2="262" stroke="currentColor" stroke-width="0.8" opacity=".35"></line>
+      <text x="20" y="288" font-family="Martian Mono, monospace" font-size="10" opacity=".6" letter-spacing="1">OLTRE IL MURO — TUTTO PER BONIFICO, ACCREDITATO A MANO</text>
+
+      <rect x="20" y="300" width="256" height="106" fill="none" stroke="var(--ottone)" stroke-width="1.6"></rect>
+      <text x="32" y="326" font-family="Bodoni Moda, serif" font-size="16">Il contributo</text>
+      <text x="32" y="348" font-family="Martian Mono, monospace" font-size="12" fill="var(--rame)">29 € / anno</text>
+      <text x="32" y="370" font-family="Archivo, sans-serif" font-size="12" opacity=".78">riapre tutto: gioco, punti,</text>
+      <text x="32" y="387" font-family="Archivo, sans-serif" font-size="12" opacity=".78">e le 7 sezioni «superiore»</text>
+
+      <line x1="276" y1="353" x2="304" y2="353" stroke="currentColor" stroke-width="1.2" marker-end="url(#s1)"></line>
+
+      <rect x="312" y="300" width="256" height="106" fill="none" stroke="var(--ottone)" stroke-width="1.6"></rect>
+      <text x="324" y="326" font-family="Bodoni Moda, serif" font-size="16">I token</text>
+      <text x="324" y="348" font-family="Martian Mono, monospace" font-size="12" fill="var(--rame)">5 € l'uno · 1 per domanda</text>
+      <text x="324" y="370" font-family="Archivo, sans-serif" font-size="12" opacity=".78">L'Esperto Risponde, 1-a-1</text>
+      <text x="324" y="387" font-family="Archivo, sans-serif" font-size="12" opacity=".78">rimborso se tace 7 giorni</text>
+
+      <line x1="568" y1="353" x2="596" y2="353" stroke="currentColor" stroke-width="1.2" marker-end="url(#s1)"></line>
+
+      <rect x="604" y="300" width="256" height="106" fill="none" stroke="var(--rame)" stroke-width="2"></rect>
+      <text x="616" y="326" font-family="Bodoni Moda, serif" font-size="16">L'Area Professionale</text>
+      <text x="616" y="348" font-family="Martian Mono, monospace" font-size="12" fill="var(--rame)">contributo da definire</text>
+      <text x="616" y="370" font-family="Archivo, sans-serif" font-size="12" opacity=".78">corso privato col docente,</text>
+      <text x="616" y="387" font-family="Archivo, sans-serif" font-size="12" opacity=".78">compiti, feedback, Diploma</text>
+    </svg>
+    <figcaption>Il muro non è un paywall messo davanti al gioco: <b>è il gioco che finisce.</b> Le tre serrature sono deliberate e ben fatte — quella sulle scritture AJAX chiude una falla che le altre due da sole lascerebbero aperta. Il problema non è il muro: è che <b>i tre gradini a destra non sono mai nominati dal sito</b> a chi sta a sinistra.</figcaption>
+  </figure>
+
+  <div class="scheda">
+    <div class="titolo">Le sette sezioni «superiore», dal registro di sezioni.php</div>
+    <p style="margin-bottom:0">Libreria Video delle Lezioni &middot; Calendario Corsi &middot; Corsi Online (l'Area Professionale) &middot; Messaggi &middot; L'Esperto Risponde &middot; Conversazioni private &middot; Posta interna. Tutto il resto del gioco &mdash; Sfide, Tavolo di Lavoro, Indovina, Sfoglia Misurata, Giuria, Ricettario, Cassaforte, Testamenti, Matterello, Letture &mdash; è già marcato <span class="cod">'livello' =&gt; 'base'</span>. <strong>La distinzione base/superiore esiste e funziona: è il congelamento che la scavalca</strong>, chiudendo anche le sezioni base a chi ha finito la prova.</p>
+  </div>
+</section>
+
+<section id="congelate">
+  <div class="cifra">03</div>
+  <div class="etichetta">La conseguenza che nessuno ha ancora contato</div>
+  <h2>Le congelate</h2>
+  <p class="guida">Con un muro a trenta giorni, le iscritte gratuite non sono una popolazione che cresce: sono un flusso che passa. Chi non contribuisce entro il mese non resta nella community &mdash; esce, e si deposita in un magazzino che oggi nessuno apre.</p>
+  <p>È la differenza che cambia tutta l'aritmetica del piano precedente. Il v2 ragionava su «mille iscritte gratuite» come se fossero mille persone presenti insieme. Con questo impianto, mille registrazioni in un anno significano circa <strong>ottantatré persone in prova in ogni dato momento</strong>, e tutte le altre o hanno contribuito o sono congelate.</p>
+
+  <figure class="largo">
+    <svg viewBox="0 0 880 300" role="img" aria-label="Confronto fra il modello ipotizzato nel piano v2, in cui le iscritte gratuite si accumulano in una comunità permanente, e il modello reale, in cui passano per una prova di trenta giorni e poi o contribuiscono o si depositano come congelate.">
+      <defs>
+        <marker id="s2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+      <text x="20" y="22" font-family="Martian Mono, monospace" font-size="10" opacity=".55" letter-spacing="1">COME LO IMMAGINAVA IL PIANO V2 — UNA COMUNITÀ CHE SI ACCUMULA</text>
+      <rect x="20" y="34" width="120" height="46" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"></rect>
+      <text x="80" y="62" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5" opacity=".7">1.000 iscritte</text>
+      <line x1="140" y1="57" x2="196" y2="57" stroke="currentColor" stroke-width="1" opacity=".5"></line>
+      <rect x="200" y="34" width="150" height="46" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"></rect>
+      <text x="275" y="62" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5" opacity=".7">restano, per sempre</text>
+      <line x1="350" y1="57" x2="406" y2="57" stroke="currentColor" stroke-width="1" opacity=".5"></line>
+      <rect x="410" y="34" width="150" height="46" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"></rect>
+      <text x="485" y="62" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5" opacity=".7">120 contribuiscono</text>
+      <text x="580" y="62" font-family="Archivo, sans-serif" font-size="12.5" opacity=".55">…e le altre 880 restano lì, a guardare.</text>
+
+      <line x1="20" y1="108" x2="860" y2="108" stroke="currentColor" stroke-width="0.8" opacity=".3"></line>
+
+      <text x="20" y="140" font-family="Martian Mono, monospace" font-size="10" fill="var(--rame)" letter-spacing="1">COME FUNZIONA DAVVERO — UN FLUSSO CHE ATTRAVERSA</text>
+      <rect x="20" y="154" width="120" height="52" fill="none" stroke="currentColor" stroke-width="1.3"></rect>
+      <text x="80" y="176" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5">83 al mese</text>
+      <text x="80" y="194" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".7">si registrano</text>
+
+      <line x1="140" y1="180" x2="196" y2="180" stroke="currentColor" stroke-width="1.3" marker-end="url(#s2)"></line>
+
+      <rect x="200" y="154" width="150" height="52" fill="none" stroke="currentColor" stroke-width="1.3"></rect>
+      <text x="275" y="176" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5">30 giorni di prova</text>
+      <text x="275" y="194" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".7">poi il muro</text>
+
+      <path d="M350 168 L392 150 L406 150" fill="none" stroke="var(--erba)" stroke-width="2" marker-end="url(#s2)"></path>
+      <path d="M350 192 L392 232 L406 232" fill="none" stroke="var(--rame)" stroke-width="4" marker-end="url(#s2)"></path>
+
+      <rect x="410" y="126" width="170" height="48" fill="none" stroke="var(--erba)" stroke-width="1.6"></rect>
+      <text x="495" y="147" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5" font-weight="600">200 contribuiscono</text>
+      <text x="495" y="164" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">il 20 %</text>
+
+      <rect x="410" y="208" width="170" height="48" fill="none" stroke="var(--rame)" stroke-width="2"></rect>
+      <text x="495" y="229" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12.5" font-weight="600">800 si congelano</text>
+      <text x="495" y="246" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">l'80 %</text>
+
+      <line x1="580" y1="232" x2="616" y2="232" stroke="var(--rame)" stroke-width="2.4" marker-end="url(#s2)"></line>
+      <rect x="620" y="196" width="240" height="72" fill="none" stroke="var(--rame)" stroke-width="2"></rect>
+      <text x="634" y="222" font-family="Bodoni Moda, serif" font-size="17">Il magazzino</text>
+      <text x="634" y="244" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">ottocento indirizzi email di</text>
+      <text x="634" y="260" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">gente che si era iscritta</text>
+    </svg>
+    <figcaption>La freccia spessa è quella che conta, ed è quella verso il basso. <b>Ogni congelata è un'acquisizione già pagata che non rende niente</b>: si era registrata, aveva compilato, aveva aspettato l'approvazione. Il numero esatto lo sapete già — il pannello Abbonamenti conta le scadute e le fa lampeggiare in rosso.</figcaption>
+  </figure>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Il meccanismo che dovrebbe riportarle indietro è chiuso dentro il muro.</strong> Il suggerimento dinamico di <span class="cod">prossimo-passo.php</span> vive in cima a «La Mia Sfoglia» &mdash; e «La Mia Sfoglia» è la prima cosa che si chiude a chi è congelata (<span class="cod">shortcodes.php</span>, riga 334: il riquadro sostituisce tutto). L'unico motore di richiamo che avete <em>è irraggiungibile esattamente per le persone che dovrebbe richiamare.</em></p>
+    <p>Il riquadro che vedono al suo posto è scritto bene &mdash; «non hai perso niente, è congelato non cancellato» &mdash; ma è statico e uguale per tutte, e per le istruzioni rimanda a un'email di settimane prima. Una signora che ha guadagnato 1.240 punti e tre badge legge la stessa riga di una che si era iscritta e non aveva mai pubblicato niente.</p>
+  </div>
+</section>
+
+<section id="gradino">
+  <div class="cifra">04</div>
+  <div class="etichetta">La decisione presa &middot; il muro resta, la soglia si allarga</div>
+  <h2>Allargare il primo gradino</h2>
+  <p class="guida">Non un livello gratuito permanente: il muro dei trenta giorni resta dov'è. Ma alle sei pagine che restano aperte se ne aggiungono due, scelte perché danno un motivo per tornare senza regalare il gioco.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Cosa si apre</th><th>In che modo</th><th>Perché proprio questa</th><th>Cosa resta chiuso</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="chiave">Il Tavolo di Lavoro</td>
+          <td>Sola lettura: si vedono le sfoglie delle altre e i commenti</td>
+          <td>È la cosa più calda del sito e l'unica che si può guardare senza invidia. Vedere una sfoglia venuta bene non fa sentire escluse: fa venire voglia di provare</td>
+          <td>Pubblicare, commentare, votare &mdash; e i punti</td>
+        </tr>
+        <tr>
+          <td class="chiave">Il Ricettario delle Famiglie</td>
+          <td>Sola lettura</td>
+          <td>È il pezzo per cui l'Accademia è un'associazione culturale e non un club a pagamento. Tenerlo chiuso a chi non contribuisce è la cosa più difficile da difendere se qualcuno ve lo chiede</td>
+          <td>Aggiungere una ricetta di famiglia</td>
+        </tr>
+        <tr>
+          <td class="chiave">La Correzione della Settimana</td>
+          <td>Pagina pubblica, senza login</td>
+          <td>Non esiste ancora: è la vetrina che oggi manca all'Esperto Risponde e all'Area Professionale (sezione 05)</td>
+          <td>&mdash;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Restano fuori, e devono restare fuori: le Sfide, Indovina la Sfoglia, la Sfoglia Misurata, la Giuria, i punti, i badge, la classifica scalabile. <strong>Quello è il gioco, ed è quello che si sostiene contribuendo.</strong></p>
+
+  <div class="scheda">
+    <div class="titolo">Come si fa, tecnicamente</div>
+    <p style="margin-bottom:0">Non serve toccare il congelamento. Serve una seconda porta accanto a quella che c'è: <span class="cod">gs_gate_riservato()</span> resta com'è per tutto il resto, e i due shortcode del Tavolo e del Ricettario chiamano invece una <span class="cod">gs_gate_lettura()</span> che, alla sfoglina congelata, restituisce il contenuto senza i comandi invece del riquadro di avviso. Le scritture continuano a passare da <span class="cod">gs_puo_partecipare()</span>, che le blocca comunque: <strong>anche se un pulsante sfuggisse, la scrittura non passa lo stesso.</strong> È la stessa doppia protezione già usata oggi, riusata invece che riscritta.</p>
+  </div>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Aprire in sola lettura ha un prezzo che va detto:</strong> qualcuna guarderà il Tavolo di Lavoro per mesi senza contribuire mai, e voi avrete pagato la banda e i backup delle sue visite. È un costo reale ma piccolo, e va confrontato con l'alternativa &mdash; ottocento persone che non tornano mai più. <strong>La domanda giusta non è «quante ne perdo che avrebbero pagato», è «quante ne recupero che erano già perse».</strong></p>
+    <p>Ma c'è un limite da rispettare: <strong>due sezioni, non sei.</strong> Se si apre metà del gioco, chi ha contribuito lo scopre e ha ragione ad arrabbiarsi &mdash; e non avete nessun modo di risarcirla. Il confine da tenere è netto e spiegabile in una riga: <em>guardare si può, fare no.</em></p>
+  </div>
+</section>
+
+<section id="corrimano">
+  <div class="cifra">05</div>
+  <div class="etichetta">Il vero lavoro da fare</div>
+  <h2>Il corrimano che manca</h2>
+  <p class="guida">I tre gradini oltre il muro &mdash; il contributo, i token per il maestro, l'Area Professionale col diploma &mdash; sono costruiti, funzionanti, e <em>invisibili</em>. Nessuna pagina li annuncia a chi non li ha già. Questo, e non l'architettura, è il buco vero.</p>
+
+  <h3>Il suggerimento che non nomina mai la scala</h3>
+  <p><span class="cod">prossimo-passo.php</span> controlla oggi cinque condizioni in ordine di priorità. Sono buone, ma guardano tutte dentro il gioco:</p>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Oggi controlla</th><th>E dice</th><th class="n">Porta a</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Missioni di oggi non finite</td><td>«vale la pena dare un'occhiata prima che finisca la giornata»</td><td class="n">gioco</td></tr>
+        <tr><td class="chiave">Vicina al livello successivo</td><td>«ti mancano solo N punti: pubblica una sfoglia o vota»</td><td class="n">gioco</td></tr>
+        <tr><td class="chiave">Corso in calendario con posti liberi</td><td>«potrebbe interessarti prenotare il tuo primo corso»</td><td class="n">corso</td></tr>
+        <tr><td class="chiave">Nessuna delle precedenti</td><td>«continua così: pubblica o lascia un consiglio»</td><td class="n">gioco</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Manca tutto il resto della scala. Le cinque condizioni da aggiungere, ciascuna agganciata a un dato che il plugin già tiene:</p>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Quando</th><th>Dire</th><th>Dato già presente</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Prova a 7 giorni dalla fine</td><td>«la tua prova finisce fra una settimana: i tuoi 1.240 punti e i tuoi 3 badge restano tuoi comunque, ma si fermano»</td><td><span class="cod">gs_abbonamento_scadenza</span></td></tr>
+        <tr><td class="chiave">Saldo token a zero e mai una domanda</td><td>«c'è una cosa che il sito non sa risponderti: chiedila a Rina»</td><td><span class="cod">gs_token_credito</span></td></tr>
+        <tr><td class="chiave">Sconto accumulato sopra il 15 %</td><td>«hai già il 18 % su un corso base: si azzera il 24 dicembre»</td><td><span class="cod">gs_sconto_pct</span></td></tr>
+        <tr><td class="chiave">Livello alto e nessun corso privato</td><td>«sei fra le prime dieci: l'Area Professionale è un percorso tuo con un docente»</td><td>livello + CPT <span class="cod">gs_corso</span></td></tr>
+        <tr><td class="chiave">Diplomata e non ancora Madrina</td><td>«hai il diploma: c'è un'allieva che aspetta una madrina»</td><td>diploma + <span class="cod">gs_abbinamento</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La terza è quella che frutta di più subito, ed è a costo zero: <strong>uno sconto accumulato che si azzera il 24 dicembre e che nessuno ricorda alla proprietaria è denaro che avete già promesso e che non porta nessuno a un corso.</strong></p>
+
+  <h3>Il riquadro delle congelate, che oggi è uguale per tutte</h3>
+  <p>Il riquadro di <span class="cod">gs_congelata_avviso()</span> dice le cose giuste ma non sa niente di chi lo sta leggendo. Ha accesso all'ID utente: può dire <em>quanti</em> punti sono congelati, <em>quali</em> badge, a che livello era arrivata, quanto sconto corso aveva accumulato. «Non hai perso niente» è una promessa; «i tuoi 1.240 punti, i tuoi 3 badge e il tuo 18 % di sconto ti aspettano» è la stessa promessa con dentro il motivo per rientrare.</p>
+
+  <h3>Le adesioni che nessuno raccoglie</h3>
+  <div class="scheda">
+    <div class="titolo">Un elenco già pieno, mai aperto</div>
+    <p>Il modulo di registrazione salva da fine agosto quattro adesioni facoltative: <span class="cod">appello</span>, <span class="cod">registro</span>, <span class="cod">newsletter</span> e <span class="cod">sostegno</span>. Nel codice c'è scritto: «solo salvate come dato sulla scheda della sfoglina: nessun invio automatico collegato, per ora».</p>
+    <p style="margin-bottom:0">Chi ha spuntato <span class="cod">sostegno</span> ha alzato la mano da sola per diventare Supporter, e la pagina che glielo spiegherebbe esiste già ed è uno shortcode, <span class="cod">[gs_pagina_supporter]</span>. <strong>Manca solo la riga che congiunge le due cose</strong>: un elenco nel pannello, «hanno chiesto informazioni sul sostegno», con accanto il link. Mezz'ora di lavoro su una domanda che le persone hanno già fatto.</p>
+  </div>
+
+  <h3>La Correzione della Settimana</h3>
+  <p>L'Esperto Risponde e l'Area Professionale sono le due cose migliori del sito e nessuno che non le abbia già comprate le ha mai viste. Sono, per costruzione, private: conversazioni 1-a-1, corsi non visibili alle altre sfogline. Giusto così &mdash; ma significa che <strong>non hanno una vetrina.</strong></p>
+  <p>Ogni lunedì, una correzione vera pubblicata per intero su una pagina senza login: la foto, la misura, e le venti righe del maestro. Con il consenso della sfoglina e il suo nome tolto. È lo stesso schema motivazionale già scelto per <span class="cod">[gs_percorsi_pubblici]</span> &mdash; far vedere la mappa senza dare accesso alle lezioni &mdash; applicato alla cosa che qui vale di più.</p>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>È il lavoro ricorrente più impegnativo di tutto il documento, e non è assegnato a nessuno.</strong> Cinquantadue correzioni all'anno, scritte bene, senza saltarne una &mdash; perché una rubrica settimanale che salta due lunedì è finita. Prima di metterla nel piano va risposta una domanda sola: <em>chi la scrive, ogni lunedì, da qui a un anno?</em> Se la risposta non è un nome, meglio farla quindicinale e mantenerla, che settimanale e abbandonarla a novembre.</p>
+  </div>
+</section>
+
+<section id="foglio">
+  <div class="cifra">06</div>
+  <div class="etichetta">L'unica cosa davvero nuova &mdash; e ha già dove innestarsi</div>
+  <h2>Il Foglio di Prova</h2>
+  <p class="guida">La Sfoglia Misurata esiste già e fa quasi tutto: un CPT <span class="cod">gs_misura</span>, una cosa da misurare, un'unità, tre modi di vincere (il numero più basso, il più alto, il più vicino a un obiettivo) e trenta punti a chi vince. Quello che le manca è nel suo stesso commento: <em>«ogni sfoglina dichiara la propria misura, a fiducia».</em></p>
+  <p>A fiducia va benissimo per il tempo di tiratura o i grammi di farina per uovo. Non basta il giorno in cui da un numero dipendono badge, sconti sui corsi e la classifica. Il Foglio di Prova aggiunge alla Sfoglia Misurata la sola cosa che le manca: <strong>una misura che si può verificare guardando una fotografia.</strong></p>
+  <p>È un PDF A4 da stampare, nuovo ogni mese, che si mette <em>sotto</em> la sfoglia. È la versione codificata della prova che si fa da sempre in Romagna &mdash; la sfoglia è buona quando ci si legge il giornale attraverso &mdash; solo che invece del giornale c'è una scala di corpi tipografici, e invece di «si legge» c'è un numero.</p>
+
+<figure>
+    <svg viewBox="0 0 600 800" role="img" aria-label="Il Foglio di Prova: un foglio A4 con nove riquadri, ciascuno contenente una scala di sei corpi tipografici da 12 a 5, più una scala di grigi, una barra di calibrazione da 5 centimetri e il codice personale del mese.">
+      <rect x="10" y="10" width="580" height="780" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+
+      <text x="34" y="46" font-family="Bodoni Moda, serif" font-size="21">Foglio di Prova</text>
+      <text x="34" y="66" font-family="Martian Mono, monospace" font-size="10" opacity=".65" letter-spacing="1">ACCADEMIA DELLA SFOGLIA · SETTEMBRE 2026</text>
+      <rect x="404" y="26" width="162" height="46" fill="none" stroke="var(--rame)" stroke-width="1.3"></rect>
+      <text x="485" y="46" text-anchor="middle" font-family="Martian Mono, monospace" font-size="9" fill="var(--rame)" letter-spacing="1">CODICE PERSONALE</text>
+      <text x="485" y="63" text-anchor="middle" font-family="Martian Mono, monospace" font-size="13" fill="var(--rame)" font-weight="600">R-4471-SET</text>
+
+      <line x1="34" y1="86" x2="566" y2="86" stroke="currentColor" stroke-width="1.4"></line>
+      <line x1="34" y1="90" x2="566" y2="90" stroke="currentColor" stroke-width="0.7"></line>
+
+      <text x="34" y="118" font-family="Martian Mono, monospace" font-size="9.5" opacity=".7" letter-spacing="1">I NOVE RIQUADRI — UNA SCALA DI CORPI PER OGNI ZONA</text>
+
+      <g stroke="currentColor" stroke-width="1" fill="none">
+        <rect x="34" y="130" width="177" height="150"></rect><rect x="211" y="130" width="178" height="150"></rect><rect x="389" y="130" width="177" height="150"></rect>
+        <rect x="34" y="280" width="177" height="150"></rect><rect x="389" y="280" width="177" height="150"></rect>
+        <rect x="34" y="430" width="177" height="150"></rect><rect x="211" y="430" width="178" height="150"></rect><rect x="389" y="430" width="177" height="150"></rect>
+      </g>
+      <rect x="211" y="280" width="178" height="150" fill="none" stroke="var(--rame)" stroke-width="1.8"></rect>
+
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="44" y="150" font-family="Martian Mono, monospace" font-size="8" opacity=".6">N-O</text>
+        <text x="44" y="172" font-size="12">la sfoglia buona</text>
+        <text x="44" y="192" font-size="10">la sfoglia buona si vede</text>
+        <text x="44" y="209" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="44" y="224" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="44" y="238" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="44" y="251" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+        <text x="152" y="272" font-family="Martian Mono, monospace" font-size="7.5" opacity=".55">12 10 8 7 6 5</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="221" y="150" font-family="Martian Mono, monospace" font-size="8" opacity=".6">N</text>
+        <text x="221" y="172" font-size="12">la sfoglia buona</text>
+        <text x="221" y="192" font-size="10">la sfoglia buona si vede</text>
+        <text x="221" y="209" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="221" y="224" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="221" y="238" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="221" y="251" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="399" y="150" font-family="Martian Mono, monospace" font-size="8" opacity=".6">N-E</text>
+        <text x="399" y="172" font-size="12">la sfoglia buona</text>
+        <text x="399" y="192" font-size="10">la sfoglia buona si vede</text>
+        <text x="399" y="209" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="399" y="224" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="399" y="238" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="399" y="251" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="44" y="300" font-family="Martian Mono, monospace" font-size="8" opacity=".6">O</text>
+        <text x="44" y="322" font-size="12">la sfoglia buona</text>
+        <text x="44" y="342" font-size="10">la sfoglia buona si vede</text>
+        <text x="44" y="359" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="44" y="374" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="44" y="388" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="44" y="401" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif">
+        <text x="221" y="300" font-family="Martian Mono, monospace" font-size="8" fill="var(--rame)">CENTRO — RIFERIMENTO</text>
+        <text x="221" y="322" font-size="12">la sfoglia buona</text>
+        <text x="221" y="342" font-size="10">la sfoglia buona si vede</text>
+        <text x="221" y="359" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="221" y="374" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="221" y="388" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="221" y="401" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="399" y="300" font-family="Martian Mono, monospace" font-size="8" opacity=".6">E</text>
+        <text x="399" y="322" font-size="12">la sfoglia buona</text>
+        <text x="399" y="342" font-size="10">la sfoglia buona si vede</text>
+        <text x="399" y="359" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="399" y="374" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="399" y="388" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="399" y="401" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="44" y="450" font-family="Martian Mono, monospace" font-size="8" opacity=".6">S-O</text>
+        <text x="44" y="472" font-size="12">la sfoglia buona</text>
+        <text x="44" y="492" font-size="10">la sfoglia buona si vede</text>
+        <text x="44" y="509" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="44" y="524" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="44" y="538" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="44" y="551" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="221" y="450" font-family="Martian Mono, monospace" font-size="8" opacity=".6">S</text>
+        <text x="221" y="472" font-size="12">la sfoglia buona</text>
+        <text x="221" y="492" font-size="10">la sfoglia buona si vede</text>
+        <text x="221" y="509" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="221" y="524" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="221" y="538" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="221" y="551" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="399" y="450" font-family="Martian Mono, monospace" font-size="8" opacity=".6">S-E</text>
+        <text x="399" y="472" font-size="12">la sfoglia buona</text>
+        <text x="399" y="492" font-size="10">la sfoglia buona si vede</text>
+        <text x="399" y="509" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="399" y="524" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="399" y="538" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="399" y="551" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+
+      <text x="34" y="612" font-family="Martian Mono, monospace" font-size="9.5" opacity=".7" letter-spacing="1">SCALA DI GRIGI — PER LA FOTOGRAFIA</text>
+      <g stroke="currentColor" stroke-width="0.8">
+        <rect x="34" y="622" width="52" height="30" fill="#ffffff"></rect>
+        <rect x="86" y="622" width="52" height="30" fill="#cccccc"></rect>
+        <rect x="138" y="622" width="52" height="30" fill="#999999"></rect>
+        <rect x="190" y="622" width="52" height="30" fill="#666666"></rect>
+        <rect x="242" y="622" width="52" height="30" fill="#333333"></rect>
+        <rect x="294" y="622" width="52" height="30" fill="#000000"></rect>
+      </g>
+
+      <text x="380" y="612" font-family="Martian Mono, monospace" font-size="9.5" opacity=".7" letter-spacing="1">CALIBRO 5 CM</text>
+      <g stroke="currentColor" stroke-width="1.1">
+        <line x1="380" y1="640" x2="566" y2="640"></line>
+        <line x1="380" y1="632" x2="380" y2="648"></line>
+        <line x1="417" y1="634" x2="417" y2="646"></line>
+        <line x1="454" y1="632" x2="454" y2="648"></line>
+        <line x1="491" y1="634" x2="491" y2="646"></line>
+        <line x1="529" y1="632" x2="529" y2="648"></line>
+        <line x1="566" y1="632" x2="566" y2="648"></line>
+      </g>
+
+      <line x1="34" y1="686" x2="566" y2="686" stroke="currentColor" stroke-width="0.8"></line>
+      <text x="34" y="710" font-family="Archivo, sans-serif" font-size="12" opacity=".8">1. Stendi la sfoglia. 2. Appoggia questo foglio sotto il centro, con il codice scoperto.</text>
+      <text x="34" y="730" font-family="Archivo, sans-serif" font-size="12" opacity=".8">3. Fotografa dall'alto, alla luce di una finestra, senza flash.</text>
+      <text x="34" y="750" font-family="Archivo, sans-serif" font-size="12" opacity=".8">4. Seconda foto: la sfoglia intera sul tagliere, con il foglio di fianco per la scala.</text>
+      <text x="34" y="774" font-family="Martian Mono, monospace" font-size="9" opacity=".55" letter-spacing="1">IL CODICE DEVE ESSERE LEGGIBILE NELLA FOTO — ALTRIMENTI LA PROVA NON VALE</text>
+    </svg>
+    <figcaption>Ogni riquadro ha la <b>sua</b> scala di corpi: è questo che rende misurabile l'uniformità, non solo la finezza. Il centro è il riferimento; ogni zona che legge un corpo più grosso è un punto in cui il mattarello non è arrivato. Il codice personale in alto a destra cambia ogni mese e deve risultare leggibile nella foto: una sfoglia presa da internet non lo ha, e quella dell'anno scorso ha il codice sbagliato.</figcaption>
+  </figure>
+
+  <h3>L'Indice di Sfoglia</h3>
+  <p>Dalla fotografia si ricava un numero da 0 a 100. Nel plugin non è un modulo nuovo: è una <span class="cod">gs_misura</span> con <span class="cod">gs_misura_modo = 'piu'</span>, che l'impianto esistente sa già ordinare e premiare.</p>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Voce</th><th class="n">Peso</th><th>Come si ricava</th><th>Chi la legge</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Trasparenza</td><td class="n">0&ndash;40</td><td>Il corpo più piccolo leggibile nel riquadro centrale: c12&nbsp;=&nbsp;10, c10&nbsp;=&nbsp;18, c8&nbsp;=&nbsp;26, c7&nbsp;=&nbsp;32, c6&nbsp;=&nbsp;36, c5&nbsp;=&nbsp;40</td><td>Chiunque, dalla foto</td></tr>
+        <tr><td class="chiave">Uniformità</td><td class="n">0&ndash;30</td><td>30 meno 3 punti per ogni riquadro che legge un corpo più grosso del centro</td><td>Chiunque, dalla foto</td></tr>
+        <tr><td class="chiave">Forma</td><td class="n">0&ndash;20</td><td>Scarto fra raggio massimo e minimo: ≤3&nbsp;cm&nbsp;=&nbsp;20, ≤5&nbsp;=&nbsp;15, ≤8&nbsp;=&nbsp;10, oltre&nbsp;=&nbsp;5</td><td>Il maestro</td></tr>
+        <tr><td class="chiave">Bordo</td><td class="n">0&ndash;10</td><td>Quanto il bordo resta della stessa altezza del corpo &mdash; giudizio a occhio</td><td>Il maestro</td></tr>
+      </tbody>
+      <tfoot><tr><td>Indice di Sfoglia</td><td class="n">0&ndash;100</td><td colspan="2">Le prime due voci le può verificare una giurata; le ultime due no</td></tr></tfoot>
+    </table>
+  </div>
+  <p>La riga di frattura fra le prime due voci e le ultime due <strong>è esattamente la scala del sito</strong>, e non è stata costruita per far pagare: è ciò che una fotografia dice da sola contro ciò che serve un occhio a dire. Chi è in prova o ha contribuito ottiene un indice su 70. Le ultime trenta si comprano come si comprano oggi le domande all'Esperto: <strong>con un token</strong>, sull'impianto che già c'è, rimborso automatico compreso se il maestro non risponde entro sette giorni.</p>
+
+  <h3>Esempio &mdash; Rosanna, 62 anni, Faenza</h3>
+  <div class="scheda">
+    <div class="titolo">Indice di Sfoglia &mdash; terza sfoglia di settembre</div>
+    <div class="punteggio">
+      <div class="riga-p"><span>Trasparenza</span><span class="barra"><i style="width:80%"></i></span><span class="v">32 / 40</span></div>
+      <div class="riga-p"><span>Uniformità</span><span class="barra"><i style="width:70%"></i></span><span class="v">21 / 30</span></div>
+      <div class="riga-p"><span>Forma</span><span class="barra"><i style="width:50%"></i></span><span class="v">10 / 20</span></div>
+      <div class="riga-p"><span>Bordo</span><span class="barra"><i style="width:50%"></i></span><span class="v">5 / 10</span></div>
+      <div class="riga-p totale"><span><strong>Indice</strong></span><span class="barra"><i style="width:68%;background:var(--rame)"></i></span><span class="v">68 / 100</span></div>
+    </div>
+    <p style="font-size:13.5px;color:var(--tenue);margin-bottom:0">Legge il corpo 7 al centro. Tre riquadri su nove &mdash; N-O, O, S-O &mdash; si fermano al corpo 10. Raggio da 27 a 33 cm.</p>
+  </div>
+  <div class="citazione">
+    «Il tuo nord-ovest è più spesso da tre mesi, sempre lo stesso. Non stai girando la sfoglia: stai girando te stessa intorno al tagliere, e quando arrivi da quella parte sei già stanca. Prova a ruotare la sfoglia di un quarto ogni due passate, sempre nello stesso verso, con i piedi fermi. Il bordo gonfio a nord-ovest è la stessa cosa vista da fuori: l'ultima spinta su quel lato non arriva mai in fondo. Per la prossima non cercare il corpo 6. Cerca l'uniformità a 27: fine è facile, uguale è difficile.»
+    <span class="firma">Un token, speso bene</span>
+  </div>
+  <p>Venti righe scritte da qualcuno che ha guardato quella sfoglia. Costa a un maestro dieci minuti, non è replicabile da nessun video registrato, e viaggia sul canale che il plugin ha già: una Conversazione privata, aperta da <span class="cod">esperti.php</span>.</p>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Cominciate dalla misura fatta a mano, non dall'automatismo.</strong> Leggere in modo affidabile un corpo tipografico attraverso una fotografia scattata col telefono, controluce, alle sette di sera, è il pezzo più difficile di tutto il documento. La giurata di turno &mdash; <span class="cod">giuria-turno.php</span> esiste già &mdash; ci mette due minuti a occhio e non sbaglia. Automatizzare le prime due voci si potrà, dopo duecento fotografie vere su cui tarare qualcosa.</p>
+    <p><strong>E l'Indice non entra in classifica.</strong> Un numero pubblico su una cosa fatta a mano fa due danni: fa inseguire il punteggio invece del piatto, e umilia chi parte da 40. Resta una curva personale, visibile solo alla proprietaria. Se finisce in classifica avrete costruito una macchina per far sentire inadeguate delle signore, e l'avrete costruita apposta.</p>
+  </div>
+</section>
+
+<section id="maestro">
+  <div class="cifra">07</div>
+  <div class="etichetta">Come si tengono i maestri senza assumerli</div>
+  <h2>Il Maestro del Mese</h2>
+  <p class="guida">Oggi i canali dell'Esperto Risponde sono due nomi fissi, Rina Poletti e Bruno Cingolani, e la configurazione prevede già «ogni altro canale futuro». Il carico però è continuo e non ha una forma: le domande arrivano quando arrivano.</p>
+  <p>La cattedra a rotazione dà una forma a quel carico. Un maestro la tiene per trenta giorni: lancia una Sfoglia Misurata, ne giudica gli esiti, risponde alle domande del suo canale, e alla fine lascia <strong>un Testamento</strong> &mdash; una tecnica sola, filmata a fondo, con il suo nome sopra, che entra per sempre nella Cassaforte del Sapere. Poi passa il mattarello.</p>
+  <div class="scheda">
+    <div class="titolo">Perché il Testamento è l'argomento di reclutamento, non il compenso</div>
+    <p style="margin-bottom:0">Il modulo esiste già ed è una sezione base: «I Testamenti delle Maestre». Una azdora di settantacinque anni non si convince con un compenso mensile; si convince sapendo che il modo in cui lei chiude il cappelletto non morirà con lei. <strong>È anche l'unica ragione per cui accetterà di farsi filmare.</strong> Se questo documento ha un'anima, è questa riga &mdash; ed è l'unica idea del piano v2 che sopravvive intatta, perché è l'unica che non riguardava il software.</p>
+  </div>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Il rischio non è il costo, è l'assenza.</strong> Sono spesso persone anziane, con una bottega vera da mandare avanti, e un impegno preso a marzo si dimentica a ottobre. Serve una panchina di due maestri di riserva contattati <em>prima</em> di annunciare la rotazione, e una regola scritta prima del primo caso: se un maestro salta, quel mese i token spesi sul suo canale si rimborsano. Il rimborso automatico a sette giorni che c'è già in <span class="cod">token.php</span> lo fa da solo &mdash; ma è meglio dirlo prima che scoprirlo.</p>
+  </div>
+</section>
+
+<section id="madrine">
+  <div class="cifra">08</div>
+  <div class="etichetta">Due moduli che esistono e non si parlano</div>
+  <h2>Dalle diplomate alle Madrine</h2>
+  <p class="guida">L'Area Professionale rilascia un Diploma col nome del docente vero. Madrina &amp; Allieva abbina una sfoglina esperta a una principiante. I due moduli non si conoscono, e in quel vuoto c'è il pezzo che decide se la scala regge quando le iscritte raddoppiano.</p>
+  <p>Il collo di bottiglia di tutta la parte alta è il tempo dei maestri, che non si moltiplica. Il diploma, invece, produce persone capaci di insegnare. <strong>Ogni diplomata che diventa Madrina toglie carico al maestro senza toglierne valore</strong>, perché segue le allieve nelle cose che si imparano guardando, non quelle che richiedono un occhio da maestro.</p>
+  <div class="scheda">
+    <div class="titolo">Il ponte, in concreto</div>
+    <ul>
+      <li>Al conseguimento del Diploma, <span class="cod">prossimo-passo.php</span> propone di diventare Madrina &mdash; la condizione è già nella tabella della sezione 05</li>
+      <li>Nel pannello, l'elenco delle diplomate disponibili accanto a quello delle allieve in attesa di abbinamento</li>
+      <li>Un badge «Madrina Diplomata», distinto da quello di Madrina: è il riconoscimento che sostituisce il compenso</li>
+      <li>Il numero di diploma e il nome del docente restano sull'abbinamento: l'allieva sa da chi discende quello che le viene insegnato</li>
+    </ul>
+  </div>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Il diploma vale quanto è difficile.</strong> Se lo prendono tutte, l'anno dopo non lo vuole nessuna e le Madrine diplomate non valgono più delle altre. Va messo in conto &mdash; e detto prima &mdash; che qualcuna venga rimandata. Un rinvio è doloroso una volta; un diploma regalato è inutile per sempre.</p>
+    <p><strong>E una cosa da far leggere a chi vi segue gli statuti:</strong> in Italia questo non è un titolo, è un attestato privato dell'associazione. Va scritto in modo che nessuna lo scambi per una qualifica spendibile altrove. Da chiedere insieme alla domanda sui token e sui compensi ai maestri, in una volta sola.</p>
+  </div>
+</section>
+
+<section id="conti">
+  <div class="cifra">09</div>
+  <div class="etichetta">Con i contributi che stanno nel codice</div>
+  <h2>I conti, rifatti</h2>
+  <p class="guida">Il v2 inventava un listino. Qui i contributi sono quelli che il plugin già usa: 29 € l'anno, 5 € il token, 150 € l'anno di riferimento per i partner. Restano ipotesi le percentuali di conversione e il contributo dell'Area Professionale, che nel codice non c'è &mdash; lo decide il gestore corso per corso.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Voce</th><th class="n">Quantità</th><th class="n">Contributo</th><th class="n">Totale</th><th>Ipotesi</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Contributo gaming</td><td class="n">200</td><td class="n">29 €</td><td class="n">5.800 €</td><td>20 % di 1.000 registrazioni</td></tr>
+        <tr><td class="chiave">Token</td><td class="n">350</td><td class="n">5 €</td><td class="n">1.750 €</td><td>domande all'Esperto e Vetrine attivate</td></tr>
+        <tr><td class="chiave">Area Professionale</td><td class="n">8</td><td class="n">490 €</td><td class="n">3.920 €</td><td><strong>contributo da decidere</strong>, non è nel codice</td></tr>
+        <tr><td class="chiave">Artigiani della Pasta</td><td class="n">6</td><td class="n">150 €</td><td class="n">900 €</td><td>riferimento già impostato nel pannello</td></tr>
+        <tr><td class="chiave">Scuole di Cucina</td><td class="n">4</td><td class="n">150 €</td><td class="n">600 €</td><td>riferimento già impostato nel pannello</td></tr>
+      </tbody>
+      <tfoot><tr><td>Totale, esclusi i corsi</td><td class="n"></td><td class="n"></td><td class="n">12.970 €</td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <p>Meno i compensi ai maestri sui token e sull'Area Professionale (ipotizzati rispettivamente al 60 % e al 40 %, da decidere) e circa 300 € di piattaforma, restano <strong>poco più di diecimila euro netti</strong>. È il doppio di quanto stimava il v2, e per una ragione precisa: <strong>qui i maestri si pagano a consumo</strong>, non con un compenso fisso mensile. La struttura che avete già è più prudente di quella che vi proponevo.</p>
+
+  <h3>Dove sono davvero i soldi: due numeri</h3>
+  <div class="scheda">
+    <div class="titolo">Il primo &mdash; lo sconto che scade inutilizzato</div>
+    <p style="margin-bottom:0">Lo sconto accumulato in <span class="cod">gs_sconto_pct</span> si azzera il 24 dicembre di ogni anno. È già promesso, è già guadagnato con dei badge, non costa niente ricordarlo, e se scade non ha portato nessuno a un corso. <strong>Una sola riga in <span class="cod">prossimo-passo.php</span></strong>, più un'email a inizio dicembre a chi ha più del 15 %, è probabilmente l'intervento col miglior rapporto fra risultato e lavoro di tutto il documento.</p>
+  </div>
+  <div class="scheda">
+    <div class="titolo">Il secondo &mdash; le ottocento congelate</div>
+    <p style="margin-bottom:0">Recuperarne il 10 % vale 2.320 € di contributi, ma non è lì il valore: è che una congelata recuperata è una persona che <em>può</em> prenotare un corso, e una congelata che non torna non lo farà mai. Se l'insieme degli interventi &mdash; primo gradino allargato, riquadro personalizzato, Correzione della Settimana &mdash; porta le prenotazioni dei corsi dal 4 % al 9 % delle registrazioni, <strong>sono cinquanta prenotazioni in più</strong>. A 180 € l'una fanno 9.000 €: quasi quanto tutto il resto del documento messo insieme.</p>
+  </div>
+  <p style="font-size:13.5px;color:var(--tenue)">I 180 € del corso sono una mia ipotesi: il contributo vero sta nel Calendario Corsi, non l'ho cercato. Sostituitelo e il ragionamento non cambia di segno.</p>
+</section>
+
+<section id="nonfare">
+  <div class="cifra">10</div>
+  <div class="etichetta">La parte più utile di un avvocato del diavolo</div>
+  <h2>Cosa <em>non</em> fare</h2>
+  <p class="guida">Sei cose che il piano v2 proponeva, o che sembrano naturali leggendo questo, e che sul sistema reale farebbero danno. Le metto in ordine di quanto costerebbero.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Non fare</th><th>Perché</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Aggiungere rami dentro <span class="cod">gs_add_points()</span></td><td>È la funzione più delicata del plugin e ha già pagato due difetti veri: le scritture perse per corsa critica (14/08) e gli handler AJAX che restavano scrivibili (26/08). Adesso è atomica e corretta. Ogni logica nuova va <em>prima</em> della chiamata, mai dentro</td></tr>
+        <tr><td class="chiave">Rinominare i gradini</td><td>Il v2 proponeva Fontana, Impasto, Tirata, Tavola. Sono nomi belli su un sistema vivo che le sfogline già chiamano in un altro modo. Rinominare ciò che funziona è costo puro: nessuna riga di valore, tutte le email di assistenza</td></tr>
+        <tr><td class="chiave">Un livello numerico <span class="cod">gs_livello_percorso</span> da 0 a 3</td><td>La struttura vera non è lineare: si può comprare un token senza essere «più avanti», e l'Area Professionale non richiede di aver speso token. Un intero appiattirebbe in una scala una cosa che è deliberatamente un ventaglio</td></tr>
+        <tr><td class="chiave">Aggiungere pagamenti online</td><td>Il bonifico con causale non è un ripiego: è la verifica antifrode e la traccia contabile insieme. Toglierlo per comodità sposta lavoro dal pannello alla contabilità</td></tr>
+        <tr><td class="chiave">Mettere l'Indice di Sfoglia in classifica</td><td>Vedi sezione 06. Una curva privata motiva; un numero pubblico su una cosa fatta a mano umilia</td></tr>
+        <tr><td class="chiave">Aprire più di due sezioni in lettura</td><td>Chi ha contribuito se ne accorge, ha ragione ad arrabbiarsi, e non avete modo di risarcirla</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="tecnico">
+  <div class="cifra">11</div>
+  <div class="etichetta">In ordine di fatica, non di importanza</div>
+  <h2>Il piano tecnico</h2>
+
+  <h4>Giorni, non settimane</h4>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Cosa</th><th>Dove</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Accendere la gara mensile</td><td>pannello Stato Generale</td><td>Una spunta. Nessun codice</td></tr>
+        <tr><td class="chiave">Le cinque condizioni nuove</td><td><span class="cod">prossimo-passo.php</span></td><td>Stesso schema delle cinque che ci sono, dati già tutti presenti</td></tr>
+        <tr><td class="chiave">Riquadro congelate personalizzato</td><td><span class="cod">gs_congelata_avviso()</span></td><td>Ha già l'ID utente: bastano punti, badge, livello, sconto</td></tr>
+        <tr><td class="chiave">Elenco «hanno chiesto il sostegno»</td><td>pannello + <span class="cod">registration.php</span></td><td>Il dato <span class="cod">vuoi_anche</span> è già salvato dal 30/08</td></tr>
+        <tr><td class="chiave">Uniformare «intermedio» e «avanzato»</td><td><span class="cod">calendario.php</span> · <span class="cod">sconto-corsi.php</span></td><td>Stesso gradino, due nomi. Tre occorrenze contro una</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Settimane</h4>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Cosa</th><th>Dove</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">La porta in sola lettura</td><td>nuova <span class="cod">gs_gate_lettura()</span></td><td>Solo due shortcode la chiamano. Le scritture restano chiuse da <span class="cod">gs_puo_partecipare()</span></td></tr>
+        <tr><td class="chiave">La Correzione della Settimana</td><td>nuova pagina pubblica</td><td>Stesso schema di Vetrina, Registro e Ultimi Traguardi: non passa dal cancello</td></tr>
+        <tr><td class="chiave">Il Foglio di Prova</td><td>nuovo generatore PDF</td><td>Un A4 al mese con il codice personale. La parte più semplice del pezzo nuovo</td></tr>
+        <tr><td class="chiave">L'Indice di Sfoglia</td><td>innesto su <span class="cod">sfoglia-misurata.php</span></td><td>Una <span class="cod">gs_misura</span> con modo «piu», più il caricamento della foto e la scheda del maestro</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Dopo, quando le prime cose avranno risposto</h4>
+  <p>Il ponte diplomate → Madrine (sezione 08) e la cattedra a rotazione (sezione 07) toccano moduli che funzionano e persone vere: vanno affrontati quando il resto è in piedi e si sa quante diplomate e quanti maestri ci sono davvero.</p>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Le cinque cose della prima tabella valgono, insieme, più di tutto il resto del documento</strong>, e si fanno in una settimana di lavoro. Se questo piano dovesse fermarsi dopo la prima tabella, avrebbe comunque fatto il suo mestiere. La tentazione da evitare è l'opposta: cominciare dal Foglio di Prova perché è la parte più bella da costruire.</p>
+  </div>
+</section>
+
+<section id="passi">
+  <div class="cifra">12</div>
+  <div class="etichetta">Cosa serve da te</div>
+  <h2>Decisioni, in ordine</h2>
+  <div class="chiusura">
+    <h3 style="margin-top:0">Prima di scrivere qualunque riga</h3>
+    <ol>
+      <li><strong>Guarda quante sono le congelate.</strong> Il numero c'è già: il pannello Abbonamenti le conta e le fa lampeggiare in rosso. Se sono trenta, la sezione 03 è teoria e questo documento va ridimensionato. Se sono trecento, è la cosa più urgente che avete. <strong>Nessun'altra decisione va presa prima di aver guardato quel numero.</strong></li>
+      <li><strong>La gara mensile al 1° novembre.</strong> È la spunta «🏁 Gara mensile Buono Sfoglia» nello Stato Generale. Nessuna fretta e nessun rischio: finché è spenta il segnaposto del mese si aggiorna da solo, così alla prima accensione nessuna riceve il resoconto dei mesi non giocati.</li>
+      <li><strong>Chi scrive la Correzione della Settimana.</strong> Un nome, non un'intenzione. Se non c'è, si fa quindicinale.</li>
+      <li><strong>Il contributo dell'Area Professionale.</strong> Nel codice non esiste: lo decide il gestore corso per corso. Averne uno di riferimento serve a poterlo nominare nel corrimano.</li>
+      <li><strong>La domanda al commercialista, in una volta sola:</strong> i token acquistabili in euro e riscattabili in prestazioni, la forma dei compensi ai maestri, e la parola «diploma».</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div style="height:2px;background:var(--riga-forte)"></div>
+  <div class="sotto"></div>
+  <p>Questo documento sostituisce il piano v2 del 31.08.2026, scritto senza il plugin a disposizione. Tutte le affermazioni sul codice sono verificate su <strong>Gaming Sfogline 3.321.30</strong>, 103 moduli: <span class="cod">points.php</span> (una definizione, 34 chiamate in 21 file), <span class="cod">abbonamenti.php</span>, <span class="cod">token.php</span>, <span class="cod">esperti.php</span>, <span class="cod">area-pro.php</span>, <span class="cod">sfoglia-misurata.php</span>, <span class="cod">sezioni.php</span>, <span class="cod">sconto-corsi.php</span>, <span class="cod">buono-sfoglia.php</span>, <span class="cod">helpers.php</span>, <span class="cod">shortcodes.php</span>, <span class="cod">prossimo-passo.php</span>, <span class="cod">registration.php</span>, <span class="cod">artigiani.php</span>, <span class="cod">scuole-cucina.php</span>, <span class="cod">madrina.php</span>.</p>
+  <p>Nessuna modifica è stata fatta al plugin. Restano ipotesi, e sono segnate come tali: le percentuali di conversione, il contributo dell'Area Professionale, il contributo dei corsi in presenza e le quote dei compensi ai maestri. Il numero da guardare per primo non è nessuno di questi &mdash; è quante congelate avete adesso.</p>
+</footer>
+
+</div>
