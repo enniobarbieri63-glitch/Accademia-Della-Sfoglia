@@ -213,6 +213,8 @@
     padding:10px 6px;font-size:12px;letter-spacing:.08em;
   }
   .segmenti button:last-child{border-right:none}
+  .segmenti.cieli button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:9px 4px}
+  .pallino{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.15) inset}
 
   textarea{
     font-family:inherit;font-size:14px;line-height:1.5;
@@ -318,6 +320,16 @@
   <div class="pannello-corpo">
 
     <section class="gruppo">
+      <h2>Cielo</h2>
+      <div class="segmenti cieli" role="group" aria-label="Sfondo della scena">
+        <button type="button" class="segmento" id="k-farina" data-cielo="farina" aria-pressed="true"><span class="pallino" style="background:#D9A227"></span>Farina</button>
+        <button type="button" class="segmento" id="k-terracotta" data-cielo="terracotta" aria-pressed="false"><span class="pallino" style="background:#C45A35"></span>Terracotta</button>
+        <button type="button" class="segmento" id="k-salvia" data-cielo="salvia" aria-pressed="false"><span class="pallino" style="background:#82906A"></span>Salvia</button>
+        <button type="button" class="segmento" id="k-mattina" data-cielo="mattina" aria-pressed="false"><span class="pallino" style="background:#7A96A8"></span>Mattina</button>
+      </div>
+    </section>
+
+    <section class="gruppo">
       <h2>Volo</h2>
       <div class="cursore">
         <label class="riga" for="n-aerei">Aeroplanini <span class="valore" id="v-aerei">5</span></label>
@@ -350,7 +362,7 @@
 
     <section class="gruppo">
       <h2>Striscione</h2>
-      <div class="segmenti" role="group" aria-label="Cosa portano gli striscioni">
+      <div class="segmenti modi" role="group" aria-label="Cosa portano gli striscioni">
         <button type="button" class="segmento" id="s-testo" data-modo="testo" aria-pressed="false">Testo</button>
         <button type="button" class="segmento" id="s-volti" data-modo="volti" aria-pressed="false">Volti</button>
         <button type="button" class="segmento" id="s-misto" data-modo="misto" aria-pressed="true">Testo e volti</button>
@@ -430,6 +442,50 @@ Buon compleanno!</textarea>
   var CAPELLI = ["#6B4A2E", "#3A2A1E", "#8A6B49", "#B9A48D", "#A9602E"];
   var INCHIOSTRO = "#38281C";
   var CARTA = "#FDF6E7";
+
+  /* ---------- i cieli ----------
+     Non e' un ciclo giorno/notte: sono quattro palette, come le tinte dei
+     palloncini (farina, terracotta, salvia...). Ogni cielo ha una versione
+     chiara e una scura, pensate per lo stesso contrasto di inchiostro che
+     usa gia' il tema in corso — cosi' il testo resta leggibile sempre. */
+  var CIELI = {
+    farina: {
+      chiaro: { ground: "#EFE4CE", ground2: "#FAF5EC", halo: "rgba(217,162,39,.20)", nube: "rgba(255,253,246,.78)" },
+      scuro:  { ground: "#171210", ground2: "#241A14", halo: "rgba(224,122,95,.16)", nube: "rgba(244,232,215,.07)" }
+    },
+    terracotta: {
+      chiaro: { ground: "#F3DCC6", ground2: "#FBEBDA", halo: "rgba(196,90,53,.22)", nube: "rgba(255,250,244,.80)" },
+      scuro:  { ground: "#20130A", ground2: "#2E170D", halo: "rgba(224,122,95,.20)", nube: "rgba(244,220,200,.08)" }
+    },
+    salvia: {
+      chiaro: { ground: "#E3E6D2", ground2: "#F1F3E6", halo: "rgba(130,144,106,.20)", nube: "rgba(252,253,247,.80)" },
+      scuro:  { ground: "#12160F", ground2: "#1B2216", halo: "rgba(150,166,120,.16)", nube: "rgba(232,240,220,.07)" }
+    },
+    mattina: {
+      chiaro: { ground: "#E1E7EA", ground2: "#F0F5F6", halo: "rgba(122,150,168,.20)", nube: "rgba(252,253,255,.80)" },
+      scuro:  { ground: "#0E1519", ground2: "#16222A", halo: "rgba(122,170,196,.18)", nube: "rgba(220,235,240,.07)" }
+    }
+  };
+
+  /* il tema (chiaro/scuro) lo decide chi ospita la pagina, non noi: lo
+     stesso criterio del foglio di stile, cosi' il cielo scelto resta
+     coerente quando l'ospite cambia tema sotto ai piedi */
+  function temaScuro() {
+    var t = document.documentElement.dataset.theme;
+    if (t === "light") return false;
+    if (t === "dark") return true;
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  function applicaCielo() {
+    var set = CIELI[cielo] || CIELI.farina;
+    var v = temaScuro() ? set.scuro : set.chiaro;
+    var radice = document.documentElement.style;
+    radice.setProperty("--ground", v.ground);
+    radice.setProperty("--ground-2", v.ground2);
+    radice.setProperty("--halo", v.halo);
+    radice.setProperty("--nube", v.nube);
+  }
 
   var contatore = 0;
 
@@ -665,7 +721,7 @@ Buon compleanno!</textarea>
   /* ---------- la squadriglia ---------- */
   var aerei = [];
   var L = window.innerWidth, H = window.innerHeight;
-  var velocita = 1, dimensione = 1, inPausa = false, modo = "misto";
+  var velocita = 1, dimensione = 1, inPausa = false, modo = "misto", cielo = "farina";
   var tempo = 0, semeFlotta = Math.floor(Math.random() * 1e9);
   var puntatore = { x: -999, y: -999, attivo: false };
   var motoRidotto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1105,7 +1161,8 @@ Buon compleanno!</textarea>
   var bRimescola = document.getElementById("b-rimescola");
   var bMotori = document.getElementById("b-motori");
   var campoMessaggi = document.getElementById("t-messaggi");
-  var segmenti = [].slice.call(document.querySelectorAll(".segmento"));
+  var segmenti = [].slice.call(document.querySelectorAll(".segmenti.modi .segmento"));
+  var bottoniCielo = [].slice.call(document.querySelectorAll(".segmenti.cieli .segmento"));
   var bTutti = document.getElementById("b-tutti");
   var bNessuno = document.getElementById("b-nessuno");
   var bCarica = document.getElementById("b-carica");
@@ -1177,6 +1234,28 @@ Buon compleanno!</textarea>
       salva();
     });
   });
+
+  bottoniCielo.forEach(function (b) {
+    b.addEventListener("click", function () {
+      cielo = b.dataset.cielo;
+      bottoniCielo.forEach(function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+      applicaCielo();
+      salva();
+    });
+  });
+
+  /* il tema puo' cambiare sotto ai piedi — l'ospite lo comunica alla pagina,
+     oppure e' il sistema operativo a passare da chiaro a scuro: in ogni
+     caso il cielo scelto deve restare quello, solo con l'altra luce */
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var suCambioTema = function () { applicaCielo(); };
+    if (mq.addEventListener) mq.addEventListener("change", suCambioTema);
+    else if (mq.addListener) mq.addListener(suCambioTema);
+  }
+  try {
+    new MutationObserver(applicaCielo).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  } catch (e) { /* pazienza */ }
 
   var attesa = null;
   campoMessaggi.addEventListener("input", function () {
@@ -1317,6 +1396,7 @@ Buon compleanno!</textarea>
       motori: motore.attivo(),
       modo: modo,
       messaggi: campoMessaggi.value,
+      cielo: cielo,
       scelte: scelte,
       volti: galleria.filter(function (p) { return p.tipo === "volto"; }),
       loghi: galleria.filter(function (p) { return p.tipo === "immagine"; })
@@ -1346,6 +1426,7 @@ Buon compleanno!</textarea>
     if (memoria.volume != null) nVolume.value = memoria.volume;
     if (typeof memoria.messaggi === "string") campoMessaggi.value = memoria.messaggi;
     if (memoria.modo) modo = memoria.modo;
+    if (memoria.cielo && CIELI[memoria.cielo]) cielo = memoria.cielo;
     if (memoria.scelte) scelte = memoria.scelte;
     galleria = (memoria.volti && memoria.volti.length ? memoria.volti : nuoviVolti(8))
       .concat(memoria.loghi || []);
@@ -1361,6 +1442,8 @@ Buon compleanno!</textarea>
   vDimensione.textContent = moltiplicatore(nDimensione.value);
   vVolume.textContent = nVolume.value;
   segmenti.forEach(function (o) { o.setAttribute("aria-pressed", String(o.dataset.modo === modo)); });
+  bottoniCielo.forEach(function (o) { o.setAttribute("aria-pressed", String(o.dataset.cielo === cielo)); });
+  applicaCielo();
   motore.volume(parseInt(nVolume.value, 10) / 10);
 
   disegnaGalleria();
