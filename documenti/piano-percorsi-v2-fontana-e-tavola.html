@@ -1,0 +1,1189 @@
+<title>La Fontana e la Tavola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Archivo:wght@400;500;600;700&family=Martian+Mono:wght@500;600&display=swap">
+
+<style>
+:root{
+  --farina:#FAF5EC;
+  --tagliere:#FFFDF7;
+  --inchiostro:#2A1F17;
+  --tenue:#6B5A4C;
+  --rame:#A93B27;
+  --ottone:#8F6410;
+  --erba:#4F6B3C;
+  --erba-velo:#E9EEE2;
+  --riga:#E2D6C0;
+  --riga-forte:#2A1F17;
+  --rame-velo:#F6E7E1;
+  --ottone-velo:#F7EDD5;
+  --ombra:0 1px 1px rgba(42,31,23,.05), 0 10px 30px -18px rgba(42,31,23,.28);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --farina:#17120E;
+    --tagliere:#201913;
+    --inchiostro:#F0E6D4;
+    --tenue:#AC9B85;
+    --rame:#E07257;
+    --ottone:#E2B85A;
+    --erba:#93B47B;
+    --erba-velo:#1E2619;
+    --riga:#3B3126;
+    --riga-forte:#6E5C46;
+    --rame-velo:#2E1C17;
+    --ottone-velo:#2C2312;
+    --ombra:0 1px 1px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --farina:#17120E;
+  --tagliere:#201913;
+  --inchiostro:#F0E6D4;
+  --tenue:#AC9B85;
+  --rame:#E07257;
+  --ottone:#E2B85A;
+  --erba:#93B47B;
+  --erba-velo:#1E2619;
+  --riga:#3B3126;
+  --riga-forte:#6E5C46;
+  --rame-velo:#2E1C17;
+  --ottone-velo:#2C2312;
+  --ombra:0 1px 1px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--farina);
+  color:var(--inchiostro);
+  font-family:Archivo,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:16.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--rame); outline-offset:3px;}
+
+.foglio{max-width:1020px; margin:0 auto; padding:0 22px 120px;}
+
+/* ---- testata ---- */
+.testata{padding:56px 0 0;}
+.marchio{display:flex; align-items:center; gap:11px; margin-bottom:40px;}
+.marchio .nome{font-family:"Bodoni Moda",Didot,Georgia,serif; font-size:18px; font-weight:700;}
+.marchio .sep{flex:1; height:1px; background:var(--riga);}
+.marchio .meta{font-family:"Martian Mono",ui-monospace,monospace; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--tenue);}
+.occhiello{font-family:"Martian Mono",ui-monospace,monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--rame); font-weight:600;}
+.testata h1{
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-weight:400; font-size:clamp(3rem,8.5vw,5.6rem); line-height:.94;
+  letter-spacing:-.02em; margin:20px 0 0; text-wrap:balance;
+}
+.testata h1 em{font-style:italic; color:var(--rame);}
+.sommario{max-width:34em; font-size:1.16rem; line-height:1.55; color:var(--tenue); margin:26px 0 0;}
+.regola-doppia{height:2px; background:var(--riga-forte); margin-top:46px;}
+.regola-doppia + .regola-sottile{height:1px; background:var(--riga-forte); margin-top:3px;}
+
+/* ---- indice ---- */
+.indice{margin:38px 0 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:2px 30px;}
+.indice a{
+  display:flex; gap:11px; align-items:baseline;
+  color:var(--inchiostro); text-decoration:none;
+  font-size:14.5px; padding:5px 0; border-bottom:1px solid var(--riga);
+}
+.indice a:hover,.indice a:focus-visible{color:var(--rame);}
+.indice .n{font-family:"Martian Mono",ui-monospace,monospace; font-size:10px; color:var(--ottone); letter-spacing:.06em;}
+
+/* ---- sezioni ---- */
+section{
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr);
+  gap:0 26px;
+  margin:82px 0 0;
+  scroll-margin-top:20px;
+}
+section > *{grid-column:2;}
+.cifra{
+  grid-column:1; grid-row:span 2;
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-size:3.1rem; line-height:.8; color:var(--ottone);
+  font-weight:400; padding-top:4px;
+}
+section h2{
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-weight:400; font-size:2.1rem; line-height:1.08; letter-spacing:-.015em;
+  margin:0 0 6px; text-wrap:balance;
+}
+section h2 em{font-style:italic; color:var(--rame);}
+.etichetta{font-family:"Martian Mono",ui-monospace,monospace; font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:var(--tenue); margin-bottom:12px;}
+h3{
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-weight:700; font-size:1.24rem; margin:34px 0 8px; letter-spacing:-.005em;
+}
+h4{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:10px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--rame); font-weight:600; margin:26px 0 8px;
+}
+p{margin:0 0 15px; max-width:66ch;}
+.guida{font-size:1.05rem; color:var(--tenue); max-width:60ch;}
+strong{font-weight:600;}
+ul,ol{margin:0 0 16px; padding-left:20px; max-width:64ch;}
+li{margin-bottom:7px;}
+li::marker{color:var(--ottone);}
+a{color:var(--rame);}
+.cod{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:.78em; letter-spacing:-.01em;
+  background:var(--ottone-velo); padding:.14em .42em; border-radius:3px;
+  white-space:nowrap;
+}
+.num{font-variant-numeric:tabular-nums;}
+
+/* larghezza piena dentro la sezione */
+.largo{grid-column:1 / -1;}
+
+/* ---- schede ---- */
+.scheda{
+  background:var(--tagliere);
+  border:1px solid var(--riga);
+  border-radius:2px;
+  padding:24px 26px;
+  margin:22px 0;
+  box-shadow:var(--ombra);
+}
+.scheda > :last-child{margin-bottom:0;}
+.scheda .titolo{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--erba); font-weight:600; margin-bottom:12px;
+  display:flex; align-items:center; gap:10px;
+}
+.scheda .titolo::after{content:""; flex:1; height:1px; background:var(--riga);}
+
+.diavolo{
+  background:var(--rame-velo);
+  border:1px solid var(--riga);
+  border-left:3px solid var(--rame);
+  border-radius:2px;
+  padding:20px 24px;
+  margin:22px 0;
+}
+.diavolo > :last-child{margin-bottom:0;}
+.diavolo .titolo{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--rame); font-weight:600; margin-bottom:11px;
+}
+.diavolo p,.diavolo li{max-width:64ch;}
+
+.citazione{
+  border-left:3px solid var(--ottone);
+  padding:4px 0 4px 20px; margin:20px 0;
+  font-family:"Bodoni Moda",Didot,Georgia,serif;
+  font-size:1.12rem; line-height:1.5; font-style:italic;
+}
+.citazione .firma{
+  display:block; margin-top:10px;
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9.5px; letter-spacing:.12em; text-transform:uppercase;
+  font-style:normal; color:var(--tenue);
+}
+
+/* ---- tabelle ---- */
+.tabella{overflow-x:auto; margin:20px 0; border:1px solid var(--riga); border-radius:2px; background:var(--tagliere);}
+table{width:100%; border-collapse:collapse; font-size:14.2px; min-width:520px;}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--riga); vertical-align:top;}
+thead th{
+  font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9px; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--tenue); font-weight:600; background:var(--ottone-velo);
+  border-bottom:1px solid var(--riga);
+}
+tbody tr:last-child td{border-bottom:none;}
+td.chiave{font-weight:600; white-space:nowrap;}
+td.n,th.n{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap;}
+tfoot td{font-weight:600; background:var(--erba-velo); border-top:1px solid var(--riga);}
+
+/* ---- figure ---- */
+figure{margin:26px 0; }
+figure svg{display:block; width:100%; height:auto; max-width:920px; color:var(--inchiostro);}
+figcaption{
+  margin-top:12px; font-size:13.5px; color:var(--tenue); max-width:62ch;
+  border-top:1px solid var(--riga); padding-top:9px;
+}
+figcaption b{color:var(--inchiostro); font-weight:600;}
+
+/* ---- gradini ---- */
+.gradini{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:16px; margin:22px 0;}
+.gradino{
+  background:var(--tagliere); border:1px solid var(--riga);
+  border-top:3px solid var(--ottone); border-radius:2px;
+  padding:18px 18px 16px; display:flex; flex-direction:column;
+}
+.gradino.g0{border-top-color:var(--erba);}
+.gradino.g3{border-top-color:var(--rame);}
+.gradino .t{font-family:"Martian Mono",ui-monospace,monospace; font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:var(--tenue);}
+.gradino .nome{font-family:"Bodoni Moda",Didot,Georgia,serif; font-size:1.35rem; margin:6px 0 2px;}
+.gradino .prezzo{font-family:"Martian Mono",ui-monospace,monospace; font-size:12px; color:var(--rame); margin-bottom:12px;}
+.gradino ul{padding-left:16px; margin:0; font-size:13.6px;}
+.gradino li{margin-bottom:5px;}
+
+/* ---- pastiglie ---- */
+.pastiglia{
+  display:inline-block; font-family:"Martian Mono",ui-monospace,monospace;
+  font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 8px; border-radius:2px; font-weight:600;
+}
+.p-si{background:var(--erba-velo); color:var(--erba);}
+.p-no{background:var(--rame-velo); color:var(--rame);}
+.p-forse{background:var(--ottone-velo); color:var(--ottone);}
+
+/* ---- punteggio ---- */
+.punteggio{display:grid; gap:9px; margin:18px 0;}
+.riga-p{display:grid; grid-template-columns:150px 1fr 58px; gap:12px; align-items:center; font-size:13.5px;}
+.barra{height:9px; background:var(--riga); border-radius:1px; overflow:hidden;}
+.barra i{display:block; height:100%; background:var(--ottone);}
+.riga-p .v{font-family:"Martian Mono",ui-monospace,monospace; font-size:11px; text-align:right; font-variant-numeric:tabular-nums;}
+.totale{border-top:1px solid var(--riga-forte); padding-top:10px; margin-top:4px;}
+.totale .v{color:var(--rame); font-weight:600;}
+
+/* ---- chiusura ---- */
+.chiusura{
+  background:linear-gradient(180deg,var(--erba-velo),var(--tagliere));
+  border:1px solid var(--riga); border-radius:2px; padding:28px 30px;
+}
+.chiusura ol{margin:14px 0 0; padding-left:22px;}
+.chiusura li{margin-bottom:11px;}
+
+footer{
+  margin-top:96px; padding-top:20px;
+  border-top:2px solid var(--riga-forte);
+  font-size:13px; color:var(--tenue); max-width:66ch;
+}
+footer .sotto{height:1px; background:var(--riga-forte); margin:3px 0 20px;}
+
+@media (max-width:760px){
+  section{grid-template-columns:1fr;}
+  section > *{grid-column:1;}
+  .cifra{grid-row:auto; font-size:2.2rem; margin-bottom:4px;}
+  .riga-p{grid-template-columns:110px 1fr 52px;}
+  .foglio{padding:0 18px 90px;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+</style>
+
+<div class="foglio">
+
+<header class="testata">
+  <div class="marchio">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true" style="color:var(--rame)">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M4.6 9.2h14.8M4.6 14.8h14.8M9.2 3.4v17.2M14.8 3.4v17.2"></path>
+    </svg>
+    <span class="nome">Accademia della Sfoglia</span>
+    <span class="sep"></span>
+    <span class="meta">Piano percorsi &middot; v2 &middot; 31.08.2026</span>
+  </div>
+  <span class="occhiello">Avvocato del diavolo &middot; sviluppo integrale</span>
+  <h1>La Fontana<br>e <em>la Tavola</em></h1>
+  <p class="sommario">Quattro tappe, non due: si entra gratis nella fontana di farina, si sale finché il gesto non passa sotto l'occhio di un maestro di sfoglia e di un cuoco. Qui c'è il disegno completo &mdash; con lo strumento di misura, i conti veri, e tutte le ragioni per cui potrebbe non funzionare.</p>
+  <div class="regola-doppia"></div>
+  <div class="regola-sottile"></div>
+  <nav class="indice" aria-label="Indice">
+    <a href="#tesi"><span class="n">01</span><span>La tesi contraria</span></a>
+    <a href="#scala"><span class="n">02</span><span>Le quattro tappe</span></a>
+    <a href="#fontana"><span class="n">03</span><span>La Fontana &mdash; gratis</span></a>
+    <a href="#impasto"><span class="n">04</span><span>L'Impasto &mdash; i punti contano</span></a>
+    <a href="#tirata"><span class="n">05</span><span>La Tirata &mdash; entra il maestro</span></a>
+    <a href="#tavola"><span class="n">06</span><span>La Tavola &mdash; sfoglia e cucina</span></a>
+    <a href="#ponti"><span class="n">07</span><span>I ponti fra le tappe</span></a>
+    <a href="#maestri"><span class="n">08</span><span>L'economia dei maestri</span></a>
+    <a href="#conti"><span class="n">09</span><span>I conti, senza sconti</span></a>
+    <a href="#integrita"><span class="n">10</span><span>Integrità e imbrogli</span></a>
+    <a href="#calendario"><span class="n">11</span><span>L'anno dell'Accademia</span></a>
+    <a href="#tecnico"><span class="n">12</span><span>Il piano tecnico</span></a>
+    <a href="#rovina"><span class="n">13</span><span>Cinque modi di fallire</span></a>
+    <a href="#passi"><span class="n">14</span><span>Decisioni, in ordine</span></a>
+  </nav>
+</header>
+
+<section id="tesi">
+  <div class="cifra">01</div>
+  <div class="etichetta">Prima di tutto il resto</div>
+  <h2>La tesi contraria: <em>la scala non è il fatturato</em></h2>
+  <p class="guida">Comincio dall'obiezione invece di finirci, perché cambia il modo di leggere tutte le pagine seguenti. Se la si legge alla fine è troppo tardi: si è già progettato l'oggetto sbagliato.</p>
+  <p>Il piano precedente diceva: l'introito del gaming sostiene la struttura, quattro persone tutti i giorni. Ho provato a farlo tornare con numeri realistici per un'associazione con mille iscritte, ed è la sezione <a href="#conti">09</a>: <strong>non torna, e non torna di poco.</strong> Tutta la scala degli abbonamenti, ai prezzi che si possono chiedere a una sfoglina, produce circa 13.000 € lordi l'anno, dai quali vanno tolti 7.200 € di compensi ai maestri. Restano meno di 6.000 €. Non è uno stipendio, è un rimborso spese.</p>
+  <p>Ma nella stessa simulazione c'è un altro numero. Se la scala alza la percentuale di iscritte che prenotano un corso in presenza dal 4 % all'11 %, quello vale <strong>12.600 € in più</strong> &mdash; il doppio del margine netto di tutti gli abbonamenti messi insieme. Non perché i corsi siano magici: perché costano 180 € invece di 29 € e il margine è già collaudato.</p>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p>Costruire questa scala per farne un ricavo diretto è il modo migliore di sprecarla. <strong>La scala è un imbuto verso i corsi in presenza, non un prodotto in sé.</strong> Il che significa una regola di progetto, non uno slogan: <em>ogni tappa deve finire in un corso.</em> Se una funzione del gioco non avvicina qualcuno a prenotare un corso, o a restare abbastanza da prenotarlo l'anno dopo, è decorazione &mdash; e quattro persone che lavorano tutti i giorni non possono permettersi decorazione.</p>
+    <p>C'è un corollario scomodo: <strong>il portale non può reggere quattro stipendi, qualunque cosa si costruisca.</strong> A quel livello servono o cinque volte le iscritte, o gambe fuori dal portale &mdash; corsi aziendali e team building, eventi, il diploma come titolo vendibile, la fornitura di un molino che sponsorizza la farina in cambio di visibilità nella Cassaforte. Vanno decise a parte. Questo documento le nomina e non le risolve.</p>
+  </div>
+</section>
+
+<section id="scala">
+  <div class="cifra">02</div>
+  <div class="etichetta">L'architettura</div>
+  <h2>Le quattro tappe</h2>
+  <p class="guida">I nomi non sono decorativi: sono i quattro gesti con cui si fa la sfoglia, in ordine. Chi è dentro il mestiere li riconosce senza spiegazione, e la sequenza dice da sola che si tratta di una salita e non di un listino.</p>
+  <p><strong>La Fontana</strong> è il cratere di farina in cui si rompono le uova: è l'inizio, è aperta a tutte, non costa niente. <strong>L'Impasto</strong> è quando la fatica diventa materia: qui i punti cominciano a contare. <strong>La Tirata</strong> è il mattarello, il gesto vero &mdash; ed è la prima tappa in cui qualcuno ti guarda le mani. <strong>La Tavola</strong> è la sfoglia diventata piatto: è dove entra il cuoco accanto alla maestra.</p>
+
+  <figure class="largo">
+    <svg viewBox="0 0 880 412" role="img" aria-label="Scala a quattro gradini: La Fontana gratis, L'Impasto 29 euro l'anno, La Tirata 120 euro l'anno, La Tavola 690 euro a percorso. I maestri entrano dalla terza tappa. Fra un gradino e l'altro il ponte che fa salire.">
+      <defs>
+        <marker id="p1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+
+      <!-- bracket maestri -->
+      <path d="M446 46 L446 32 L858 32 L858 46" fill="none" stroke="var(--rame)" stroke-width="1.4"></path>
+      <text x="652" y="22" text-anchor="middle" font-family="Martian Mono, monospace" font-size="11" fill="var(--rame)" letter-spacing="1">QUI ENTRANO I MAESTRI</text>
+
+      <!-- base -->
+      <line x1="20" y1="336" x2="860" y2="336" stroke="currentColor" stroke-width="2"></line>
+
+      <!-- gradino 0 -->
+      <text x="26" y="262" font-family="Martian Mono, monospace" font-size="12" fill="var(--erba)" font-weight="600">GRATIS</text>
+      <rect x="22" y="272" width="176" height="64" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="34" y="296" font-family="Bodoni Moda, serif" font-size="19">La Fontana</text>
+      <text x="34" y="316" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">entrare, guardare, pubblicare</text>
+
+      <!-- gradino 1 -->
+      <text x="236" y="207" font-family="Martian Mono, monospace" font-size="12" fill="var(--rame)" font-weight="600">29 €/anno</text>
+      <rect x="232" y="217" width="176" height="119" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="244" y="241" font-family="Bodoni Moda, serif" font-size="19">L'Impasto</text>
+      <text x="244" y="261" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">i punti contano davvero</text>
+      <text x="244" y="279" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">badge, classifica, sconti</text>
+
+      <!-- gradino 2 -->
+      <text x="446" y="152" font-family="Martian Mono, monospace" font-size="12" fill="var(--rame)" font-weight="600">120 €/anno</text>
+      <rect x="442" y="162" width="176" height="174" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="454" y="186" font-family="Bodoni Moda, serif" font-size="19">La Tirata</text>
+      <text x="454" y="206" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">un maestro ti corregge</text>
+      <text x="454" y="224" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">il gesto, ogni mese</text>
+
+      <!-- gradino 3 -->
+      <text x="656" y="97" font-family="Martian Mono, monospace" font-size="12" fill="var(--rame)" font-weight="600">690 € a percorso</text>
+      <rect x="652" y="107" width="176" height="229" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="664" y="131" font-family="Bodoni Moda, serif" font-size="19">La Tavola</text>
+      <text x="664" y="151" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">maestra + cuoco</text>
+      <text x="664" y="169" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">sei capitoli, diploma</text>
+
+      <!-- ponti -->
+      <line x1="185" y1="362" x2="245" y2="362" stroke="var(--ottone)" stroke-width="1.6" marker-end="url(#p1)"></line>
+      <text x="215" y="384" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".8">la prova di 30 giorni</text>
+      <text x="215" y="400" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".8">che poi si congela</text>
+
+      <line x1="395" y1="362" x2="455" y2="362" stroke="var(--ottone)" stroke-width="1.6" marker-end="url(#p1)"></line>
+      <text x="425" y="384" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".8">la Correzione della</text>
+      <text x="425" y="400" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".8">Settimana, in pubblico</text>
+
+      <line x1="605" y1="362" x2="665" y2="362" stroke="var(--ottone)" stroke-width="1.6" marker-end="url(#p1)"></line>
+      <text x="635" y="384" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".8">l'Indice di Sfoglia</text>
+      <text x="635" y="400" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".8">che si ferma a 70</text>
+    </svg>
+    <figcaption><b>Ogni gradino contiene quello sotto</b>, e fra l'uno e l'altro non c'è un bottone «abbonati»: c'è un meccanismo che fa venire voglia di salire, descritto alla sezione 07. I maestri costano, e per questo compaiono solo dalla terza tappa &mdash; è la riga di galleggiamento dell'intero piano.</figcaption>
+  </figure>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Tappa</th><th>Prezzo proposto</th><th>Cosa aggiunge</th><th>Chi ci lavora</th><th class="n">Costo per l'Accademia</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">0 &middot; La Fontana</td><td>0 €</td><td>Community, contenuti, pubblicare i propri lavori, guardare la gara senza giocarla</td><td>Nessuno &mdash; automatico</td><td class="n">quasi zero</td></tr>
+        <tr><td class="chiave">1 &middot; L'Impasto</td><td>29 € / anno</td><td>I punti si accreditano: badge, classifica, sconto corsi, Buono Sfoglia</td><td>Nessuno &mdash; automatico</td><td class="n">quasi zero</td></tr>
+        <tr><td class="chiave">2 &middot; La Tirata</td><td>120 € / anno<br><span style="font-size:12.5px;color:var(--tenue)">o 12 €/mese</span></td><td>Scheda del Gesto mensile su una sfoglia vera, Mattarello Sincrono, Maestro del Mese</td><td>1 maestro a rotazione</td><td class="n">400 €/mese</td></tr>
+        <tr><td class="chiave">3 &middot; La Tavola</td><td>690 € / percorso<br><span style="font-size:12.5px;color:var(--tenue)">6 capitoli, 6 mesi</span></td><td>Percorso in coppia maestra + cuoco, gruppo da 8, esame e diploma</td><td>2 docenti per capitolo</td><td class="n">400 €/capitolo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13.5px;color:var(--tenue)">I prezzi sono proposte da discutere, non decisioni. I 29 € sono già stati annunciati in fase di registrazione e quindi vincolati; gli altri due derivano dal costo dei docenti (sezione 08) più un margine, non dal desiderio.</p>
+</section>
+
+<section id="fontana">
+  <div class="cifra">03</div>
+  <div class="etichetta">Tappa 0 &middot; gratuita, per sempre</div>
+  <h2>La Fontana</h2>
+  <p class="guida">Il primo piano lo diceva già e resta giusto: senza sfogline il gioco non esiste, e l'iscrizione gratuita è l'unica leva di massa che avete. Quello che aggiungo è un vincolo: la Fontana deve essere <em>bella da sola</em>, non l'atrio di qualcos'altro.</p>
+  <div class="scheda">
+    <div class="titolo">Cosa contiene, tutto gratis</div>
+    <ul>
+      <li><strong>Appartenenza</strong> &mdash; Le Sfogline, Vetrina, Palloncini, Dicono di Noi, Galleria, Diario</li>
+      <li><strong>Sapere</strong> &mdash; Ricettario delle Famiglie, Il Matterello Parlante, Le Letture, i Testamenti, la Cassaforte del Sapere</li>
+      <li><strong>Fare</strong> &mdash; pubblicare nel Tavolo di Lavoro, giocare a Indovina la Sfoglia, rispondere alle Sfide, la Madrina e l'Allieva</li>
+      <li><strong>Misurarsi da sole</strong> &mdash; scaricare il Foglio di Prova, fotografare la propria sfoglia, leggere il proprio Indice di Sfoglia calcolato dal sistema</li>
+      <li><strong>Guardare</strong> &mdash; classifica, badge altrui, Ultimi Traguardi, e una Correzione della Settimana per intero</li>
+    </ul>
+  </div>
+  <p>L'ultima riga è la novità che cambia tutto, ed è spiegata alla sezione 05: <strong>il Foglio di Prova è gratuito e l'Indice di Sfoglia si calcola anche a chi non paga.</strong> È controintuitivo regalare lo strumento di misura, e infatti è il punto in cui il piano si gioca la conversione. Una sfoglina che scopre di essere ferma a 68 da tre mesi ha un problema che nessun contenuto gratuito può risolverle: le serve un occhio.</p>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p>Il rischio nominato nel primo piano &mdash; la community gratis che diventa una sala d'attesa &mdash; peggiora con quattro tappe invece di due, perché adesso chi sta in basso vede <em>tre</em> piani sopra di sé anziché uno. Se la Fontana comunica soprattutto ciò che manca, respinge esattamente le persone che vi servono di più.</p>
+    <p><strong>Il rimedio non è mettere più cose gratis, è togliere la gara dalla vista.</strong> Nella Fontana la classifica non è la homepage: la homepage è il Tavolo di Lavoro, cioè le sfoglie delle altre, con i commenti. L'orgoglio di pubblicare regge senza punteggio; la frustrazione di essere ultima in classifica no. La classifica sta a due clic di distanza, per chi la va a cercare.</p>
+  </div>
+</section>
+
+<section id="impasto">
+  <div class="cifra">04</div>
+  <div class="etichetta">Tappa 1 &middot; 29 € l'anno</div>
+  <h2>L'Impasto</h2>
+  <p class="guida">È esattamente il meccanismo del primo piano, e resta il pezzo tecnicamente più semplice: partecipare è gratis, il punteggio si accredita solo a chi ha pagato. Cambia una cosa sola, ma strutturale: l'interruttore acceso/spento diventa un numero da 0 a 3.</p>
+
+  <figure class="largo">
+    <svg viewBox="0 0 880 424" role="img" aria-label="Tutte le azioni passano da una sola funzione gs_add_points, che consulta il livello dell'utente: da livello 1 in su i punti si accreditano e alimentano badge, sconti e Buono Sfoglia; a livello 0 restano storico congelato. Da livello 2 i punti si convertono anche in Gettoni di Bottega spendibili col maestro.">
+      <defs>
+        <marker id="p2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+        </marker>
+        <marker id="p2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--rame)"></path>
+        </marker>
+      </defs>
+
+      <text x="20" y="20" font-family="Martian Mono, monospace" font-size="10" opacity=".6" letter-spacing="1">LE AZIONI</text>
+      <rect x="20" y="30" width="158" height="34" fill="none" stroke="currentColor" stroke-width="1"></rect>
+      <text x="99" y="52" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13">Sfide</text>
+      <rect x="20" y="74" width="158" height="34" fill="none" stroke="currentColor" stroke-width="1"></rect>
+      <text x="99" y="96" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13">Tavolo di Lavoro</text>
+      <rect x="20" y="118" width="158" height="34" fill="none" stroke="currentColor" stroke-width="1"></rect>
+      <text x="99" y="140" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13">Indovina la Sfoglia</text>
+      <rect x="20" y="162" width="158" height="34" fill="none" stroke="currentColor" stroke-width="1"></rect>
+      <text x="99" y="184" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13">Foglio di Prova</text>
+
+      <path d="M178 47 L212 47 L212 108" fill="none" stroke="currentColor" stroke-width="1"></path>
+      <path d="M178 91 L212 91" fill="none" stroke="currentColor" stroke-width="1"></path>
+      <path d="M178 135 L212 135 L212 118" fill="none" stroke="currentColor" stroke-width="1"></path>
+      <path d="M178 179 L212 179 L212 128" fill="none" stroke="currentColor" stroke-width="1"></path>
+      <line x1="212" y1="113" x2="252" y2="113" stroke="currentColor" stroke-width="1.4" marker-end="url(#p2)"></line>
+
+      <rect x="256" y="84" width="150" height="58" fill="none" stroke="currentColor" stroke-width="2"></rect>
+      <text x="331" y="108" text-anchor="middle" font-family="Martian Mono, monospace" font-size="11">gs_add_points()</text>
+      <text x="331" y="128" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".7">porta unica</text>
+
+      <line x1="406" y1="113" x2="446" y2="113" stroke="currentColor" stroke-width="1.4" marker-end="url(#p2)"></line>
+
+      <rect x="450" y="84" width="132" height="58" fill="none" stroke="var(--rame)" stroke-width="1.6"></rect>
+      <text x="516" y="107" text-anchor="middle" font-family="Martian Mono, monospace" font-size="11" fill="var(--rame)">livello ≥ 1 ?</text>
+      <text x="516" y="126" text-anchor="middle" font-family="Archivo, sans-serif" font-size="11.5" opacity=".7">l'unico controllo</text>
+
+      <path d="M582 100 L610 100 L610 62" fill="none" stroke="var(--rame)" stroke-width="1.4" marker-end="url(#p2r)"></path>
+      <text x="620" y="80" font-family="Martian Mono, monospace" font-size="11" fill="var(--rame)">SÌ</text>
+      <path d="M582 126 L610 126 L610 214" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#p2)"></path>
+      <text x="620" y="176" font-family="Martian Mono, monospace" font-size="11" opacity=".7">NO</text>
+
+      <rect x="646" y="20" width="214" height="82" fill="none" stroke="var(--rame)" stroke-width="1.6"></rect>
+      <text x="660" y="42" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Punti veri</text>
+      <text x="660" y="62" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">badge · classifica · livello</text>
+      <text x="660" y="80" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">sconto corsi · Buono Sfoglia</text>
+
+      <rect x="646" y="218" width="214" height="66" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"></rect>
+      <text x="660" y="240" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Storico congelato</text>
+      <text x="660" y="260" font-family="Archivo, sans-serif" font-size="12.5" opacity=".75">si vede, non conta</text>
+      <text x="660" y="276" font-family="Archivo, sans-serif" font-size="12.5" opacity=".75">si scongela pagando</text>
+
+      <path d="M753 102 L753 330" fill="none" stroke="var(--ottone)" stroke-width="1.4" marker-end="url(#p2)"></path>
+      <rect x="646" y="334" width="214" height="66" fill="none" stroke="var(--ottone)" stroke-width="1.6"></rect>
+      <text x="660" y="356" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Gettoni di Bottega</text>
+      <text x="660" y="376" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">15 minuti di maestro</text>
+      <text x="660" y="392" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">l'uno, spendibili</text>
+      <text x="380" y="356" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">1 gettone ogni 500 punti,</text>
+      <text x="380" y="374" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">solo da livello 2 in su</text>
+      <line x1="628" y1="360" x2="646" y2="360" stroke="var(--ottone)" stroke-width="1.2"></line>
+      <line x1="612" y1="360" x2="628" y2="360" stroke="var(--ottone)" stroke-width="1.2" stroke-dasharray="3 3"></line>
+    </svg>
+    <figcaption>Il commento originale in <span class="cod">points.php</span> &mdash; «tutti i punti passano da <span class="cod">gs_add_points()</span>» &mdash; è ciò che rende possibile tutto questo con <b>un solo controllo in un solo file</b>. Nessun modulo di gioco viene toccato: sfide, tavolo, indovina e misurata continuano a funzionare identici, cambia solo cosa succede in fondo.</figcaption>
+  </figure>
+
+  <h3>La prova, e il congelamento</h3>
+  <p>Trenta giorni in cui i punti contano <strong>davvero</strong>: non un assaggio finto, la vittoria vera. Allo scadere, se non si passa all'Impasto, il punteggio resta visibile ma si congela &mdash; non muove più classifica, badge, sconti. Chi ha già sentito il gusto di vincere converte in quel momento, non prima.</p>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p>Il congelamento è la mossa più aggressiva del piano, ed è quella che vi può far scrivere il primo commento cattivo. Una signora di sessant'anni che ha giocato un mese e si vede spegnere i punti non pensa «che bel meccanismo di conversione», pensa che l'hanno presa in giro. Due accorgimenti che costano poco e cambiano il tono: <strong>dirlo il primo giorno</strong>, grosso, nella schermata di benvenuto &mdash; «i tuoi punti contano per 30 giorni» &mdash; e non azzerarli mai. Il punteggio congelato <em>si scongela integralmente</em> il giorno in cui paga, anche due anni dopo. Non è una perdita, è una pausa: e una pausa recuperabile è un motivo per tornare, mentre una perdita è un motivo per andarsene.</p>
+  </div>
+</section>
+
+<section id="tirata">
+  <div class="cifra">05</div>
+  <div class="etichetta">Tappa 2 &middot; 120 € l'anno &middot; entra il maestro</div>
+  <h2>La Tirata</h2>
+  <p class="guida">Qui il piano smette di essere un abbonamento e diventa una scuola. Il salto da 29 € a 120 € non si giustifica con «più contenuti»: si giustifica con l'unica cosa che nessun contenuto sostituisce, cioè qualcuno che guarda la <em>tua</em> sfoglia e ti dice cosa stai sbagliando con le mani.</p>
+  <p>Il problema di venderlo è che è invisibile. «Un maestro ti corregge» è una promessa vaga finché non la si può misurare. Perciò la Tirata poggia su uno strumento fisico, gratuito, e su un numero.</p>
+
+  <h3>Il Foglio di Prova</h3>
+  <p>Un PDF A4 da stampare, nuovo ogni mese, che si mette <strong>sotto</strong> la sfoglia. È la versione codificata della prova che si fa da sempre in Romagna: la sfoglia è buona quando ci si legge il giornale attraverso. Solo che invece del giornale c'è una scala di corpi tipografici, e invece di «si legge» c'è un numero.</p>
+
+  <figure>
+    <svg viewBox="0 0 600 800" role="img" aria-label="Il Foglio di Prova: un foglio A4 con nove riquadri, ciascuno contenente una scala di sei corpi tipografici da 12 a 5, più una scala di grigi, una barra di calibrazione da 5 centimetri e il codice personale del mese.">
+      <rect x="10" y="10" width="580" height="780" fill="none" stroke="currentColor" stroke-width="1.6"></rect>
+
+      <text x="34" y="46" font-family="Bodoni Moda, serif" font-size="21">Foglio di Prova</text>
+      <text x="34" y="66" font-family="Martian Mono, monospace" font-size="10" opacity=".65" letter-spacing="1">ACCADEMIA DELLA SFOGLIA · SETTEMBRE 2026</text>
+      <rect x="404" y="26" width="162" height="46" fill="none" stroke="var(--rame)" stroke-width="1.3"></rect>
+      <text x="485" y="46" text-anchor="middle" font-family="Martian Mono, monospace" font-size="9" fill="var(--rame)" letter-spacing="1">CODICE PERSONALE</text>
+      <text x="485" y="63" text-anchor="middle" font-family="Martian Mono, monospace" font-size="13" fill="var(--rame)" font-weight="600">R-4471-SET</text>
+
+      <line x1="34" y1="86" x2="566" y2="86" stroke="currentColor" stroke-width="1.4"></line>
+      <line x1="34" y1="90" x2="566" y2="90" stroke="currentColor" stroke-width="0.7"></line>
+
+      <text x="34" y="118" font-family="Martian Mono, monospace" font-size="9.5" opacity=".7" letter-spacing="1">I NOVE RIQUADRI — UNA SCALA DI CORPI PER OGNI ZONA</text>
+
+      <g stroke="currentColor" stroke-width="1" fill="none">
+        <rect x="34" y="130" width="177" height="150"></rect><rect x="211" y="130" width="178" height="150"></rect><rect x="389" y="130" width="177" height="150"></rect>
+        <rect x="34" y="280" width="177" height="150"></rect><rect x="389" y="280" width="177" height="150"></rect>
+        <rect x="34" y="430" width="177" height="150"></rect><rect x="211" y="430" width="178" height="150"></rect><rect x="389" y="430" width="177" height="150"></rect>
+      </g>
+      <rect x="211" y="280" width="178" height="150" fill="none" stroke="var(--rame)" stroke-width="1.8"></rect>
+
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="44" y="150" font-family="Martian Mono, monospace" font-size="8" opacity=".6">N-O</text>
+        <text x="44" y="172" font-size="12">la sfoglia buona</text>
+        <text x="44" y="192" font-size="10">la sfoglia buona si vede</text>
+        <text x="44" y="209" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="44" y="224" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="44" y="238" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="44" y="251" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+        <text x="152" y="272" font-family="Martian Mono, monospace" font-size="7.5" opacity=".55">12 10 8 7 6 5</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="221" y="150" font-family="Martian Mono, monospace" font-size="8" opacity=".6">N</text>
+        <text x="221" y="172" font-size="12">la sfoglia buona</text>
+        <text x="221" y="192" font-size="10">la sfoglia buona si vede</text>
+        <text x="221" y="209" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="221" y="224" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="221" y="238" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="221" y="251" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="399" y="150" font-family="Martian Mono, monospace" font-size="8" opacity=".6">N-E</text>
+        <text x="399" y="172" font-size="12">la sfoglia buona</text>
+        <text x="399" y="192" font-size="10">la sfoglia buona si vede</text>
+        <text x="399" y="209" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="399" y="224" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="399" y="238" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="399" y="251" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="44" y="300" font-family="Martian Mono, monospace" font-size="8" opacity=".6">O</text>
+        <text x="44" y="322" font-size="12">la sfoglia buona</text>
+        <text x="44" y="342" font-size="10">la sfoglia buona si vede</text>
+        <text x="44" y="359" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="44" y="374" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="44" y="388" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="44" y="401" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif">
+        <text x="221" y="300" font-family="Martian Mono, monospace" font-size="8" fill="var(--rame)">CENTRO — RIFERIMENTO</text>
+        <text x="221" y="322" font-size="12">la sfoglia buona</text>
+        <text x="221" y="342" font-size="10">la sfoglia buona si vede</text>
+        <text x="221" y="359" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="221" y="374" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="221" y="388" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="221" y="401" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="399" y="300" font-family="Martian Mono, monospace" font-size="8" opacity=".6">E</text>
+        <text x="399" y="322" font-size="12">la sfoglia buona</text>
+        <text x="399" y="342" font-size="10">la sfoglia buona si vede</text>
+        <text x="399" y="359" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="399" y="374" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="399" y="388" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="399" y="401" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="44" y="450" font-family="Martian Mono, monospace" font-size="8" opacity=".6">S-O</text>
+        <text x="44" y="472" font-size="12">la sfoglia buona</text>
+        <text x="44" y="492" font-size="10">la sfoglia buona si vede</text>
+        <text x="44" y="509" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="44" y="524" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="44" y="538" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="44" y="551" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="221" y="450" font-family="Martian Mono, monospace" font-size="8" opacity=".6">S</text>
+        <text x="221" y="472" font-size="12">la sfoglia buona</text>
+        <text x="221" y="492" font-size="10">la sfoglia buona si vede</text>
+        <text x="221" y="509" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="221" y="524" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="221" y="538" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="221" y="551" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+      <g font-family="Archivo, sans-serif" opacity=".85">
+        <text x="399" y="450" font-family="Martian Mono, monospace" font-size="8" opacity=".6">S-E</text>
+        <text x="399" y="472" font-size="12">la sfoglia buona</text>
+        <text x="399" y="492" font-size="10">la sfoglia buona si vede</text>
+        <text x="399" y="509" font-size="8">la sfoglia buona si vede dal bordo</text>
+        <text x="399" y="524" font-size="7">la sfoglia buona si vede dal bordo e dal centro</text>
+        <text x="399" y="538" font-size="6">la sfoglia buona si vede dal bordo e dal centro insieme</text>
+        <text x="399" y="551" font-size="5">la sfoglia buona si vede dal bordo e dal centro insieme, sempre</text>
+      </g>
+
+      <text x="34" y="612" font-family="Martian Mono, monospace" font-size="9.5" opacity=".7" letter-spacing="1">SCALA DI GRIGI — PER LA FOTOGRAFIA</text>
+      <g stroke="currentColor" stroke-width="0.8">
+        <rect x="34" y="622" width="52" height="30" fill="#ffffff"></rect>
+        <rect x="86" y="622" width="52" height="30" fill="#cccccc"></rect>
+        <rect x="138" y="622" width="52" height="30" fill="#999999"></rect>
+        <rect x="190" y="622" width="52" height="30" fill="#666666"></rect>
+        <rect x="242" y="622" width="52" height="30" fill="#333333"></rect>
+        <rect x="294" y="622" width="52" height="30" fill="#000000"></rect>
+      </g>
+
+      <text x="380" y="612" font-family="Martian Mono, monospace" font-size="9.5" opacity=".7" letter-spacing="1">CALIBRO 5 CM</text>
+      <g stroke="currentColor" stroke-width="1.1">
+        <line x1="380" y1="640" x2="566" y2="640"></line>
+        <line x1="380" y1="632" x2="380" y2="648"></line>
+        <line x1="417" y1="634" x2="417" y2="646"></line>
+        <line x1="454" y1="632" x2="454" y2="648"></line>
+        <line x1="491" y1="634" x2="491" y2="646"></line>
+        <line x1="529" y1="632" x2="529" y2="648"></line>
+        <line x1="566" y1="632" x2="566" y2="648"></line>
+      </g>
+
+      <line x1="34" y1="686" x2="566" y2="686" stroke="currentColor" stroke-width="0.8"></line>
+      <text x="34" y="710" font-family="Archivo, sans-serif" font-size="12" opacity=".8">1. Stendi la sfoglia. 2. Appoggia questo foglio sotto il centro, con il codice scoperto.</text>
+      <text x="34" y="730" font-family="Archivo, sans-serif" font-size="12" opacity=".8">3. Fotografa dall'alto, alla luce di una finestra, senza flash.</text>
+      <text x="34" y="750" font-family="Archivo, sans-serif" font-size="12" opacity=".8">4. Seconda foto: la sfoglia intera sul tagliere, con il foglio di fianco per la scala.</text>
+      <text x="34" y="774" font-family="Martian Mono, monospace" font-size="9" opacity=".55" letter-spacing="1">IL CODICE DEVE ESSERE LEGGIBILE NELLA FOTO — ALTRIMENTI LA PROVA NON VALE</text>
+    </svg>
+    <figcaption>Ogni riquadro ha la <b>sua</b> scala di corpi: è questo che rende misurabile l'uniformità, non solo la finezza. Il centro è il riferimento; ogni zona che legge un corpo più grosso è un punto in cui il mattarello non è arrivato. Il codice personale in alto a destra cambia ogni mese e serve contro gli imbrogli (sezione 10).</figcaption>
+  </figure>
+
+  <h3>L'Indice di Sfoglia</h3>
+  <p>Dalle due fotografie si ricava un numero da 0 a 100. È il cuore innovativo del piano: trasforma un giudizio estetico in una misura ripetibile, che si può confrontare con la propria di tre mesi fa &mdash; e su cui si possono appendere badge che significano qualcosa.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Voce</th><th class="n">Peso</th><th>Come si ricava</th><th>Chi la calcola</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Trasparenza</td><td class="n">0&ndash;40</td><td>Il corpo più piccolo leggibile nel riquadro centrale: c12&nbsp;=&nbsp;10, c10&nbsp;=&nbsp;18, c8&nbsp;=&nbsp;26, c7&nbsp;=&nbsp;32, c6&nbsp;=&nbsp;36, c5&nbsp;=&nbsp;40</td><td>Automatico + verifica</td></tr>
+        <tr><td class="chiave">Uniformità</td><td class="n">0&ndash;30</td><td>30 meno 3 punti per ogni riquadro che legge un corpo più grosso del centro (max 9 riquadri)</td><td>Automatico + verifica</td></tr>
+        <tr><td class="chiave">Forma</td><td class="n">0&ndash;20</td><td>Scarto fra raggio massimo e minimo: ≤3&nbsp;cm&nbsp;=&nbsp;20, ≤5&nbsp;=&nbsp;15, ≤8&nbsp;=&nbsp;10, oltre&nbsp;=&nbsp;5</td><td>Maestro</td></tr>
+        <tr><td class="chiave">Bordo</td><td class="n">0&ndash;10</td><td>Quanto il bordo resta della stessa altezza del corpo &mdash; giudizio a occhio</td><td>Maestro</td></tr>
+      </tbody>
+      <tfoot><tr><td>Indice di Sfoglia</td><td class="n">0&ndash;100</td><td colspan="2">Trasparenza + Uniformità + Forma + Bordo</td></tr></tfoot>
+    </table>
+  </div>
+
+  <p>Le prime due voci si calcolano da sole; le ultime due richiedono l'occhio del maestro. <strong>Ecco perché la Fontana può avere il numero e non la correzione:</strong> chi non paga vede un indice parziale su 70 punti, e sotto la scritta «Forma e Bordo: servono gli occhi di un maestro». Non è un paywall inventato: è letteralmente ciò che la macchina non sa fare.</p>
+
+  <h3>Esempio: Rosanna, 62 anni, Faenza</h3>
+  <p>Terza sfoglia di settembre. Le due fotografie arrivano il martedì, la scheda torna il venerdì.</p>
+
+  <div class="scheda">
+    <div class="titolo">Indice di Sfoglia &mdash; 24 settembre 2026</div>
+    <div class="punteggio">
+      <div class="riga-p"><span>Trasparenza</span><span class="barra"><i style="width:80%"></i></span><span class="v">32 / 40</span></div>
+      <div class="riga-p"><span>Uniformità</span><span class="barra"><i style="width:70%"></i></span><span class="v">21 / 30</span></div>
+      <div class="riga-p"><span>Forma</span><span class="barra"><i style="width:50%"></i></span><span class="v">10 / 20</span></div>
+      <div class="riga-p"><span>Bordo</span><span class="barra"><i style="width:50%"></i></span><span class="v">5 / 10</span></div>
+      <div class="riga-p totale"><span><strong>Indice</strong></span><span class="barra"><i style="width:68%;background:var(--rame)"></i></span><span class="v">68 / 100</span></div>
+    </div>
+    <p style="font-size:13.5px;color:var(--tenue);margin-bottom:0">Legge il corpo 7 al centro. Tre riquadri su nove &mdash; N-O, O, S-O &mdash; si fermano al corpo 10. Raggio da 27 a 33 cm.</p>
+  </div>
+
+  <div class="citazione">
+    «Il tuo nord-ovest è più spesso da tre mesi, sempre lo stesso. Non stai girando la sfoglia: stai girando te stessa intorno al tagliere, e quando arrivi da quella parte sei già stanca. Prova a ruotare la sfoglia di un quarto ogni due passate, sempre nello stesso verso, con i piedi fermi. Il bordo gonfio a nord-ovest è la stessa cosa vista da fuori: l'ultima spinta su quel lato non arriva mai in fondo. Per la prossima non cercare il corpo 6. Cerca l'uniformità a 27: fine è facile, uguale è difficile.»
+    <span class="firma">Scheda del Gesto &mdash; Maestra Lucia, ottobre in cattedra</span>
+  </div>
+
+  <p>Questa scheda è il prodotto. Non il video, non il PDF, non la classifica: <strong>venti righe scritte da qualcuno che ha guardato la tua sfoglia.</strong> Costa a un maestro dieci minuti e non è replicabile da nessun contenuto registrato, ed è per questo che si può far pagare.</p>
+
+  <h4>Cosa c'è dentro la Tirata, in tutto</h4>
+  <div class="gradini">
+    <div class="gradino">
+      <div class="t">Ogni mese</div>
+      <div class="nome">La Scheda del Gesto</div>
+      <div class="prezzo">1 sfoglia corretta / mese</div>
+      <ul><li>Indice di Sfoglia completo su 100</li><li>Venti righe dal Maestro del Mese</li><li>Un obiettivo numerico per la volta dopo</li><li>Lo storico dei propri indici, in curva</li></ul>
+    </div>
+    <div class="gradino">
+      <div class="t">Ogni domenica, ore 10</div>
+      <div class="nome">Il Mattarello Sincrono</div>
+      <div class="prezzo">2 ore in diretta</div>
+      <ul><li>Si tira tutte insieme, in video, alla stessa ora</li><li>Il maestro passa fra i riquadri e corregge dal vivo</li><li>Nessun montaggio, nessuna produzione</li><li>Chi non c'è si rivede la registrazione</li></ul>
+    </div>
+    <div class="gradino">
+      <div class="t">Ogni mese uno diverso</div>
+      <div class="nome">Il Maestro del Mese</div>
+      <div class="prezzo">La cattedra a rotazione</div>
+      <ul><li>Un maestro tiene la cattedra per 30 giorni</li><li>Lancia una sfida, la giudica, firma le schede</li><li>Lascia un Testamento alla Cassaforte</li><li>Poi passa il mattarello al successivo</li></ul>
+    </div>
+  </div>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>Il collo di bottiglia è il maestro, e le vostre 42 iscritte lo sanno usare tutte nella stessa settimana.</strong> Quaranta schede in sette giorni sono sette ore di lavoro concentrate male. Il rimedio è banale ma va deciso adesso, non a gennaio: le schede si consegnano <em>a scaglioni per cognome</em>, dieci per settimana, e il calendario è pubblico dal primo giorno. Chi entra sa già che la sua settimana è la terza.</p>
+    <p><strong>E se il maestro del mese sparisce?</strong> È il rischio più concreto: sono spesso persone anziane, con una bottega vera da mandare avanti, e un impegno di trenta giorni preso a marzo si dimentica a ottobre. Serve una panchina di almeno due maestri di riserva contattati <em>prima</em> del lancio, e una regola scritta: se una scheda salta, quel mese è gratis per tutte. Costa poco e vi salva la reputazione una volta sola, che è l'unica che conta.</p>
+    <p><strong>L'obiezione più seria è sull'Indice stesso.</strong> Un numero su una cosa fatta a mano può fare due danni: far inseguire il punteggio invece del piatto, e umiliare chi parte da 40. Il primo si limita facendo pesare l'uniformità quanto la finezza &mdash; una sfoglia sottilissima e sbilenca prende meno di una onesta e uguale, che è anche la verità del mestiere. Il secondo si limita mostrando <strong>solo la propria curva, mai il confronto</strong>: l'Indice non entra in classifica e non si vede nel profilo pubblico. Se lo mettete in classifica avrete costruito una macchina per far sentire inadeguate delle signore, e la costruirete a mano.</p>
+  </div>
+</section>
+
+<section id="tavola">
+  <div class="cifra">06</div>
+  <div class="etichetta">Tappa 3 &middot; 690 € a percorso &middot; maestra e cuoco insieme</div>
+  <h2>La Tavola</h2>
+  <p class="guida">Le prime tre tappe insegnano a fare la sfoglia. La quarta insegna a farci da mangiare &mdash; ed è l'unica in cui la sfoglia smette di essere il fine. È qui che entrano i maestri di cucina, e non come ospiti: come metà del percorso.</p>
+
+  <h3>La Coppia</h3>
+  <p>Ogni capitolo è tenuto da due persone insieme, con una divisione netta che nessuno dei due sconfina:</p>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Chi</th><th>Insegna</th><th>Valuta</th><th>Non tocca</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">La Maestra di Sfoglia</td><td>Il gesto: impasto, tirata, spessore, taglio, chiusura, tenuta</td><td>Indice di Sfoglia, peso e misura del formato, tenuta in cottura</td><td>Il condimento</td></tr>
+        <tr><td class="chiave">Il Maestro di Cucina</td><td>Il piatto: ripieno, proporzioni, sugo, brodo, cottura, abbinamento, servizio</td><td>Equilibrio, sapidità, cottura, presentazione</td><td>Il gesto</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>La separazione non è burocrazia: è la ragione per cui questa tappa vale 690 € e un corso in presenza da 180 € no. Sono due mestieri diversi che di solito non si incontrano mai nella stessa aula, e metterli sullo stesso piatto è il prodotto.</p>
+
+  <h3>Un capitolo, per intero</h3>
+  <div class="scheda">
+    <div class="titolo">Capitolo 3 &middot; novembre &middot; Il Tortellino e il suo brodo</div>
+    <div class="tabella" style="margin-top:0;border:none;background:none">
+      <table style="min-width:460px">
+        <tbody>
+          <tr><td class="chiave" style="width:34%">Settimana 1</td><td><strong>Diretta congiunta, 2 ore.</strong> La maestra tira la sfoglia da tortellino e la lascia riposare quanto serve; il cuoco, in parallelo, rosola il lombo e monta il ripieno. Le due cose finiscono nello stesso momento, in video, e si vede perché.</td></tr>
+          <tr><td class="chiave">Settimana 2</td><td><strong>A casa.</strong> Il quadretto da 4 cm, la chiusura sull'indice, il cappello. Ogni allieva manda un video di 60 secondi delle sole mani, e la foto del Foglio di Prova.</td></tr>
+          <tr><td class="chiave">Settimana 3</td><td><strong>Le schede.</strong> Due correzioni scritte a testa, una per mano. Diretta di mezz'ora sugli errori più comuni del gruppo, con i video anonimi.</td></tr>
+          <tr><td class="chiave">Settimana 4</td><td><strong>La prova del capitolo.</strong> Cento tortellini in 90 minuti, filmati senza tagli, cotti nel proprio brodo.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h4 style="margin-top:20px">Come si misura la prova</h4>
+    <div class="tabella" style="margin:0">
+      <table style="min-width:420px">
+        <thead><tr><th>Misura</th><th>Obiettivo</th><th>Perché</th></tr></thead>
+        <tbody>
+          <tr><td class="chiave">Peso medio</td><td>1,2 &ndash; 1,5 g</td><td>Sotto è sfoglia sprecata, sopra non è più un tortellino</td></tr>
+          <tr><td class="chiave">Scarto di peso</td><td>max ±0,3 g</td><td>Cento tortellini uguali sono la vera difficoltà</td></tr>
+          <tr><td class="chiave">Tenuta</td><td>0 aperti su 20</td><td>Dice tutto sulla chiusura e sull'umidità del ripieno</td></tr>
+          <tr><td class="chiave">Indice di Sfoglia</td><td>≥ 72</td><td>Sotto questa soglia il brodo entra e il ripieno esce</td></tr>
+          <tr><td class="chiave">Il brodo</td><td>Giudizio del cuoco</td><td>Limpidezza, sapidità, grassezza &mdash; l'unica voce non numerica</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h4>I sei capitoli dell'anno</h4>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Mese</th><th>Il gesto</th><th>Il piatto</th><th>La prova</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Settembre</td><td>Il taglio &mdash; tagliatella, garganello, maltagliato</td><td>Il ragù, e perché il ragù non è sugo</td><td>Tagliatella a 6 mm, 50 pezzi, scarto ±1 mm</td></tr>
+        <tr><td class="chiave">Ottobre</td><td>Il ripieno corto &mdash; tortello d'erbetta</td><td>Le erbe di stagione, il burro e la salvia</td><td>Tenuta in cottura, 0 aperti su 20</td></tr>
+        <tr><td class="chiave">Novembre</td><td>Il tortellino, la chiusura sull'indice</td><td>Il ripieno e il brodo di terza</td><td>100 in 90 minuti, peso 1,2&ndash;1,5 g</td></tr>
+        <tr><td class="chiave">Gennaio</td><td>Il formato difficile &mdash; cappelletto, anolino</td><td>I brodi grassi e le paste in brodo</td><td>Uniformità del formato su 60 pezzi</td></tr>
+        <tr><td class="chiave">Marzo</td><td>La sfoglia verde e le paste colorate</td><td>Pesce e verdure, i condimenti leggeri</td><td>Colore uniforme e Indice ≥ 75</td></tr>
+        <tr><td class="chiave">Maggio</td><td colspan="2"><strong>L'esame.</strong> Un menù completo da tre portate, tirato e cucinato in giornata, davanti a due maestri &mdash; uno di sfoglia, uno di cucina</td><td>Diploma o rinvio a novembre</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Il diploma, e perché è la parte più importante del piano</h3>
+  <p>Chi supera l'esame diventa <strong>Sfoglina Diplomata dell'Accademia</strong>: un numero progressivo, una pagina pubblica verificabile, una firma doppia. E soprattutto un diritto: <strong>può diventare Madrina</strong>, dentro il modulo Madrina &amp; Allieva che già esiste.</p>
+  <div class="scheda">
+    <div class="titolo">Il vincolo strutturale da cui dipende tutto</div>
+    <p>L'Accademia non potrà mai assumere venti maestri. Ma può <em>diplomarli</em>. Una scala che non produce i propri insegnanti si strozza al secondo anno: le iscritte crescono, i maestri no, le schede arrivano in ritardo, la Tirata perde valore e il passaparola si gira contro. Una scala che li produce si allarga da sola.</p>
+    <p style="margin-bottom:0"><strong>Perciò la tappa 3 non è la cima della scala: è la fabbrica della tappa 2.</strong> Sei diplomate all'anno sono sei Madrine in più, e una Madrina che segue tre allieve toglie tre schede al maestro del mese. Al terzo anno la Tirata regge il doppio delle iscritte con lo stesso costo.</p>
+  </div>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>690 € è tanto, e a un'associazione culturale sta stretto addosso.</strong> Non per il valore &mdash; sei mesi con due docenti li valgono &mdash; ma per quello che dice: che il vertice del percorso è riservato a chi se lo può permettere. Se la classifica è aperta a tutte ma il diploma no, la scala è una scenografia. È esattamente la ragione per cui la Borsa dell'Accademia (sezione 07) non è beneficenza: <strong>è ciò che rende vera la competizione.</strong> Se due posti su otto si vincono coi punti e non con la carta di credito, allora giocare serve davvero a qualcosa.</p>
+    <p><strong>Il diploma vale quanto è difficile.</strong> Se il primo anno lo prendono otto su otto, l'anno dopo non lo vuole nessuno. Va messo in conto &mdash; e detto prima &mdash; che una parte del gruppo venga rinviata a novembre. Un rinvio è doloroso una volta; un diploma regalato è inutile per sempre.</p>
+    <p><strong>Un nodo pratico che va risolto prima di stampare la parola «diploma»:</strong> in Italia questo titolo non è un titolo. È un attestato privato dell'associazione, e va chiamato e scritto in modo che nessuna lo scambi per una qualifica professionale spendibile altrove. Da far leggere a chi vi segue la contabilità e gli statuti, insieme al punto sui Gettoni della sezione 08.</p>
+  </div>
+</section>
+
+<section id="ponti">
+  <div class="cifra">07</div>
+  <div class="etichetta">Il meccanismo di salita</div>
+  <h2>I ponti fra le tappe</h2>
+  <p class="guida">Un listino a quattro righe non fa salire nessuno. Quello che fa salire è vedere, da dove si è, una cosa concreta che manca. Quattro ponti, ciascuno costruito su un pezzo che esiste già.</p>
+
+  <h3>Il Saggio &mdash; la Correzione della Settimana</h3>
+  <p>Ogni lunedì, una Scheda del Gesto vera viene pubblicata <strong>per intero e in chiaro a tutte, anche alla Fontana</strong>, con la sfoglina resa anonima e consenziente. Foto, indice, le venti righe del maestro.</p>
+  <p>È il pezzo di marketing più onesto che si possa scrivere, perché non è marketing: è il prodotto, mostrato. Chi legge tre correzioni di fila capisce da solo la differenza fra guardare un video e essere guardata. E funziona sullo schema già collaudato da <span class="cod">percorsi-lezioni.php</span>, che mostra i Percorsi Guidati a chi non è iscritto «a scopo motivazionale, senza dare accesso».</p>
+
+  <h3>L'Indice che si ferma a 70</h3>
+  <p>Il ponte più forte è quello descritto alla sezione 05: alla Fontana e all'Impasto l'Indice si calcola, ma su 70 punti &mdash; Forma e Bordo restano vuoti perché nessuno ha guardato. Non è un blocco artificiale, è un fatto. E una casella vuota nel proprio profilo lavora tutti i giorni senza che voi dobbiate mandare una sola email.</p>
+
+  <h3>Lo Scatto &mdash; non si paga mai due volte</h3>
+  <p>Chi sale entro dodici mesi si porta dietro l'intero. Chi ha pagato 29 € a novembre e passa alla Tirata a marzo, paga 91 €, non 120 €. Chi ha la Tirata e entra nella Tavola scala i mesi non consumati.</p>
+  <p>Toglie di mezzo l'obiezione più frequente e più stupida &mdash; «ho appena rinnovato, aspetto l'anno prossimo» &mdash; che è il modo più comune di perdere una conversione già matura. Costa qualche decina di euro a testa e ne fa incassare centinaia con un anno d'anticipo.</p>
+
+  <h3>La Borsa dell'Accademia</h3>
+  <div class="scheda">
+    <div class="titolo">Due posti su otto, ogni percorso della Tavola</div>
+    <ul>
+      <li><strong>Un posto per punti</strong> &mdash; alla prima in classifica dell'anno che non ha mai fatto la Tavola. Automatico, indiscutibile, e dà finalmente alla classifica un premio che vale la pena inseguire.</li>
+      <li><strong>Un posto per giuria</strong> &mdash; assegnato dal modulo Giuria fra chi si candida raccontando perché non può permetterselo. Non è il migliore Indice: è chi ne ha più bisogno e più costanza.</li>
+      <li>Costo reale per l'Accademia: due posti da 690 € su un gruppo da otto significa incassare 4.140 € invece di 5.520 €. È il prezzo di avere una scala credibile, ed è il modo più diretto in cui un'associazione resta un'associazione.</li>
+    </ul>
+  </div>
+
+  <h3>L'invito giusto alla persona giusta</h3>
+  <p>Tutto questo passa da <span class="cod">prossimo-passo.php</span>, che già suggerisce cosa fare dopo in base allo stato di ciascuna. Le condizioni da aggiungere sono quattro, e sono tutte specifiche:</p>
+  <ul>
+    <li>Prova scaduta e punti congelati da meno di 14 giorni &rarr; «i tuoi 1.240 punti ti stanno aspettando»</li>
+    <li>Tre Fogli di Prova caricati e Indice fermo entro ±3 punti &rarr; «sei ferma a 68 da tre mesi: ti serve un occhio, non un altro video»</li>
+    <li>Indice parziale ≥ 60 su 70 e mai stata alla Tirata &rarr; «Forma e Bordo non li sa leggere una macchina»</li>
+    <li>Tirata da 8 mesi, Indice sopra 78, mai prenotato un corso &rarr; l'invito alla Tavola, e se rifiuta, l'invito al corso in presenza</li>
+  </ul>
+</section>
+
+<section id="maestri">
+  <div class="cifra">08</div>
+  <div class="etichetta">Come si tengono insieme le persone che insegnano</div>
+  <h2>L'economia dei maestri</h2>
+  <p class="guida">La parte del piano che ha più probabilità di rompersi non è il codice: sono cinque o sei persone vere, spesso anziane, che devono avere una ragione per esserci a novembre come a marzo. I soldi sono la ragione meno affidabile.</p>
+
+  <h3>Il Testamento &mdash; l'argomento vero per reclutarli</h3>
+  <p>Ogni maestro che tiene la cattedra per un mese lascia <strong>un Testamento</strong>: una tecnica sola, filmata a fondo, con il suo nome sopra, che entra per sempre nella Cassaforte del Sapere. Non un contributo a un corso: un pezzo di sé che resta.</p>
+  <p>È il modulo Testamenti che già esiste, usato per quello che serve davvero. Una azdora di settantacinque anni non si convince con 400 € al mese; si convince sapendo che il modo in cui lei chiude il cappelletto non morirà con lei. <strong>Se questo piano ha un'anima, è questa riga</strong> &mdash; ed è anche, per inciso, l'unica ragione per cui accetteranno di farsi filmare.</p>
+
+  <h3>Il Gettone di Bottega</h3>
+  <p>Un gettone vale quindici minuti dell'attenzione di un maestro: una scheda in più fuori turno, una risposta privata, un video commentato. Si ottengono in due modi &mdash; <strong>ogni 500 punti guadagnati</strong> se si è almeno alla Tirata, oppure comprandoli a 12 €. Il maestro viene pagato a gettone consumato.</p>
+  <p>È il pezzo che dà finalmente ai punti un potere d'acquisto reale su qualcosa di scarso e desiderabile, invece che solo uno sconto differito. Ed è anche il modo di far pagare l'uso intenso senza alzare il prezzo dell'abbonamento a tutte.</p>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo &mdash; il punto più pericoloso del documento</div>
+    <p><strong>Un gettone è una moneta, e una moneta è un debito.</strong> Mille gettoni distribuiti e non consumati sono duecentocinquanta ore di lavoro promesse che qualcuno, prima o poi, verrà a riscuotere &mdash; magari tutti insieme a dicembre. Due cose non negoziabili: <strong>scadenza a sei mesi</strong> scritta grande, e <strong>un tetto mensile di gettoni consumabili</strong> pari a quanti i maestri riescono davvero a onorare.</p>
+    <p><strong>E c'è un problema fiscale che non so risolvere e non fingo di sapere.</strong> Un'associazione che emette titoli acquistabili in euro e riscattabili in prestazioni sta facendo qualcosa che assomiglia molto a vendere servizi con corrispettivo differito, e i compensi ai maestri hanno una loro forma contrattuale da definire. Va portato al commercialista <em>prima</em> di scrivere una riga di codice, insieme alla domanda sulla Quota Supporter rimasta aperta nel primo piano. Se la risposta è no, il piano non cade: i gettoni si riducono a un contatore non acquistabile, guadagnato solo coi punti. Perde la gamba commerciale, tiene quella di gioco.</p>
+  </div>
+
+  <figure class="largo">
+    <svg viewBox="0 0 880 400" role="img" aria-label="Ciclo chiuso: la sfoglina paga la Tirata o la Tavola, il maestro corregge e lascia un Testamento, il Testamento entra nella Cassaforte e attira nuove iscritte alla Fontana, alcune salgono e si diplomano, le diplomate diventano Madrine e alleggeriscono il carico dei maestri.">
+      <defs>
+        <marker id="p3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+        </marker>
+        <marker id="p3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="var(--ottone)"></path>
+        </marker>
+      </defs>
+
+      <rect x="158" y="36" width="176" height="52" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="246" y="58" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600">La sfoglina paga</text>
+      <text x="246" y="76" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">Tirata o Tavola</text>
+
+      <rect x="556" y="36" width="176" height="52" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="644" y="58" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Il maestro corregge</text>
+      <text x="644" y="76" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">e viene pagato</text>
+
+      <rect x="686" y="176" width="176" height="52" fill="none" stroke="var(--ottone)" stroke-width="1.6"></rect>
+      <text x="774" y="198" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Il Testamento</text>
+      <text x="774" y="216" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">entra in Cassaforte</text>
+
+      <rect x="352" y="316" width="176" height="52" fill="none" stroke="currentColor" stroke-width="1.2"></rect>
+      <text x="440" y="338" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Nuove sfogline</text>
+      <text x="440" y="356" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">entrano nella Fontana</text>
+
+      <rect x="18" y="176" width="176" height="52" fill="none" stroke="var(--rame)" stroke-width="1.6"></rect>
+      <text x="106" y="198" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600">Le diplomate</text>
+      <text x="106" y="216" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".72">diventano Madrine</text>
+
+      <line x1="334" y1="62" x2="546" y2="62" stroke="currentColor" stroke-width="1.3" marker-end="url(#p3)"></line>
+      <text x="440" y="52" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" opacity=".78">la Scheda del Gesto</text>
+
+      <path d="M732 68 L790 68 L790 166" fill="none" stroke="var(--ottone)" stroke-width="1.3" marker-end="url(#p3g)"></path>
+      <text x="800" y="122" font-family="Archivo, sans-serif" font-size="12" opacity=".78">una tecnica</text>
+      <text x="800" y="138" font-family="Archivo, sans-serif" font-size="12" opacity=".78">al mese</text>
+
+      <path d="M760 228 L700 300 L538 336" fill="none" stroke="currentColor" stroke-width="1.3" marker-end="url(#p3)"></path>
+      <text x="654" y="292" font-family="Archivo, sans-serif" font-size="12" opacity=".78">il sapere attira</text>
+
+      <path d="M352 340 L180 300 L118 238" fill="none" stroke="currentColor" stroke-width="1.3" marker-end="url(#p3)"></path>
+      <text x="176" y="292" font-family="Archivo, sans-serif" font-size="12" opacity=".78">alcune salgono</text>
+      <text x="176" y="308" font-family="Archivo, sans-serif" font-size="12" opacity=".78">fino al diploma</text>
+
+      <path d="M106 176 L106 62 L148 62" fill="none" stroke="currentColor" stroke-width="1.3" marker-end="url(#p3)"></path>
+      <text x="118" y="126" font-family="Archivo, sans-serif" font-size="12" opacity=".78">portano</text>
+      <text x="118" y="142" font-family="Archivo, sans-serif" font-size="12" opacity=".78">le allieve</text>
+
+      <path d="M194 190 L556 66" fill="none" stroke="var(--rame)" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#p3)"></path>
+      <text x="392" y="150" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" fill="var(--rame)">e tolgono schede al maestro</text>
+    </svg>
+    <figcaption>La freccia tratteggiata è quella che decide se il piano regge al terzo anno: <b>senza di lei il carico sui maestri cresce come le iscritte</b>, e il collo di bottiglia strozza tutto il resto. È anche la ragione per cui il diploma va difeso: una Madrina diplomata male vale meno di nessuna Madrina.</figcaption>
+  </figure>
+</section>
+
+<section id="conti">
+  <div class="cifra">09</div>
+  <div class="etichetta">La simulazione, con le ipotesi in chiaro</div>
+  <h2>I conti, senza sconti</h2>
+  <p class="guida">Tutti i numeri che seguono poggiano su un'ipotesi sola: <strong>mille iscritte gratuite entro il primo anno.</strong> Se sono cinquecento, dimezzate tutto; se sono tremila, il piano cambia natura. Le percentuali di conversione sono prudenti ma inventate: non ne avete ancora di vostre, e finché non ne avrete queste sono segnaposto.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Voce</th><th class="n">Persone</th><th class="n">Prezzo</th><th class="n">Ricavo</th><th>Ipotesi</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">La Fontana</td><td class="n">1.000</td><td class="n">0 €</td><td class="n">0 €</td><td>obiettivo primo anno</td></tr>
+        <tr><td class="chiave">L'Impasto</td><td class="n">120</td><td class="n">29 €</td><td class="n">3.480 €</td><td>12 % della Fontana</td></tr>
+        <tr><td class="chiave">La Tirata</td><td class="n">42</td><td class="n">120 €</td><td class="n">5.040 €</td><td>35 % dell'Impasto</td></tr>
+        <tr><td class="chiave">La Tavola</td><td class="n">6</td><td class="n">690 €</td><td class="n">4.140 €</td><td>8 posti, 2 in borsa</td></tr>
+        <tr><td class="chiave">Diplomi</td><td class="n">4</td><td class="n">90 €</td><td class="n">360 €</td><td>4 promosse su 8</td></tr>
+      </tbody>
+      <tfoot><tr><td>Ricavi della scala</td><td class="n"></td><td class="n"></td><td class="n">13.020 €</td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Costi</th><th class="n">Quantità</th><th class="n">Unitario</th><th class="n">Totale</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Maestro del Mese</td><td class="n">12 mesi</td><td class="n">400 €</td><td class="n">4.800 €</td><td>2 dirette, 1 sfida, le schede, 1 Testamento</td></tr>
+        <tr><td class="chiave">Coppia della Tavola</td><td class="n">6 capitoli</td><td class="n">400 €</td><td class="n">2.400 €</td><td>200 € a testa per capitolo</td></tr>
+        <tr><td class="chiave">Commissioni incasso</td><td class="n">4 %</td><td class="n">&mdash;</td><td class="n">521 €</td><td>su tutti i pagamenti online</td></tr>
+        <tr><td class="chiave">Piattaforma</td><td class="n">1 anno</td><td class="n">300 €</td><td class="n">300 €</td><td>archiviazione foto e video, stima larga</td></tr>
+      </tbody>
+      <tfoot><tr><td>Totale costi</td><td class="n"></td><td class="n"></td><td class="n">8.021 €</td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="scheda">
+    <div class="titolo">Il risultato</div>
+    <p style="font-size:1.24rem;font-family:'Bodoni Moda',serif;margin-bottom:6px">13.020 &minus; 8.021 = <strong style="color:var(--rame)">4.999 € netti</strong></p>
+    <p style="margin-bottom:0">Un anno di lavoro di quattro persone, tutta l'architettura, tutti i maestri, per meno di cinquemila euro. <strong>Questo è il vero risultato del documento</strong>, e va guardato prima di innamorarsi del disegno.</p>
+  </div>
+
+  <h3>Dove sono davvero i soldi</h3>
+  <figure class="largo">
+    <svg viewBox="0 0 880 372" role="img" aria-label="Ogni tappa della scala alimenta le prenotazioni dei corsi in presenza. La Fontana gratuita, pur convertendo poco in percentuale, produce da sola 58 delle 110 prenotazioni annuali: la freccia più spessa parte dal gradino che non paga niente.">
+      <defs>
+        <marker id="p4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+
+      <text x="20" y="20" font-family="Martian Mono, monospace" font-size="10" opacity=".6" letter-spacing="1">LA SCALA — 13.020 € DI ABBONAMENTI</text>
+
+      <rect x="20" y="32" width="290" height="54" fill="none" stroke="currentColor" stroke-width="1.1"></rect>
+      <text x="34" y="54" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600">La Fontana</text>
+      <text x="34" y="73" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">1.000 iscritte · 0 €</text>
+
+      <rect x="20" y="102" width="290" height="54" fill="none" stroke="currentColor" stroke-width="1.1"></rect>
+      <text x="34" y="124" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600">L'Impasto</text>
+      <text x="34" y="143" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">120 iscritte · 3.480 €</text>
+
+      <rect x="20" y="172" width="290" height="54" fill="none" stroke="currentColor" stroke-width="1.1"></rect>
+      <text x="34" y="194" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600">La Tirata</text>
+      <text x="34" y="213" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">42 iscritte · 5.040 €</text>
+
+      <rect x="20" y="242" width="290" height="54" fill="none" stroke="currentColor" stroke-width="1.1"></rect>
+      <text x="34" y="264" font-family="Archivo, sans-serif" font-size="13.5" font-weight="600">La Tavola</text>
+      <text x="34" y="283" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">6 allieve · 4.140 €</text>
+
+      <path d="M310 59 Q470 59 600 150" fill="none" stroke="var(--rame)" stroke-width="8" opacity=".9" marker-end="url(#p4)"></path>
+      <path d="M310 129 Q470 129 600 166" fill="none" stroke="currentColor" stroke-width="4" opacity=".75" marker-end="url(#p4)"></path>
+      <path d="M310 199 Q470 199 600 182" fill="none" stroke="currentColor" stroke-width="3.5" opacity=".75" marker-end="url(#p4)"></path>
+      <path d="M310 269 Q470 269 600 200" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".75" marker-end="url(#p4)"></path>
+
+      <text x="410" y="48" font-family="Archivo, sans-serif" font-size="12.5" fill="var(--rame)" font-weight="600">58 prenotano un corso</text>
+      <text x="410" y="118" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">24</text>
+      <text x="410" y="188" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">21</text>
+      <text x="410" y="258" font-family="Archivo, sans-serif" font-size="12.5" opacity=".8">6</text>
+
+      <rect x="604" y="110" width="256" height="128" fill="none" stroke="var(--rame)" stroke-width="2"></rect>
+      <text x="622" y="140" font-family="Bodoni Moda, serif" font-size="19">Corsi in presenza</text>
+      <text x="622" y="166" font-family="Archivo, sans-serif" font-size="13" opacity=".8">110 prenotazioni × 180 €</text>
+      <text x="622" y="196" font-family="Martian Mono, monospace" font-size="18" fill="var(--rame)" font-weight="600">19.800 €</text>
+      <text x="622" y="222" font-family="Archivo, sans-serif" font-size="12.5" opacity=".75">contro 7.200 € senza la scala</text>
+
+      <line x1="20" y1="322" x2="860" y2="322" stroke="currentColor" stroke-width="0.8" opacity=".4"></line>
+      <text x="20" y="346" font-family="Archivo, sans-serif" font-size="13">L'aumento dei corsi vale <tspan font-weight="600">12.600 €</tspan> — due volte e mezzo il netto di tutta la scala.</text>
+      <text x="20" y="364" font-family="Archivo, sans-serif" font-size="12.5" opacity=".72">Lo spessore delle frecce è proporzionale alle prenotazioni portate da ciascuna tappa.</text>
+    </svg>
+    <figcaption><b>La freccia più spessa parte dal gradino che non paga niente.</b> Le percentuali di conversione salgono lungo la scala &mdash; dal 6 % della Fontana al 100 % della Tavola &mdash; ma i numeri assoluti restano in basso, perché in basso ci sono mille persone. È l'argomento definitivo per non impoverire mai la tappa gratuita per spingere le vendite.</figcaption>
+  </figure>
+
+  <h3>Le due soglie di partenza</h3>
+  <div class="scheda">
+    <div class="titolo">Nessuna tappa parte prima di essersi ripagata</div>
+    <ul>
+      <li><strong>La Tirata parte a 45 adesioni, non prima.</strong> I maestri costano 4.800 € l'anno; a 115 € netti per iscritta il pareggio è a 42. La simulazione qui sopra, con le sue 42 iscritte, è <em>esattamente il pareggio</em>: significa che nello scenario centrale la Tirata non guadagna niente, guadagna solo lo scenario buono. Si vende in <strong>prevendita a gennaio</strong> con una promessa scritta: si parte il 1° marzo se siamo in 45, altrimenti si restituisce tutto. Nessun rischio per voi, urgenza vera per loro, e una risposta di mercato prima di aver speso un euro in maestri.</li>
+      <li><strong>La Tavola parte a 6 paganti su 8 posti.</strong> La coppia costa 2.400 € a percorso; il pareggio è a 4 paganti. Sei danno 1.574 € di margine e lasciano i due posti in borsa. Sotto i sei si rinvia di sei mesi: un gruppo da tre non è un gruppo, è un corso privato venduto al prezzo di un corso di gruppo.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="integrita">
+  <div class="cifra">10</div>
+  <div class="etichetta">Quello che succede quando i punti valgono soldi</div>
+  <h2>Integrità e imbrogli</h2>
+  <p class="guida">Nel momento in cui una fotografia produce punti, i punti producono gettoni e i gettoni producono sconti, qualcuna proverà a caricare la sfoglia di un'altra. Non per cattiveria: perché è possibile, e perché a un certo punto avrà fretta.</p>
+  <div class="scheda">
+    <div class="titolo">Tre difese, tutte a costo quasi nullo</div>
+    <ul>
+      <li><strong>Il codice sul Foglio.</strong> Il Foglio di Prova porta un codice personale che cambia ogni mese e deve risultare leggibile nella fotografia, sotto la sfoglia. Una foto presa da internet non lo ha, e una foto dell'anno scorso ha il codice sbagliato. È l'anti-frode più economica che esista: è già stampata sullo strumento che serve comunque.</li>
+      <li><strong>La parola del mese.</strong> Nella seconda foto &mdash; la sfoglia intera sul tagliere &mdash; deve comparire un cartoncino scritto a mano con la parola del mese, annunciata il primo del mese. Costa zero, e chiede un gesto che una foto rubata non può avere.</li>
+      <li><strong>La Giuria per i casi dubbi.</strong> Il modulo che già esiste, usato per quello che serve: due membri guardano, decidono, e la decisione è definitiva. Nessuna discussione pubblica, nessun processo sulla bacheca.</li>
+    </ul>
+  </div>
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>La sanzione va scritta prima del primo caso, non dopo.</strong> Quando succederà &mdash; e succederà a qualcuna conosciuta e benvoluta &mdash; se non c'è una regola scritta la decisione sembrerà personale, e vi spaccherà la community in due. La regola che propongo è mite e chiara: <em>primo caso, la prova si annulla e basta, in privato. Secondo caso, tre mesi senza punti. Nessun nome, mai, in pubblico.</em></p>
+    <p>E una nota di misura: <strong>state gestendo una comunità di signore che tirano la sfoglia, non un torneo di poker online.</strong> Un sistema anti-frode che si vede troppo offende novecentonovantanove persone oneste per fermarne una. Il codice sul foglio è invisibile perché è già lì; qualunque cosa più invasiva di così costa più di quanto protegge.</p>
+  </div>
+</section>
+
+<section id="calendario">
+  <div class="cifra">11</div>
+  <div class="etichetta">Il ritmo</div>
+  <h2>L'anno dell'Accademia</h2>
+  <p class="guida">Un gioco sempre acceso stanca, e un maestro sempre disponibile non esiste. La stagionalità non è marketing: è ciò che rende sostenibile il carico e prevedibile la vendita.</p>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Stagione</th><th>Il tema</th><th>Cosa succede nel gioco</th><th>Cosa si vende</th></tr></thead>
+      <tbody>
+        <tr><td class="chiave">Settembre&ndash;ottobre<br><span style="font-size:12.5px;color:var(--tenue)">La ripresa</span></td><td>Si torna al tagliere</td><td>Sfida d'apertura, primo Foglio di Prova dell'anno, riapre il Mattarello Sincrono</td><td>Rinnovi dell'Impasto</td></tr>
+        <tr><td class="chiave">Novembre&ndash;dicembre<br><span style="font-size:12.5px;color:var(--tenue)">I tortellini</span></td><td>Il momento più alto dell'anno</td><td>Il Buono Sfoglia, la gara dei cento tortellini, il Premio di Fine Anno</td><td>Regali: la Tirata come regalo di Natale</td></tr>
+        <tr><td class="chiave">Gennaio&ndash;febbraio<br><span style="font-size:12.5px;color:var(--tenue)">Il silenzio</span></td><td>Si tira poco, si legge molto</td><td>Cassaforte, Testamenti, Letture. Nessuna sfida, nessuna classifica</td><td>Prevendita della Tirata, sconti spesi sui corsi</td></tr>
+        <tr><td class="chiave">Marzo&ndash;maggio<br><span style="font-size:12.5px;color:var(--tenue)">Le erbe</span></td><td>Ripieni verdi e sfoglie sottili</td><td>Ripartono le sfide, l'esame della Tavola a maggio</td><td>Corsi in presenza, il grosso dell'anno</td></tr>
+        <tr><td class="chiave">Giugno&ndash;agosto<br><span style="font-size:12.5px;color:var(--tenue)">La pausa</span></td><td>Fa caldo, la sfoglia non si tira</td><td>Tutto fermo tranne la Vetrina e il Ricettario. Detto chiaramente, non subito</td><td>Iscrizioni per l'anno dopo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>La pausa estiva dichiarata è una scelta, non una resa.</strong> Se non la dichiarate la subite lo stesso, ma con l'aria dell'abbandono: le sfide restano lì senza risposte e la classifica si ferma da sola. Dire «da giugno ad agosto l'Accademia riposa, come tutte le sfogline» è più vero e più bello, e vi restituisce tre mesi per costruire.</p>
+</section>
+
+<section id="tecnico">
+  <div class="cifra">12</div>
+  <div class="etichetta">Cosa si costruisce, e in quale ordine</div>
+  <h2>Il piano tecnico</h2>
+  <p class="guida">I riferimenti ai file del plugin vengono dal piano precedente e non ho potuto riverificarli in questa sessione: questo deposito contiene solo la cartella <span class="cod">design/</span>, non il codice. Vanno ricontrollati sul plugin vero prima di preventivare.</p>
+
+  <h3>La modifica strutturale: da interruttore a scalino</h3>
+  <p>Il primo piano prevedeva un meta booleano <span class="cod">gs_percorso_punti_attivo</span>. Con quattro tappe diventa un intero, e questa è l'unica decisione tecnica davvero irreversibile del documento:</p>
+  <div class="scheda">
+    <div class="titolo">Il cuore, tre righe</div>
+    <ul>
+      <li><span class="cod">gs_livello_percorso</span> &mdash; meta utente, intero da 0 a 3, con data di scadenza affiancata</li>
+      <li><span class="cod">gs_livello($user_id)</span> &mdash; una funzione sola che lo legge, gestisce la scadenza e restituisce 0 se scaduto</li>
+      <li><span class="cod">gs_almeno($n)</span> &mdash; il controllo che tutto il resto chiama. Dentro <span class="cod">gs_add_points()</span> diventa <span class="cod">gs_almeno(1)</span>; per i gettoni <span class="cod">gs_almeno(2)</span>; per le sezioni il livello minimo letto dalla tabella</li>
+    </ul>
+    <p style="margin-bottom:0">In <span class="cod">sezioni.php</span> le due categorie «base» e «superiore» diventano una colonna <span class="cod">livello_minimo</span> da 0 a 3. Le sette sezioni oggi «superiore» diventano livello 2, tranne Calendario Corsi e Corsi Online che restano visibili a tutte &mdash; sono le pagine che fanno prenotare, chiuderle è l'errore più costoso possibile alla luce della sezione 09.</p>
+  </div>
+
+  <h3>Le tre fasi</h3>
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Fase</th><th>Data</th><th>Cosa si costruisce</th><th class="n">Peso</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="chiave">1 &middot; Fontana e Impasto</td>
+          <td>1 nov 2026</td>
+          <td>Il livello intero e i tre helper. Il controllo dentro <span class="cod">gs_add_points()</span>. Le viste in sola lettura di Classifica, Badge e Ultimi Traguardi, sullo schema già collaudato di <span class="cod">percorsi-lezioni.php</span>. Le quattro condizioni nuove in <span class="cod">prossimo-passo.php</span>. La data del Buono Sfoglia spostata dal 1° ottobre al 1° novembre. Il Foglio di Prova come semplice PDF scaricabile, senza caricamento.</td>
+          <td class="n"><span class="pastiglia p-si">contenuto</span></td>
+        </tr>
+        <tr>
+          <td class="chiave">2 &middot; La Tirata</td>
+          <td>prevendita gen<br>partenza 1 mar 2027</td>
+          <td>Caricamento delle due foto con validazione. Calcolo automatico di Trasparenza e Uniformità. Coda di revisione per il maestro con firma della scheda. Storico e curva dell'Indice. Registro dei gettoni con scadenza e tetto mensile. Pannello del Maestro del Mese. Calendario pubblico delle consegne a scaglioni.</td>
+          <td class="n"><span class="pastiglia p-no">applicazione vera</span></td>
+        </tr>
+        <tr>
+          <td class="chiave">3 &middot; La Tavola</td>
+          <td>1° percorso set 2027</td>
+          <td>Gruppi chiusi con due docenti. Capitoli con prove e misure. Registro dell'esame a due firme. Numero di diploma e pagina pubblica verificabile. Il ponte verso Madrina &amp; Allieva.</td>
+          <td class="n"><span class="pastiglia p-forse">medio</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="diavolo">
+    <div class="titolo">L'avvocato del diavolo</div>
+    <p><strong>La frase più pericolosa del piano precedente era «un solo interruttore, un solo punto di rischio».</strong> Per la fase 1 è ancora vera e va difesa. Per la fase 2 è falsa: caricamento di immagini, misura automatica, coda di revisione con stati, registro di una valuta con scadenze e tetti, pannello per utenti non tecnici. Non è un flag, è un'applicazione &mdash; tre mesi di lavoro vero, non tre settimane, e con dentro il pezzo più difficile di tutti, cioè leggere in modo affidabile un corpo tipografico attraverso una fotografia scattata da una signora con il telefono, controluce, alle sette di sera.</p>
+    <p><strong>Perciò la fase 2 nasce con la misura manuale.</strong> Il maestro assegna tutte e quattro le voci guardando la foto; l'automatismo su Trasparenza e Uniformità arriva dopo, quando avrete duecento fotografie vere su cui tararlo. Partire dal manuale costa dieci minuti in più a scheda e vi risparmia di scoprire a marzo che l'algoritmo sbaglia su un terzo delle foto. È anche l'ordine giusto: <em>prima si capisce se qualcuno paga per la correzione, poi si automatizza la misura.</em></p>
+  </div>
+
+  <h3>Il debito lasciato aperto</h3>
+  <p>Resta da uniformare il nome del livello intermedio dei corsi: <span class="cod">calendario.php</span> lo chiama «intermedio», <span class="cod">sconto-corsi.php</span> lo chiama «avanzato». Con quattro tappe che portano ciascuna il proprio nome, due nomi per lo stesso gradino diventano una domanda in più a cui rispondere per email ogni settimana. Va chiuso nella fase 1, quando si tocca comunque quella zona.</p>
+</section>
+
+<section id="rovina">
+  <div class="cifra">13</div>
+  <div class="etichetta">Il capitolo che vi ho chiesto io</div>
+  <h2>Cinque modi di fallire</h2>
+  <p class="guida">Non sono rischi generici: sono i cinque scenari che considero più probabili di quanto sembri leggendo le pagine precedenti, messi in ordine di probabilità.</p>
+
+  <div class="tabella largo">
+    <table>
+      <thead><tr><th>Come muore</th><th>Il segnale d'allarme</th><th>Cosa si fa</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="chiave">Le mille non arrivano</td>
+          <td>A febbraio 2027 le iscritte gratuite sono 300 invece di 1.000</td>
+          <td>Tutta l'aritmetica salta e la Tirata non parte per statuto (soglia 45). <strong>È il motivo per cui la soglia esiste.</strong> Si resta a due tappe e si ricomincia dalla domanda vera: come si portano mille signore su un sito.</td>
+        </tr>
+        <tr>
+          <td class="chiave">Il maestro non c'è</td>
+          <td>La prima scheda arriva in ritardo di dieci giorni</td>
+          <td>La Tirata perde credibilità in una settimana e non la recupera. Panchina di due riserve contattate prima del lancio; mese gratis automatico se una scheda salta.</td>
+        </tr>
+        <tr>
+          <td class="chiave">L'Indice fa male</td>
+          <td>Qualcuna scrive «mi sento giudicata» sotto un post</td>
+          <td>È il segnale che l'Indice è uscito dal privato. Va tolto da ogni vista pubblica lo stesso giorno, senza discutere. Sopravvive solo come curva personale.</td>
+        </tr>
+        <tr>
+          <td class="chiave">Il congelamento offende</td>
+          <td>Ondata di disdette nei tre giorni dopo la fine delle prime prove</td>
+          <td>Si allunga la prova a 60 giorni e si rende lo scongelamento retroattivo e permanente. Meglio convertire meno e più tardi che bruciare il passaparola.</td>
+        </tr>
+        <tr>
+          <td class="chiave">Il commercialista dice no</td>
+          <td>Sui gettoni, sui compensi ai maestri, o sulla parola «diploma»</td>
+          <td>Non cade il piano, cadono tre pezzi: i gettoni diventano un contatore non acquistabile, i compensi cambiano forma, il diploma diventa «attestato». Da chiedere <em>adesso</em>, non a gennaio.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>La versione minima, se tutto il resto salta</h3>
+  <div class="scheda">
+    <div class="titolo">Cosa terrei se potessi tenere una cosa sola</div>
+    <p>Se dovessi buttare via l'ottanta per cento di questo documento &mdash; niente quattro tappe, niente gettoni, niente diploma, niente Tavola &mdash; terrei <strong>due tappe e uno strumento</strong>:</p>
+    <ol>
+      <li><strong>Fontana e Impasto</strong>, cioè esattamente il piano che avevate già, con il livello intero al posto del booleano così che la strada resti aperta.</li>
+      <li><strong>Il Foglio di Prova, gratuito per tutte</strong>, con l'Indice di Sfoglia calcolato a mano dai quattro di voi, in un foglio di calcolo, senza una riga di codice nuova.</li>
+      <li><strong>La Correzione della Settimana</strong>, una sola, scritta da chi di voi sa tirare, pubblicata il lunedì e visibile a tutte.</li>
+    </ol>
+    <p style="margin-bottom:0">Sono tre cose, si fanno entro novembre, e vi dicono in tre mesi la sola cosa che conta sapere prima di costruire il resto: <strong>se una sfoglina è disposta a fotografare la propria sfoglia e ad aspettare che qualcuno la guardi.</strong> Se la risposta è sì, tutto il documento diventa costruibile. Se è no, avete risparmiato un anno.</p>
+  </div>
+</section>
+
+<section id="passi">
+  <div class="cifra">14</div>
+  <div class="etichetta">Cosa decidere, in che ordine</div>
+  <h2>Decisioni prima del codice</h2>
+  <div class="chiusura">
+    <h3 style="margin-top:0">Entro settembre &mdash; le tre che bloccano tutto</h3>
+    <ol>
+      <li><strong>Spostare il Buono Sfoglia dal 1° ottobre al 1° novembre.</strong> È un solo cambio di data ed è urgente: oggi si accende da solo fra un mese con le regole vecchie, aperto a tutte, e poi cambierebbe le regole a gara iniziata. Chi accumula punti a ottobre credendo che contino si sentirà derubata a novembre. Questa è l'unica voce dell'elenco con una scadenza vera.</li>
+      <li><strong>La domanda al commercialista</strong>, tutta insieme: Quota Supporter e contributo unificati o separati, forma dei compensi ai maestri, ammissibilità dei gettoni, e la parola «diploma».</li>
+      <li><strong>Il livello intero al posto del booleano.</strong> Anche pubblicando a novembre solo due tappe, il dato va nato giusto: cambiarlo dopo, con mille utenti, costa dieci volte tanto.</li>
+    </ol>
+    <h3>Entro ottobre &mdash; le persone</h3>
+    <ol start="4">
+      <li><strong>Tre maestri di sfoglia e un cuoco, con un sì vero.</strong> Non «forse», non «vediamo a gennaio»: un sì su un mese preciso di cattedra. Senza questi quattro nomi, le sezioni 05, 06 e 08 sono un esercizio di stile.</li>
+      <li><strong>Chi scrive la Correzione della Settimana</strong> da novembre, ogni lunedì, senza saltarne una. È il lavoro ricorrente più impegnativo di tutto il piano e non è ancora assegnato a nessuno.</li>
+    </ol>
+    <h3>Da confermare, senza fretta</h3>
+    <ol start="6">
+      <li>Durata della prova: 30 giorni, con lo scongelamento permanente descritto alla sezione 04.</li>
+      <li>Prezzi della Tirata e della Tavola: 120 € e 690 € sono ricavati dal costo dei docenti, non dal mercato. Il primo dato vero arriverà dalla prevendita di gennaio &mdash; ed è per quello che serve la prevendita.</li>
+      <li>Le due voci automatiche dell'Indice: rimandate alla fase 2 bis, dopo duecento fotografie vere.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div style="height:2px;background:var(--riga-forte)"></div>
+  <div class="sotto"></div>
+  <p>Piano di lavoro, non un'implementazione: nessuna modifica è stata fatta al plugin. I riferimenti a <span class="cod">points.php</span>, <span class="cod">sezioni.php</span>, <span class="cod">sconto-corsi.php</span>, <span class="cod">buono-sfoglia.php</span>, <span class="cod">prossimo-passo.php</span>, <span class="cod">percorsi-lezioni.php</span> e <span class="cod">calendario.php</span> provengono dal documento «Piano Freemium Gaming» del 28.08.2026 e <strong>non sono stati riverificati qui</strong>: questo deposito contiene la sola cartella <span class="cod">design/</span>. Vanno ricontrollati sul plugin prima di trasformare la sezione 12 in un preventivo.</p>
+  <p>Tutte le cifre delle sezioni 02, 08 e 09 sono ipotesi dichiarate, non previsioni: reggono l'argomento, non il bilancio. Il numero da mettere alla prova per primo non è un prezzo &mdash; è se mille sfogline entrano davvero.</p>
+</footer>
+
+</div>
