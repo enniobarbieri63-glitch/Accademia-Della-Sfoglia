@@ -58,6 +58,7 @@ file: nessuna immagine, nessun file audio, nessuna libreria.
 
 | Comando | Cosa fa |
 |---|---|
+| Cielo | quattro sfondi: Farina, Terracotta, Salvia, Mattina |
 | Aeroplanini | da 1 a 16 |
 | Velocita' | da fermo a 3× |
 | Dimensione | da 0,5× a 2,2× |
@@ -94,6 +95,7 @@ sala comandi, poi uno `<script>` con tutto.
 | `costruisciStriscione(p)` | costruisce nastro, scritta e medaglie (una volta sola) |
 | `aggiornaStriscione(p, dt)` | l'onda, fotogramma per fotogramma |
 | `assegnaCarichi()` | decide chi porta cosa; da chiamare dopo ogni cambio nei comandi |
+| `applicaCielo()` | mette a schermo il cielo scelto, nella versione chiara o scura giusta per il tema in corso |
 | `larghezzaTesto(t, fs)` | misura vera della scritta con un righello nascosto |
 | `motore` | il rombo: due seghe filtrate, un soffio d'aria, il battito dell'elica |
 
@@ -126,6 +128,23 @@ galleria = nuoviVolti(6).concat([
 ```
 
 Quadrate e sui 240px: le medaglie sono tonde e ritagliano al centro.
+
+### Il cielo
+
+Quattro palette (`CIELI`), ognuna con una versione `chiaro` e una `scuro`.
+Non e' un ciclo giorno/notte: sono temi come le tinte dei palloncini, pensati
+per restare leggibili nel tema chiaro o scuro dell'ospite senza toccare
+l'inchiostro del testo. `applicaCielo()` guarda `temaScuro()` (lo stesso
+criterio del foglio di stile: `data-theme`, poi `prefers-color-scheme`) e
+scrive `--ground`, `--ground-2`, `--halo`, `--nube` come stile inline sulla
+radice — vince sempre sul foglio di stile, qualunque tema sia attivo. Un
+`MutationObserver` su `data-theme` e un ascolto su `prefers-color-scheme`
+tengono il cielo coerente se il tema cambia a pagina gia' aperta. La scelta
+si salva in memoria come le altre.
+
+Per aggiungere un quinto cielo: una voce in piu' dentro `CIELI` con i due
+set di colori, un bottone in piu' nel gruppo `.segmenti.cieli` con lo stesso
+`data-cielo`, e il pallino colorato per l'anteprima.
 
 ### Le trappole, gia' pagate una volta
 
