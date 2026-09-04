@@ -1,0 +1,126 @@
+UNBOUNDED QUERIES: 125
+includes/caroselli.php            :170   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/caroselli.php            :456   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/caroselli.php            :520   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC', 'fields' => array( 'ID' ) ) )
+includes/piano-lavoro.php         :749   get_users        no number => all users ()
+includes/piano-lavoro.php         :97    get_posts        explicit -1            ( array( 'post_type' => 'gs_sfoglia', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'meta_key' => 'gs_sfida_id', 'meta_value'
+includes/piano-lavoro.php         :939   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfoglia', 'post_status' => 'publish', 'posts_per_page' => -1, 'date_query' => array( array( 'after' => 'today midnight' ) 
+includes/piatti-estinzione.php    :50    get_posts        explicit -1            ( array( 'post_type' => 'gs_piatto', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' =>
+includes/aiuto.php                :31    get_posts        explicit -1            ( array( 'post_type' => 'gs_aiuto', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'suppress_filters' => true, ) )
+includes/palloncino-gigante.php   :28    get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/palloncino-gigante.php   :144   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/calendario.php           :116   get_users        no number => all users ()
+includes/calendario.php           :428   get_posts        explicit -1            ( array( 'post_type' => 'gs_corso_cal', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_data', 'orderby' => 'meta_value', 'order
+includes/calendario.php           :1870  get_posts        explicit -1            ( array( 'post_type' => 'gs_prenotazione', 'post_status' => 'trash', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', ) )
+includes/calendario.php           :1924  get_posts        explicit -1            ( array( 'post_type' => 'gs_corso_cal', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_data', 'meta_value' => $domani, ) )
+includes/sezioni.php              :196   get_users        no number => all users ()
+includes/sezioni.php              :232   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/teams.php                :28    get_users        explicit -1            ( array( 'meta_key' => 'gs_team', 'meta_value' => $team, 'number' => -1 ) )
+includes/teams.php                :73    get_users        explicit -1            ( array( 'meta_key' => 'gs_team', 'meta_compare' => 'EXISTS', 'number' => -1, ) )
+includes/sconto-corsi.php         :146   get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/faq.php                  :46    get_posts        explicit -1            ( array( 'post_type' => 'gs_faq', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'menu_order date', 'order' => 'ASC', 'suppress_filt
+includes/faq.php                  :460   get_posts        explicit -1            ( array( 'post_type' => 'gs_faq', 'post_status' => array( 'publish', 'trash' ), 'posts_per_page' => -1, 'suppress_filters' => true ) )
+includes/regia.php                :216   get_posts        explicit -1            ( array( 'post_type' => 'gs_direttiva', 'post_status' => 'trash', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', ) )
+includes/artigiani.php            :139   get_posts        explicit -1            ( array( 'post_type' => 'gs_artigiano', 'post_status' => $status, 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' =
+includes/sfoglia-insegna.php      :45    get_posts        explicit -1            ( array( 'post_type' => 'gs_errore_didattico', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'meta_key' 
+includes/promemoria.php           :145   get_users        explicit -1            ( array( 'meta_key' => 'gs_promemoria_ora', 'meta_compare' => 'EXISTS', 'number' => -1 ) )
+includes/promemoria.php           :196   get_users        explicit -1            ( array( 'meta_key' => 'gs_promemoria_ora', 'meta_compare' => 'EXISTS', 'number' => -1 ) )
+includes/sfoglia-misurata.php     :63    get_posts        explicit -1            ( array( 'post_type' => 'gs_misura', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters' =>
+includes/voting.php               :709   get_users        explicit -1            ( array( 'meta_key' => 'gs_points', 'orderby' => 'meta_value_num', 'order' => 'DESC', 'number' => -1, ) )
+includes/voting.php               :68    get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_data_fine', 'orderby' => 'meta_value', 'orde
+includes/voting.php               :110   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_data_fine', 'orderby' => 'meta_value', 'orde
+includes/voting.php               :605   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfoglia', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_sfida_id', 'meta_value' => (int) $sfida_id
+includes/voting.php               :748   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, ) )
+includes/nastro-vetrine.php       :382   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/mail-area-riservata.php  :1383  get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC', 'fields' => array( 'ID', 'display_name', 'user_login' ), 'meta_key' => 'gs_status', 'meta_valu
+includes/scuole-cucina.php        :144   get_posts        explicit -1            ( array( 'post_type' => 'gs_scuola', 'post_status' => $status, 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' => t
+includes/media-backup.php         :138   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfoglia', 'post_status' => array( 'publish', 'trash' ), 'posts_per_page' => -1, 'fields' => 'ids', ) )
+includes/buono-sfoglia.php        :89    get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/buono-sfoglia.php        :299   get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/buono-sfoglia.php        :375   get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/buono-sfoglia.php        :380   get_posts        explicit -1            ( array( 'post_type' => 'gs_messaggio', 'post_status' => 'publish', 'meta_key' => 'gs_dest', 'meta_value' => $uid, 'title' => $titolo_atteso, 'numberp
+includes/notifiche-pref.php       :215   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/esperti.php              :656   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/esperti.php              :679   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/esperti.php              :174   get_posts        explicit -1            ( array( 'post_type' => 'gs_conversazione', 'post_status' => 'publish', 'posts_per_page' => -1, ) )
+includes/letture.php              :94    get_users        no number => all users ( array( 'meta_key' => 'gs_status', 'meta_value' => 'lettore', 'orderby' => 'display_name', ) )
+includes/letture.php              :52    get_posts        explicit -1            ( array( 'post_type' => 'gs_lettura', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', ) )
+includes/letture.php              :382   get_posts        explicit -1            ( array( 'post_type' => 'gs_lettura', 'post_status' => 'trash', 'posts_per_page' => -1 ) )
+includes/export-dati.php          :29    get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/registration.php         :236   get_users        no number => all users ( array( 'meta_key' => 'gs_status', 'meta_value' => 'in_attesa', 'orderby' => 'registered', // Le più recenti in cima (Ennio, 03/09/2026): chi si è 
+includes/streak.php               :130   get_users        explicit -1            ( array( 'meta_key' => 'gs_streak', 'meta_compare' => 'EXISTS', 'number' => -1, ) )
+includes/giuria-turno.php         :68    get_posts        explicit -1            ( array( 'post_type' => 'gs_giuria', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters' =>
+includes/classifica-mensile.php   :43    get_users        explicit -1            ( array( 'meta_key' => $meta_key, 'orderby' => 'meta_value_num', 'order' => 'DESC', 'number' => -1, ) )
+includes/percorsi-lezioni.php     :257   get_posts        explicit -1            ( array( 'post_type' => 'gs_percorso_lezioni', 'post_status' => 'publish', 'posts_per_page' => -1, 'suppress_filters' => true, ) )
+includes/reset.php                :251   get_users        no number => all users ( array( 'meta_key' => GS_ARCHIVIO_GAMING_META, 'orderby' => 'display_name' ) )
+includes/reset.php                :351   get_users        no number => all users ( array( 'meta_key' => GS_ARCHIVIO_GAMING_META, 'fields' => 'ID' ) )
+includes/reset.php                :180   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'any', 'posts_per_page' => -1 ) )
+includes/reset.php                :274   get_posts        explicit -1            ( array( 'post_type' => 'gs_piatto', 'post_status' => array( 'any', 'trash' ), 'posts_per_page' => -1, 'fields' => 'ids' ) )
+includes/reset.php                :389   get_posts        explicit -1            ( array( 'post_type' => $tipo, 'post_status' => $stati_da_cancellare, 'posts_per_page' => -1, 'fields' => 'ids' ) )
+includes/reset.php                :400   get_posts        explicit -1            ( array( 'post_type' => 'gs_sondaggio', 'post_status' => $stati_da_cancellare, 'posts_per_page' => -1, 'fields' => 'ids' ) )
+includes/reset.php                :434   get_posts        explicit -1            ( array( 'post_type' => 'gs_piatto', 'post_status' => $stati_da_cancellare, 'posts_per_page' => -1, 'fields' => 'ids' ) )
+includes/registro.php             :35    get_posts        explicit -1            ( array( 'post_type' => 'gs_corso', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_diploma_rina', 'meta_value' => '1', ) )
+includes/registro.php             :77    get_posts        explicit -1            ( array( 'post_type' => 'gs_prenotazione', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_cal_attestato', 'meta_value' => '1', 
+includes/messaggi.php             :381   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/messaggi.php             :147   get_posts        explicit -1            ( array( 'post_type' => 'gs_messaggio', 'post_status' => 'publish', 'posts_per_page' => -1, 'suppress_filters' => true ) )
+includes/premi-traguardi.php      :67    get_posts        explicit -1            ( array( 'post_type' => 'gs_premio', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters' =>
+includes/conversazioni.php        :439   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/conversazioni.php        :351   get_posts        explicit -1            ( array( 'post_type' => 'gs_conversazione', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'modified', 'order' => 'DESC', ) )
+includes/conversazioni.php        :720   get_posts        explicit -1            ( array( 'post_type' => 'gs_conversazione', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_conv_stato', 'meta_value' => 'attesa
+includes/novita.php               :42    get_posts        explicit -1            ( array( 'post_type' => 'gs_novita', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters' =>
+includes/helpers.php              :697   get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/seasonal.php             :37    get_posts        explicit -1            ( array( 'post_type' => 'gs_barometro', 'post_status' => 'publish', 'posts_per_page' => -1, ) )
+includes/token.php                :363   get_posts        explicit -1            ( array( 'post_type' => 'gs_conversazione', 'post_status' => 'publish', 'posts_per_page' => -1, ) )
+includes/pianificazione-anno.php  :104   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, 'suppress_filters' => true, ) )
+includes/pianificazione-anno.php  :154   get_posts        explicit -1            ( array( 'post_type' => 'gs_corso', 'post_status' => 'publish', 'posts_per_page' => -1, 'suppress_filters' => true, ) )
+includes/ricettario.php           :89    get_posts        explicit -1            ( array( 'post_type' => 'gs_ricetta', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC', 'meta_key' => 'gs_st
+includes/control-panel.php        :496   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/control-panel.php        :906   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/control-panel.php        :1096  get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/control-panel.php        :444   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', ) )
+includes/control-panel.php        :663   get_posts        explicit -1            ( array( 'post_type' => 'gs_corso', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids' ) )
+includes/control-panel.php        :668   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfoglia', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'date_query' => array( array( 'after' => 
+includes/madrina.php              :386   get_posts        explicit -1            ( array( 'post_type' => 'gs_abbinamento', 'post_status' => 'publish', 'posts_per_page' => -1, 'meta_key' => 'gs_stato', 'meta_value' => 'attivo', ) )
+includes/compleanni.php           :47    get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/compleanni.php           :351   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/compleanni.php           :136   get_posts        explicit -1            ( array( 'post_type' => 'gs_augurio', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC', 'meta_query' => array
+includes/percorso-staffetta.php   :87    get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/testimonianze.php        :54    get_posts        explicit -1            ( array( 'post_type' => 'gs_testimonianza', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'meta_key' => 
+includes/spiegazioni.php          :498   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/sfogline-extra.php       :512   get_users        no number => all users ( array( 'meta_query' => array( array( 'key' => 'gs_status', 'value' => array( 'rifiutata', 'eliminata' ), 'compare' => 'IN' ), ), 'orderby' => 'displ
+includes/sfogline-extra.php       :602   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/sfogline-extra.php       :637   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/sfogline-extra.php       :862   get_users        no number => all users ( array( 'meta_key' => 'gs_status', 'meta_value' => 'sospesa' ) )
+includes/sfogline-extra.php       :1316  get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/biografia.php            :144   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/biografia.php            :325   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/inbox.php                :74    get_posts        explicit -1            ( array( 'post_type' => 'gs_msg_interno', 'post_status' => $stato, 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters' 
+includes/inbox.php                :242   get_posts        explicit -1            ( array( 'post_type' => 'gs_msg_interno', 'posts_per_page' => -1, 'post_status' => array( 'publish', 'trash' ), ) )
+includes/matterello-parlante.php  :50    get_posts        explicit -1            ( array( 'post_type' => 'gs_voce', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'meta_key' => 'gs_stato
+includes/diagnostica.php          :252   get_users        no number => all users ( array( 'fields' => 'all' ) )
+includes/diagnostica.php          :282   get_users        no number => all users ( array( 'fields' => array( 'ID', 'display_name' ) ) )
+includes/year-prize.php           :27    get_users        explicit -1            ( array( 'meta_key' => $meta_key, 'orderby' => 'meta_value_num', 'order' => 'DESC', 'number' => -1, ) )
+includes/testamento-sfoglina.php  :96    get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/moderazione.php          :63    get_posts        explicit -1            ( array( 'post_type' => 'gs_conversazione', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/moderazione.php          :73    get_posts        explicit -1            ( array( 'post_type' => 'gs_messaggio', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/moderazione.php          :89    get_posts        explicit -1            ( array( 'post_type' => 'gs_msg_interno', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/moderazione.php          :101   get_posts        explicit -1            ( array( 'post_type' => 'gs_aiuto', 'post_status' => 'publish', 'posts_per_page' => -1, 'suppress_filters' => true ) )
+includes/moderazione.php          :114   get_posts        explicit -1            ( array( 'post_type' => 'gs_prenotazione', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/moderazione.php          :126   get_posts        explicit -1            ( array( 'post_type' => 'gs_augurio', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/moderazione.php          :135   get_posts        explicit -1            ( array( 'post_type' => 'gs_lettura', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/locandine.php            :64    get_posts        explicit -1            ( array( 'post_type' => 'gs_locandina', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters'
+includes/area-pro.php             :359   get_users        no number => all users ( array( 'orderby' => 'display_name' ) )
+includes/area-pro.php             :344   get_posts        explicit -1            ( array( 'post_type' => 'gs_corso', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/sondaggi.php             :63    get_posts        explicit -1            ( array( 'post_type' => 'gs_sondaggio', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'suppress_filters'
+includes/cassaforte-sapere.php    :58    get_users        no number => all users ( array( 'fields' => 'ID' ) )
+includes/cassaforte-sapere.php    :45    get_posts        explicit -1            ( array( 'post_type' => 'gs_cassaforte', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'ASC', 'suppress_filters'
+includes/shortcodes.php           :1182  get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', ) )
+includes/shortcodes.php           :1208  get_posts        explicit -1            ( array( 'post_type' => 'gs_ingrediente', 'post_status' => 'publish', 'posts_per_page' => -1 ) )
+includes/lezioni-video.php        :399   get_users        explicit -1            ( array( 'meta_key' => 'gs_lezioni_viste', 'meta_compare' => 'EXISTS', 'number' => -1 ) )
+includes/lezioni-video.php        :295   get_posts        explicit -1            ( array( 'post_type' => 'gs_lezione', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC', 'suppress_filters' =
+includes/palloncini-sfogline.php  :131   get_users        no number => all users ( array( 'orderby' => 'display_name', 'order' => 'ASC' ) )
+includes/seo.php                  :272   get_posts        explicit -1            ( array( 'post_type' => 'gs_sfida', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', ) )
+includes/cruscotto.php            :66    get_posts        explicit -1            ( array( 'post_type' => $m['cpt'], 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'date', 'order' => 'DESC', 'fields' => 'ids', ) )
+includes/stato-generale.php       :55    get_users        no number => all users ()
+includes/stato-generale.php       :103   get_users        no number => all users ( array( 'fields' => 'ID' ) )
+gaming-sfogline.php               :229   get_users        no number => all users ( array( 'meta_key' => 'gs_team', 'meta_value' => 'Team Emilia-Romagna', 'fields' => 'ID' ) )

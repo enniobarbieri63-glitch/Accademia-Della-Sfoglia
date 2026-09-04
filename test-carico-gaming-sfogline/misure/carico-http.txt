@@ -1,0 +1,18 @@
+### polling 1000 utenti, 20 in parallelo
+--- gs_voli_preleva
+requests=1000 codes={'200': 1000}
+avg=177ms  p50=163ms  p90=275ms  p99=432ms  max=491ms
+avg_size=0.0KB  total=0.0MB
+--- gs_palloncini_ultimo
+requests=1000 codes={'200': 1000}
+avg=139ms  p50=132ms  p90=220ms  p99=339ms  max=386ms
+avg_size=0.1KB  total=0.1MB
+--- gs_palloncino_gigante_ultimo
+requests=1000 codes={'200': 1000}
+avg=149ms  p50=139ms  p90=232ms  p99=340ms  max=399ms
+avg_size=0.0KB  total=0.0MB
+
+### carico misto 1000 utenti x (1 pagina + 3 poll), 40 in parallelo
+requests=4000 codes={'200': 4000}
+avg=1167ms  p50=440ms  p90=2612ms  p99=7167ms  max=12087ms
+avg_size=184.6KB  total=721.0MB

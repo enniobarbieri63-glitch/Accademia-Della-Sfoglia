@@ -1,0 +1,23 @@
+SEZIONE PANNELLO                                 ms    query    KB html
+gs_pannello_mail_generale                      5706     4762     2411.9
+gs_pannello_iscritti                           5677     4666     3441.4
+gs_pannello_messaggi_sfogline                  5252     3866     1562.1
+gs_pannello_cassaforte_sapere                  1392     2007       55.0
+gs_pannello_giudici_gara                        964     2005      876.8
+gs_pannello_stato_generale                      589     1005       21.4
+gs_pannello_token                               522     1001      293.2
+gs_pannello_vuoi_anche                          517     1001        2.5
+gs_pannello_moderazione                         102      132       67.9
+gs_pannello_aiuto                                33       65       33.8
+gs_pannello_artigiani                            28       54       34.3
+gs_pannello_cruscotto                            36       54        5.5
+gs_pannello_scuole                               29       54       34.3
+gs_pannello_calendario                           64       36      212.0
+gs_pannello_riepilogo                           243       20        2.7
+gs_pannello_diagnostica                         236       16      601.4
+gs_pannello_menu_pagine                           5       10        2.2
+gs_pannello_messaggi                            229       10       62.9
+gs_pannello_caroselli                           161        8        7.1
+gs_pannello_palloncini_sfogline                 227        8      141.9
+
+TOTALE 85 sezioni: 25633 ms, 20958 query, 26.7 MB html
