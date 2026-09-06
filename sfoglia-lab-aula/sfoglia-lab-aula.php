@@ -36,8 +36,9 @@ $sla_modules = array(
 	'quiz.php',          // motore dei quiz a scelta singola/multipla
 	'classi.php',        // pannello docente: crea classe, gestisce l'elenco, assegna
 	'ingresso.php',      // ingresso studente: codice classe + nickname, sessione
-	'svolgimento.php',   // lo studente svolge l'esercizio assegnato
-	'cruscotto.php',     // le tre viste del docente + esportazione CSV
+	'svolgimento.php',   // lo studente svolge l'esercizio o il quiz assegnato
+	'cruscotto.php',     // Vista 1 (chi ha consegnato) e Vista 3 + esportazione CSV
+	'vista-errori.php',  // Vista 2: dove sbaglia la classe
 	'shortcodes.php',    // registrazione degli shortcode pubblici
 );
 

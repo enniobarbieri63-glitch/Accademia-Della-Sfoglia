@@ -74,3 +74,13 @@
 .sla-domanda-esito.sla-sbagliata { border-color: #a93b27; background: #fbf2ef; }
 .sla-domanda-esito p { margin: 0 0 6px; font-size: 14px; }
 .sla-domanda-esito .sla-spiegazione { color: #6b5a4c; font-size: 13px; margin-bottom: 0; }
+
+/* Vista 2 — dove sbaglia la classe */
+.sla-errori { display: flex; flex-direction: column; gap: 16px; }
+.sla-errore-riga { max-width: 620px; }
+.sla-errore-testa { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; margin-bottom: 4px; }
+.sla-errore-etichetta { font-weight: 500; }
+.sla-errore-percentuale { font-variant-numeric: tabular-nums; color: #a93b27; font-weight: 600; }
+.sla-errore-barra { background: #eee1cd; border-radius: 3px; height: 8px; overflow: hidden; }
+.sla-errore-riempimento { background: #a93b27; height: 100%; }
+.sla-errore-origine { font-size: 12.5px; color: #6b5a4c; margin-top: 4px; }

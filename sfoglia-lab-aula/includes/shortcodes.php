@@ -198,7 +198,46 @@ function sla_render_riquadro_classe( $classe ) {
 					) ); ?>">Scarica CSV</a>
 			</details>
 		<?php endif; ?>
+
+		<?php sla_render_errori_frequenti( $classe_id ); ?>
 	</div>
+	<?php
+}
+
+/**
+ * La Vista 2: dove sbaglia la classe, su tutte le assegnazioni insieme
+ * (non solo l'ultima). Non mostra nulla finché non c'è almeno un errore
+ * registrato — un elenco vuoto qui è una buona notizia, non va forzato a
+ * comparire comunque.
+ */
+function sla_render_errori_frequenti( $classe_id ) {
+	$righe = sla_errori_frequenti( $classe_id );
+	if ( empty( $righe ) ) {
+		return;
+	}
+	?>
+	<details class="sla-blocco" open>
+		<summary>Dove sbaglia la classe</summary>
+		<div class="sla-errori">
+			<?php foreach ( $righe as $riga ) : ?>
+				<div class="sla-errore-riga">
+					<div class="sla-errore-testa">
+						<span class="sla-errore-etichetta"><?php echo esc_html( $riga['etichetta'] ); ?></span>
+						<span class="sla-errore-percentuale"><?php echo esc_html( $riga['percentuale'] ); ?>%</span>
+					</div>
+					<div class="sla-errore-barra">
+						<div class="sla-errore-riempimento" style="width: <?php echo esc_attr( $riga['percentuale'] ); ?>%;"></div>
+					</div>
+					<div class="sla-errore-origine">
+						<?php echo esc_html( $riga['origine'] ); ?>
+						<?php if ( ! empty( $riga['suggerimento'] ) ) : ?>
+							— <?php echo esc_html( $riga['suggerimento'] ); ?>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</details>
 	<?php
 }
 
