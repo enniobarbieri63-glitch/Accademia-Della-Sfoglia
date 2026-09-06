@@ -1,0 +1,56 @@
+/* sla.css — stile minimo, funzionale: pensato per essere leggibile dentro
+   qualsiasi tema WordPress dell'istituto, non per essere il tema stesso. */
+
+.sla-pannello, .sla-ingresso, .sla-svolgimento {
+	font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	max-width: 760px;
+	color: #2a1f17;
+}
+
+.sla-riquadro, .sla-classe {
+	border: 1px solid #dcccb6;
+	border-radius: 4px;
+	padding: 18px 20px;
+	margin-bottom: 18px;
+	background: #faf6ef;
+}
+
+.sla-classe-testa h4 { margin: 0 0 4px; font-size: 20px; }
+.sla-classe-meta { margin: 0 0 6px; color: #6b5a4c; font-size: 13px; }
+.sla-codice { margin: 0; }
+.sla-codice-valore {
+	font-size: 16px; letter-spacing: 0.08em; background: #f0e4d0;
+	padding: 2px 8px; border-radius: 3px;
+}
+
+.sla-blocco { margin-top: 14px; border-top: 1px solid #e6dac6; padding-top: 12px; }
+.sla-blocco summary { cursor: pointer; font-weight: 600; }
+
+.sla-form { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; max-width: 420px; }
+.sla-form label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.sla-form input, .sla-form select, .sla-form textarea {
+	padding: 7px 9px; border: 1px solid #c9b79c; border-radius: 3px; font-size: 14px;
+}
+.sla-form button {
+	align-self: flex-start; background: #a93b27; color: #fff; border: 0;
+	padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 14px;
+}
+.sla-form button:hover { background: #8a2f1f; }
+.sla-esito { font-size: 13px; }
+
+.sla-link {
+	background: none; border: 0; color: #a93b27; text-decoration: underline;
+	cursor: pointer; padding: 0; font-size: 13px;
+}
+
+.sla-tabella { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+.sla-tabella th, .sla-tabella td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e6dac6; }
+.sla-tabella th { color: #6b5a4c; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+
+.sla-avviso { color: #8a2f1f; font-size: 14px; }
+.sla-vuoto { color: #6b5a4c; font-style: italic; }
+
+.sla-esito-esercizio { margin-top: 14px; padding: 12px 14px; border-radius: 4px; }
+.sla-esito-esercizio.sla-fascia-verde { background: #e5efdd; }
+.sla-esito-esercizio.sla-fascia-giallo { background: #faf0d2; }
+.sla-esito-esercizio.sla-fascia-rosso { background: #f6e0da; }
