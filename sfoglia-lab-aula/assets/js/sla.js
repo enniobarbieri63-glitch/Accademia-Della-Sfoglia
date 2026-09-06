@@ -18,7 +18,16 @@
 		corpo.append('action', 'sla_' + azione);
 		corpo.append('nonce', nonce);
 		Object.keys(dati).forEach(function (chiave) {
-			corpo.append(chiave, dati[chiave]);
+			var valore = dati[chiave];
+			// Un campo con più valori (le caselle di un quiz a scelta
+			// multipla, tutte con lo stesso name="risposte[d3][]") va
+			// riaggiunto una volta per valore, con la stessa chiave —
+			// altrimenti PHP ne riceve solo l'ultimo.
+			if (Array.isArray(valore)) {
+				valore.forEach(function (v) { corpo.append(chiave, v); });
+			} else {
+				corpo.append(chiave, valore);
+			}
 		});
 		return fetch(slaDati.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: corpo })
 			.then(function (r) { return r.json(); });
@@ -26,7 +35,19 @@
 
 	function datiForm(form) {
 		var risultato = {};
-		new FormData(form).forEach(function (valore, chiave) { risultato[chiave] = valore; });
+		new FormData(form).forEach(function (valore, chiave) {
+			if (Object.prototype.hasOwnProperty.call(risultato, chiave)) {
+				// Seconda occorrenza della stessa chiave: da qui in poi è un
+				// array (checkbox multiple con lo stesso name).
+				if (Array.isArray(risultato[chiave])) {
+					risultato[chiave].push(valore);
+				} else {
+					risultato[chiave] = [risultato[chiave], valore];
+				}
+			} else {
+				risultato[chiave] = valore;
+			}
+		});
 		return risultato;
 	}
 
@@ -100,6 +121,30 @@
 					box.hidden = false;
 					box.className = 'sla-esito-esercizio sla-fascia-' + r.data.fascia;
 					box.innerHTML = '<strong>Punteggio: ' + r.data.punteggio + '/100</strong><p>' + r.data.messaggio + '</p>';
+					form.remove();
+				});
+				break;
+
+			case 'consegna-quiz':
+				var contenitoreQuiz = form.closest('.sla-quiz');
+				dati.assegnazione_id = contenitoreQuiz.getAttribute('data-assegnazione-id');
+				chiamata('consegna', dati, slaDati.noncePubblico).then(function (r) {
+					var box = contenitoreQuiz.querySelector('.sla-esito-quiz');
+					if (!r.success) { mostraEsito(form, r.data.message, false); return; }
+
+					var html = '<p class="sla-quiz-punteggio sla-fascia-' + r.data.fascia + '">'
+						+ '<strong>Punteggio: ' + r.data.punteggio + '/100</strong></p>';
+
+					r.data.domande.forEach(function (d, indice) {
+						var dett = r.data.dettaglio[d.id] || { corretta: false };
+						html += '<div class="sla-domanda-esito ' + (dett.corretta ? 'sla-corretta' : 'sla-sbagliata') + '">'
+							+ '<p>' + (indice + 1) + '. ' + d.testo + (dett.corretta ? ' — giusta' : ' — sbagliata') + '</p>'
+							+ '<p class="sla-spiegazione">' + d.spiegazione + '</p>'
+							+ '</div>';
+					});
+
+					box.hidden = false;
+					box.innerHTML = html;
 					form.remove();
 				});
 				break;

@@ -142,16 +142,26 @@ function sla_render_riquadro_classe( $classe ) {
 		</details>
 
 		<details class="sla-blocco" open>
-			<summary>Assegna un esercizio</summary>
+			<summary>Assegna un esercizio o un quiz</summary>
 			<form class="sla-form" data-sla-azione="assegna-esercizio">
-				<label>Esercizio
-					<select name="esercizio">
-						<?php foreach ( $catalogo as $slug => $es ) : ?>
-							<option value="<?php echo esc_attr( $slug ); ?>">
-								<?php echo esc_html( $es['titolo'] ); ?>
-								<?php echo ! empty( $es['esempio'] ) ? ' (dati di esempio)' : ''; ?>
-							</option>
-						<?php endforeach; ?>
+				<label>Contenuto
+					<select name="contenuto">
+						<optgroup label="Esercizi">
+							<?php foreach ( $catalogo as $slug => $es ) : ?>
+								<option value="esercizio|<?php echo esc_attr( $slug ); ?>">
+									<?php echo esc_html( $es['titolo'] ); ?>
+									<?php echo ! empty( $es['esempio'] ) ? ' (dati di esempio)' : ''; ?>
+								</option>
+							<?php endforeach; ?>
+						</optgroup>
+						<optgroup label="Quiz">
+							<?php foreach ( sla_catalogo_quiz() as $slug => $qz ) : ?>
+								<option value="quiz|<?php echo esc_attr( $slug ); ?>">
+									<?php echo esc_html( $qz['titolo'] ); ?>
+									<?php echo ! empty( $qz['esempio'] ) ? ' (dati di esempio)' : ''; ?>
+								</option>
+							<?php endforeach; ?>
+						</optgroup>
 					</select>
 				</label>
 				<label>Scadenza (facoltativa)
@@ -238,34 +248,82 @@ function sla_render_svolgimento( $sessione ) {
 	<div class="sla-svolgimento">
 		<p class="sla-benvenuto">Ciao, <strong><?php echo esc_html( $sessione['nickname'] ); ?></strong>.</p>
 
-		<?php if ( ! $assegnazione ) : ?>
-			<p class="sla-vuoto">Non c'è ancora nessun esercizio assegnato. Torna più tardi.</p>
-		<?php else :
-			$slug      = get_post_meta( $assegnazione->ID, 'sla_esercizio', true );
-			$esercizio = sla_get_esercizio( $slug );
-			$puo       = sla_puo_tentare( $assegnazione->ID, $sessione['studente_id'] );
+		<?php
+		if ( ! $assegnazione ) :
 			?>
-			<div class="sla-esercizio" data-assegnazione-id="<?php echo esc_attr( $assegnazione->ID ); ?>">
-				<h3><?php echo esc_html( $esercizio['titolo'] ); ?></h3>
-				<?php if ( ! empty( $esercizio['esempio'] ) ) : ?>
-					<p class="sla-avviso">Valori di esempio, non ancora validati dai maestri.</p>
-				<?php endif; ?>
-				<p><?php echo esc_html( $esercizio['enunciato'] ); ?></p>
+			<p class="sla-vuoto">Non c'è ancora nessun esercizio assegnato. Torna più tardi.</p>
+			<?php
+		elseif ( 'quiz' === sla_tipo_assegnazione( $assegnazione->ID ) ) :
+			sla_render_svolgimento_quiz( $assegnazione, $sessione );
+		else :
+			sla_render_svolgimento_esercizio( $assegnazione, $sessione );
+		endif;
+		?>
+	</div>
+	<?php
+}
 
-				<?php if ( $puo ) : ?>
-					<form class="sla-form" data-sla-azione="consegna">
-						<label>Il tuo valore (<?php echo esc_html( $esercizio['unita'] ); ?>)
-							<input type="number" step="0.01" name="valore" required>
-						</label>
-						<button type="submit">Consegna</button>
-					</form>
-				<?php else : ?>
-					<p class="sla-avviso">Hai già usato tutti i tentativi disponibili.</p>
-				<?php endif; ?>
-
-				<div class="sla-esito-esercizio" hidden></div>
-			</div>
+function sla_render_svolgimento_esercizio( $assegnazione, $sessione ) {
+	$slug      = get_post_meta( $assegnazione->ID, 'sla_esercizio', true );
+	$esercizio = sla_get_esercizio( $slug );
+	$puo       = sla_puo_tentare( $assegnazione->ID, $sessione['studente_id'] );
+	?>
+	<div class="sla-esercizio" data-assegnazione-id="<?php echo esc_attr( $assegnazione->ID ); ?>">
+		<h3><?php echo esc_html( $esercizio['titolo'] ); ?></h3>
+		<?php if ( ! empty( $esercizio['esempio'] ) ) : ?>
+			<p class="sla-avviso">Valori di esempio, non ancora validati dai maestri.</p>
 		<?php endif; ?>
+		<p><?php echo esc_html( $esercizio['enunciato'] ); ?></p>
+
+		<?php if ( $puo ) : ?>
+			<form class="sla-form" data-sla-azione="consegna">
+				<label>Il tuo valore (<?php echo esc_html( $esercizio['unita'] ); ?>)
+					<input type="number" step="0.01" name="valore" required>
+				</label>
+				<button type="submit">Consegna</button>
+			</form>
+		<?php else : ?>
+			<p class="sla-avviso">Hai già usato tutti i tentativi disponibili.</p>
+		<?php endif; ?>
+
+		<div class="sla-esito-esercizio" hidden></div>
+	</div>
+	<?php
+}
+
+function sla_render_svolgimento_quiz( $assegnazione, $sessione ) {
+	$slug = get_post_meta( $assegnazione->ID, 'sla_esercizio', true );
+	$quiz = sla_get_quiz( $slug );
+	$puo  = sla_puo_tentare( $assegnazione->ID, $sessione['studente_id'] );
+	?>
+	<div class="sla-quiz" data-assegnazione-id="<?php echo esc_attr( $assegnazione->ID ); ?>">
+		<h3><?php echo esc_html( $quiz['titolo'] ); ?></h3>
+		<?php if ( ! empty( $quiz['esempio'] ) ) : ?>
+			<p class="sla-avviso">Domande di esempio, non ancora la banca completa.</p>
+		<?php endif; ?>
+
+		<?php if ( $puo ) : ?>
+			<form class="sla-form sla-form-quiz" data-sla-azione="consegna-quiz">
+				<?php foreach ( $quiz['domande'] as $indice => $d ) : ?>
+					<fieldset class="sla-domanda">
+						<legend><?php echo ( $indice + 1 ) . '. ' . esc_html( $d['testo'] ); ?></legend>
+						<?php foreach ( $d['opzioni'] as $lettera => $testo ) : ?>
+							<label class="sla-opzione">
+								<input type="<?php echo 'multipla' === $d['tipo'] ? 'checkbox' : 'radio'; ?>"
+									name="risposte[<?php echo esc_attr( $d['id'] ); ?>]<?php echo 'multipla' === $d['tipo'] ? '[]' : ''; ?>"
+									value="<?php echo esc_attr( $lettera ); ?>">
+								<?php echo esc_html( $testo ); ?>
+							</label>
+						<?php endforeach; ?>
+					</fieldset>
+				<?php endforeach; ?>
+				<button type="submit">Consegna il quiz</button>
+			</form>
+		<?php else : ?>
+			<p class="sla-avviso">Hai già usato tutti i tentativi disponibili.</p>
+		<?php endif; ?>
+
+		<div class="sla-esito-quiz" hidden></div>
 	</div>
 	<?php
 }

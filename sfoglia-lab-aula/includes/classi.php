@@ -117,11 +117,17 @@ function sla_rigenera_codice( $classe_id ) {
 }
 
 /**
- * Assegna un esercizio del catalogo a una classe.
+ * Assegna un esercizio o un quiz del catalogo a una classe.
+ *
+ * @param string $tipo 'esercizio' o 'quiz' — decide in quale catalogo
+ *                     cercare $slug (esercizi.php o quiz.php).
  */
-function sla_assegna_esercizio( $classe_id, $slug, $scadenza, $tentativi, $vale_voto ) {
-	if ( ! sla_get_esercizio( $slug ) ) {
-		return new WP_Error( 'sla_esercizio_sconosciuto', 'Esercizio non riconosciuto.' );
+function sla_assegna_esercizio( $classe_id, $tipo, $slug, $scadenza, $tentativi, $vale_voto ) {
+	$tipo = in_array( $tipo, array( 'esercizio', 'quiz' ), true ) ? $tipo : 'esercizio';
+
+	$contenuto = 'quiz' === $tipo ? sla_get_quiz( $slug ) : sla_get_esercizio( $slug );
+	if ( ! $contenuto ) {
+		return new WP_Error( 'sla_contenuto_sconosciuto', 'Contenuto non riconosciuto.' );
 	}
 
 	$assegnazione_id = wp_insert_post( array(
@@ -135,6 +141,7 @@ function sla_assegna_esercizio( $classe_id, $slug, $scadenza, $tentativi, $vale_
 		return $assegnazione_id;
 	}
 
+	update_post_meta( $assegnazione_id, 'sla_tipo', $tipo );
 	update_post_meta( $assegnazione_id, 'sla_esercizio', sanitize_key( $slug ) );
 	update_post_meta( $assegnazione_id, 'sla_apertura', current_time( 'mysql' ) );
 	update_post_meta( $assegnazione_id, 'sla_scadenza', sla_clean( $scadenza ) );
@@ -142,6 +149,16 @@ function sla_assegna_esercizio( $classe_id, $slug, $scadenza, $tentativi, $vale_
 	update_post_meta( $assegnazione_id, 'sla_vale_voto', $vale_voto ? '1' : '' );
 
 	return $assegnazione_id;
+}
+
+/**
+ * Il tipo di un'assegnazione ('esercizio' o 'quiz'). Le assegnazioni create
+ * prima dell'introduzione dei quiz non hanno questo meta: si considerano
+ * 'esercizio', il tipo che esisteva allora.
+ */
+function sla_tipo_assegnazione( $assegnazione_id ) {
+	$tipo = get_post_meta( $assegnazione_id, 'sla_tipo', true );
+	return in_array( $tipo, array( 'esercizio', 'quiz' ), true ) ? $tipo : 'esercizio';
 }
 
 /**
@@ -220,9 +237,18 @@ function sla_ajax_assegna_esercizio() {
 		wp_send_json_error( array( 'message' => 'Non hai accesso a questa classe.' ) );
 	}
 
+	// Il menu unico del pannello elenca esercizi e quiz insieme: ogni
+	// opzione porta il valore "tipo|slug" per sapere in quale catalogo
+	// cercare (vedi shortcodes.php, sla_render_riquadro_classe()).
+	$contenuto = sla_clean( $_POST['contenuto'] ?? '' );
+	$parti     = explode( '|', $contenuto, 2 );
+	$tipo      = $parti[0] ?? 'esercizio';
+	$slug      = $parti[1] ?? '';
+
 	$assegnazione_id = sla_assegna_esercizio(
 		$classe_id,
-		$_POST['esercizio'] ?? '',
+		$tipo,
+		$slug,
 		$_POST['scadenza'] ?? '',
 		$_POST['tentativi'] ?? 3,
 		! empty( $_POST['vale_voto'] )

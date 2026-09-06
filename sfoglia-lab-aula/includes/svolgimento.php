@@ -56,12 +56,12 @@ function sla_puo_tentare( $assegnazione_id, $studente_id ) {
 }
 
 /**
- * Registra un tentativo, calcola il punteggio e lo ritorna insieme al
- * messaggio del maestro per la fascia ottenuta. Non verifica i permessi:
- * chi chiama (l'handler AJAX qui sotto) deve aver già controllato la
- * sessione dello studente.
+ * Registra un tentativo su un esercizio numerico, calcola il punteggio e lo
+ * ritorna insieme al messaggio del maestro per la fascia ottenuta. Non
+ * verifica i permessi: chi chiama (l'handler AJAX qui sotto) deve aver già
+ * controllato la sessione dello studente.
  */
-function sla_registra_tentativo( $assegnazione_id, $studente_id, $valore ) {
+function sla_registra_tentativo_esercizio( $assegnazione_id, $studente_id, $valore ) {
 	$slug      = get_post_meta( $assegnazione_id, 'sla_esercizio', true );
 	$esercizio = sla_get_esercizio( $slug );
 	if ( ! $esercizio ) {
@@ -98,6 +98,49 @@ function sla_registra_tentativo( $assegnazione_id, $studente_id, $valore ) {
 	);
 }
 
+/**
+ * Registra un tentativo su un quiz: valuta le risposte con
+ * sla_valuta_quiz() e salva sia il punteggio complessivo sia il dettaglio
+ * domanda per domanda (serve alla Vista 2 del cruscotto, per capire su
+ * quale argomento la classe sbaglia di più).
+ */
+function sla_registra_tentativo_quiz( $assegnazione_id, $studente_id, $risposte ) {
+	$slug = get_post_meta( $assegnazione_id, 'sla_esercizio', true );
+	$quiz = sla_get_quiz( $slug );
+	if ( ! $quiz ) {
+		return new WP_Error( 'sla_quiz_sconosciuto', 'Quiz non riconosciuto.' );
+	}
+
+	$valutazione = sla_valuta_quiz( is_array( $risposte ) ? $risposte : array(), $quiz['domande'] );
+	$fascia      = sla_fascia_punteggio( $valutazione['punteggio'] );
+
+	$tentativo_id = wp_insert_post( array(
+		'post_type'   => 'sla_tentativo',
+		'post_title'  => sprintf( 'Tentativo studente #%d', $studente_id ),
+		'post_parent' => (int) $assegnazione_id,
+		'post_status' => 'publish',
+		'meta_input'  => array(
+			'sla_studente_id' => (int) $studente_id,
+			'sla_punteggio'   => $valutazione['punteggio'],
+			'sla_dettaglio'   => wp_json_encode( $valutazione['dettaglio'] ),
+			'sla_stato'       => 'consegnato',
+			'sla_data'        => current_time( 'mysql' ),
+		),
+	), true );
+
+	if ( is_wp_error( $tentativo_id ) ) {
+		return $tentativo_id;
+	}
+
+	return array(
+		'tentativo_id' => $tentativo_id,
+		'punteggio'    => $valutazione['punteggio'],
+		'fascia'       => $fascia,
+		'dettaglio'    => $valutazione['dettaglio'],
+		'domande'      => $quiz['domande'],
+	);
+}
+
 // -----------------------------------------------------------------------------
 // AJAX
 // -----------------------------------------------------------------------------
@@ -123,7 +166,24 @@ function sla_ajax_consegna() {
 		wp_send_json_error( array( 'message' => 'Hai già usato tutti i tentativi disponibili per questo esercizio.' ) );
 	}
 
-	$risultato = sla_registra_tentativo( $assegnazione_id, $sessione['studente_id'], $_POST['valore'] ?? 0 );
+	$tipo = sla_tipo_assegnazione( $assegnazione_id );
+
+	if ( 'quiz' === $tipo ) {
+		$risposte_grezze = wp_unslash( $_POST['risposte'] ?? array() );
+		$risposte        = array();
+		if ( is_array( $risposte_grezze ) ) {
+			foreach ( $risposte_grezze as $id_domanda => $valore ) {
+				$id_domanda = sanitize_key( $id_domanda );
+				$risposte[ $id_domanda ] = is_array( $valore )
+					? array_map( 'sanitize_text_field', $valore )
+					: sanitize_text_field( $valore );
+			}
+		}
+		$risultato = sla_registra_tentativo_quiz( $assegnazione_id, $sessione['studente_id'], $risposte );
+	} else {
+		$risultato = sla_registra_tentativo_esercizio( $assegnazione_id, $sessione['studente_id'], $_POST['valore'] ?? 0 );
+	}
+
 	if ( is_wp_error( $risultato ) ) {
 		wp_send_json_error( array( 'message' => $risultato->get_error_message() ) );
 	}

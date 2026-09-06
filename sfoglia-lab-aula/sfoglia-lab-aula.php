@@ -33,6 +33,7 @@ $sla_modules = array(
 	'cpt.php',           // custom post type: classe, studente, assegnazione, tentativo
 	'punteggio.php',     // calcolo del punteggio per scarto dal valore corretto
 	'esercizi.php',      // catalogo degli esercizi (dati di esempio, in attesa dei maestri)
+	'quiz.php',          // motore dei quiz a scelta singola/multipla
 	'classi.php',        // pannello docente: crea classe, gestisce l'elenco, assegna
 	'ingresso.php',      // ingresso studente: codice classe + nickname, sessione
 	'svolgimento.php',   // lo studente svolge l'esercizio assegnato

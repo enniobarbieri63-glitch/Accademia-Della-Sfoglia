@@ -56,3 +56,21 @@
 .sla-esito-esercizio.sla-fascia-verde { background: #e5efdd; }
 .sla-esito-esercizio.sla-fascia-giallo { background: #faf0d2; }
 .sla-esito-esercizio.sla-fascia-rosso { background: #f6e0da; }
+
+/* quiz */
+.sla-domanda { border: 0; padding: 0; margin: 0 0 18px; max-width: 560px; }
+.sla-domanda legend { font-weight: 600; margin-bottom: 8px; padding: 0; white-space: normal; }
+.sla-opzione { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; margin-bottom: 6px; font-weight: 400; }
+.sla-opzione input { margin-top: 3px; }
+
+.sla-esito-quiz { margin-top: 14px; }
+.sla-quiz-punteggio { padding: 10px 14px; border-radius: 4px; margin: 0 0 14px; }
+.sla-quiz-punteggio.sla-fascia-verde { background: #e5efdd; }
+.sla-quiz-punteggio.sla-fascia-giallo { background: #faf0d2; }
+.sla-quiz-punteggio.sla-fascia-rosso { background: #f6e0da; }
+
+.sla-domanda-esito { padding: 10px 14px; border-left: 3px solid; margin-bottom: 10px; max-width: 560px; }
+.sla-domanda-esito.sla-corretta { border-color: #5c7a4a; background: #f2f6ef; }
+.sla-domanda-esito.sla-sbagliata { border-color: #a93b27; background: #fbf2ef; }
+.sla-domanda-esito p { margin: 0 0 6px; font-size: 14px; }
+.sla-domanda-esito .sla-spiegazione { color: #6b5a4c; font-size: 13px; margin-bottom: 0; }
