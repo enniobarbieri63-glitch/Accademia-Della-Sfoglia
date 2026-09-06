@@ -6,6 +6,10 @@
 (function () {
 	'use strict';
 
+	// Il significato della fascia non deve dipendere solo dal colore dello
+	// sfondo (chi non lo distingue bene deve poterlo leggere).
+	var ETICHETTA_FASCIA = { verde: 'ottimo', giallo: 'da ripassare', rosso: 'da rivedere' };
+
 	function mostraEsito(form, testo, ok) {
 		var span = form.querySelector('.sla-esito');
 		if (!span) return;
@@ -133,7 +137,7 @@
 					if (!r.success) { mostraEsito(form, r.data.message, false); return; }
 
 					var html = '<p class="sla-quiz-punteggio sla-fascia-' + r.data.fascia + '">'
-						+ '<strong>Punteggio: ' + r.data.punteggio + '/100</strong></p>';
+						+ '<strong>Punteggio: ' + r.data.punteggio + '/100 — ' + (ETICHETTA_FASCIA[r.data.fascia] || '') + '</strong></p>';
 
 					r.data.domande.forEach(function (d, indice) {
 						var dett = r.data.dettaglio[d.id] || { corretta: false };

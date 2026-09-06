@@ -66,7 +66,7 @@ function sla_shortcode_pannello_docente() {
 					<input type="text" name="anno" placeholder="es. <?php echo esc_attr( $anno_corrente ); ?>" value="<?php echo esc_attr( $anno_corrente ); ?>">
 				</label>
 				<button type="submit">Crea classe</button>
-				<span class="sla-esito"></span>
+				<span class="sla-esito" role="status" aria-live="polite"></span>
 			</form>
 		</section>
 
@@ -133,10 +133,10 @@ function sla_render_riquadro_classe( $classe, $anno_corrente ) {
 					<textarea name="elenco" rows="4" placeholder="Alunno 01&#10;Alunno 02&#10;Alunno 03"></textarea>
 				</label>
 				<button type="submit">Aggiungi</button>
-				<span class="sla-esito"></span>
+				<span class="sla-esito" role="status" aria-live="polite"></span>
 			</form>
 			<table class="sla-tabella">
-				<thead><tr><th>Nickname</th><th>Stato</th><th></th></tr></thead>
+				<thead><tr><th scope="col">Nickname</th><th scope="col">Stato</th><th scope="col"><span class="sla-solo-sr">Azioni</span></th></tr></thead>
 				<tbody>
 					<?php foreach ( $studenti as $studente ) :
 						$occupato = '1' === get_post_meta( $studente->ID, 'sla_occupato', true );
@@ -187,7 +187,7 @@ function sla_render_riquadro_classe( $classe, $anno_corrente ) {
 				</label>
 				<label><input type="checkbox" name="vale_voto" value="1"> Vale come voto</label>
 				<button type="submit">Assegna</button>
-				<span class="sla-esito"></span>
+				<span class="sla-esito" role="status" aria-live="polite"></span>
 			</form>
 		</details>
 
@@ -195,7 +195,7 @@ function sla_render_riquadro_classe( $classe, $anno_corrente ) {
 			<details class="sla-blocco" open>
 				<summary>Risultati — <?php echo esc_html( get_the_title( $assegnazione ) ); ?></summary>
 				<table class="sla-tabella">
-					<thead><tr><th>Nickname</th><th>Consegnato</th><th>Punteggio</th></tr></thead>
+					<thead><tr><th scope="col">Nickname</th><th scope="col">Consegnato</th><th scope="col">Punteggio</th></tr></thead>
 					<tbody>
 						<?php foreach ( sla_dati_cruscotto( $classe_id, $assegnazione->ID ) as $riga ) : ?>
 							<tr>
@@ -282,7 +282,7 @@ function sla_render_form_ingresso() {
 					style="text-transform:uppercase" required>
 			</label>
 			<button type="submit">Continua</button>
-			<span class="sla-esito"></span>
+			<span class="sla-esito" role="status" aria-live="polite"></span>
 		</form>
 		<form class="sla-form" data-sla-azione="entra" hidden>
 			<input type="hidden" name="codice">
@@ -290,7 +290,7 @@ function sla_render_form_ingresso() {
 				<select name="studente_id" required></select>
 			</label>
 			<button type="submit">Entra</button>
-			<span class="sla-esito"></span>
+			<span class="sla-esito" role="status" aria-live="polite"></span>
 		</form>
 	</div>
 	<?php
@@ -340,7 +340,7 @@ function sla_render_svolgimento_esercizio( $assegnazione, $sessione ) {
 			<p class="sla-avviso">Hai già usato tutti i tentativi disponibili.</p>
 		<?php endif; ?>
 
-		<div class="sla-esito-esercizio" hidden></div>
+		<div class="sla-esito-esercizio" role="status" aria-live="polite" hidden></div>
 	</div>
 	<?php
 }
@@ -377,7 +377,7 @@ function sla_render_svolgimento_quiz( $assegnazione, $sessione ) {
 			<p class="sla-avviso">Hai già usato tutti i tentativi disponibili.</p>
 		<?php endif; ?>
 
-		<div class="sla-esito-quiz" hidden></div>
+		<div class="sla-esito-quiz" role="status" aria-live="polite" hidden></div>
 	</div>
 	<?php
 }

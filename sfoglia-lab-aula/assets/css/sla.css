@@ -7,6 +7,31 @@
 	color: #2a1f17;
 }
 
+/* testo presente solo per chi usa uno screen reader, invisibile a vista */
+.sla-solo-sr {
+	position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+	overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* stato di focus, uguale su tutti i controlli e visibile anche se il tema
+   dell'istituto azzera l'outline di default del browser */
+.sla-pannello button:focus-visible,
+.sla-pannello a:focus-visible,
+.sla-pannello input:focus-visible,
+.sla-pannello select:focus-visible,
+.sla-pannello textarea:focus-visible,
+.sla-pannello summary:focus-visible,
+.sla-ingresso button:focus-visible,
+.sla-ingresso a:focus-visible,
+.sla-ingresso input:focus-visible,
+.sla-ingresso select:focus-visible,
+.sla-svolgimento button:focus-visible,
+.sla-svolgimento a:focus-visible,
+.sla-svolgimento input:focus-visible {
+	outline: 3px solid #d9a227;
+	outline-offset: 2px;
+}
+
 .sla-riquadro, .sla-classe {
 	border: 1px solid #dcccb6;
 	border-radius: 4px;
