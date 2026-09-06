@@ -1,0 +1,55 @@
+/* slp.css — stile minimo, coerente con la palette del volantino
+   dell'Accademia (rosso #A93B27, toni caldi), provvisorio finché non
+   viene calibrato sul tema reale del sito (The Newspaper, CMSMasters). */
+
+.slp-pannello, .slp-catalogo, .slp-elenco-certificati {
+	font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+	max-width: 760px;
+	color: #2a1f17;
+}
+
+.slp-corso-scheda, .slp-sessione {
+	border: 1px solid #dcccb6;
+	border-radius: 4px;
+	padding: 18px 20px;
+	margin-bottom: 18px;
+	background: #faf6ef;
+}
+
+.slp-corso-scheda h3, .slp-sessione-testa h4 { margin: 0 0 6px; }
+.slp-codice-corso { font-size: 12px; color: #6b5a4c; font-weight: 400; }
+.slp-corso-meta, .slp-sessione-meta { color: #6b5a4c; font-size: 13px; margin: 0 0 8px; }
+.slp-corso-prezzo { font-size: 17px; font-weight: 600; margin: 0 0 12px; }
+.slp-corso-acconto { font-size: 13px; font-weight: 400; color: #6b5a4c; }
+
+.slp-form { display: flex; flex-direction: column; gap: 10px; max-width: 380px; }
+.slp-form label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.slp-form input {
+	padding: 7px 9px; border: 1px solid #c9b79c; border-radius: 3px; font-size: 14px;
+}
+.slp-form button, .slp-form-pagamento button {
+	align-self: flex-start; background: #a93b27; color: #fff; border: 0;
+	padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 14px;
+}
+.slp-form button:hover, .slp-form-pagamento button:hover { background: #8a2f1f; }
+.slp-esito { font-size: 13px; }
+
+.slp-form-pagamento { display: flex; gap: 6px; }
+.slp-form-pagamento input {
+	padding: 5px 7px; border: 1px solid #c9b79c; border-radius: 3px; font-size: 13px;
+}
+.slp-form-pagamento button { padding: 5px 10px; font-size: 13px; }
+
+.slp-tabella { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13.5px; }
+.slp-tabella th, .slp-tabella td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e6dac6; }
+.slp-tabella th { color: #6b5a4c; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+
+.slp-avviso { color: #8a2f1f; font-size: 14px; }
+.slp-successo { color: #3f7a3f; }
+.slp-vuoto { color: #6b5a4c; font-style: italic; }
+
+.slp-pannello button:focus-visible, .slp-catalogo button:focus-visible,
+.slp-pannello input:focus-visible, .slp-catalogo input:focus-visible,
+.slp-pannello a:focus-visible, .slp-catalogo a:focus-visible {
+	outline: 3px solid #d9a227; outline-offset: 2px;
+}

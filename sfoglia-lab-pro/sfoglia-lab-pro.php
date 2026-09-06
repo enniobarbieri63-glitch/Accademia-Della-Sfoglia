@@ -1,0 +1,65 @@
+<?php
+/**
+ * Plugin Name: Sfoglia Lab — Pro
+ * Plugin URI:  https://accademiadellasfoglia.it/
+ * Description: Corsi professionali per chef e pasticceri, iscrizione con
+ *              acconto, percorso di certificazione a livelli con elenco
+ *              pubblico. Progetto indipendente da gaming-sfogline e da
+ *              Sfoglia Lab — Aula: nessuna dipendenza tra i tre.
+ * Version:     0.1.0
+ * Author:      Accademia della Sfoglia
+ * Text Domain: sfoglia-lab-pro
+ * License:     GPL-2.0-or-later
+ *
+ * Prefisso delle funzioni: slp_ (Sfoglia Lab Pro), per non confondersi con
+ * sla_ di Sfoglia Lab — Aula né con gs_ di Gaming Sfogline: tre plugin
+ * distinti, installabili insieme sullo stesso sito senza collisioni.
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'SLP_VERSION', '0.1.0' );
+define( 'SLP_FILE', __FILE__ );
+define( 'SLP_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SLP_URL', plugin_dir_url( __FILE__ ) );
+define( 'SLP_INC', SLP_DIR . 'includes/' );
+define( 'SLP_OPTION', 'slp_settings' );
+
+$slp_modules = array(
+	'helpers.php',        // utilità condivise
+	'cpt.php',            // custom post type: sessione, iscrizione, certificato
+	'catalogo.php',       // il catalogo dei corsi (docs/01 §1.4)
+	'prezzi.php',         // calcolo acconto e stato del pagamento
+	'certificazione.php', // numerazione, scadenza, elenco pubblico
+	'sessioni.php',       // date dei corsi, posti disponibili
+	'iscrizioni.php',     // iscrizione pubblica + storico pagamenti
+	'pannello.php',       // pannello del gestore corsi
+	'shortcodes.php',     // pagine pubbliche
+);
+
+foreach ( $slp_modules as $slp_module ) {
+	$slp_path = SLP_INC . $slp_module;
+	if ( file_exists( $slp_path ) ) {
+		require_once $slp_path;
+	}
+}
+
+function slp_activate() {
+	slp_register_cpt();
+	flush_rewrite_rules();
+
+	foreach ( array( 'administrator', 'editor' ) as $slp_ruolo ) {
+		$slp_role = get_role( $slp_ruolo );
+		if ( $slp_role && ! $slp_role->has_cap( 'slp_gestisci_corsi' ) ) {
+			$slp_role->add_cap( 'slp_gestisci_corsi' );
+		}
+	}
+}
+register_activation_hook( __FILE__, 'slp_activate' );
+
+function slp_deactivate() {
+	flush_rewrite_rules();
+}
+register_deactivation_hook( __FILE__, 'slp_deactivate' );

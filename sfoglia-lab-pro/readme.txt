@@ -1,0 +1,64 @@
+=== Sfoglia Lab — Pro ===
+Contributors: accademiadellasfoglia
+Tags: education, courses
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+Stable tag: 0.1.0
+License: GPL-2.0-or-later
+
+Corsi professionali per chef e pasticceri, iscrizione con acconto,
+percorso di certificazione a livelli con elenco pubblico.
+
+== Descrizione ==
+
+Prima versione di lavoro (0.1.0), corrisponde ai cantieri 6-9 del
+progetto (docs/01-progetto-sfoglia-lab.md). Progetto indipendente sia da
+"Gaming Sfogline" sia da "Sfoglia Lab — Aula": installabile insieme a
+entrambi sullo stesso sito, senza dipendenze tra i tre.
+
+Cosa c'è in questa versione:
+
+* Catalogo dei corsi (PRO-1, PRO-2, PAS-1, PAS-2, GES-1, CER-1, AZ-1, ESA)
+  con i prezzi reali del documento di progetto, non segnaposto.
+* Il gestore programma sessioni (date) per un corso del catalogo, con
+  posti disponibili calcolati in automatico.
+* Iscrizione pubblica: nome, email, telefono; calcolo dell'acconto al 30%
+  (non rimborsabile, come da documento di progetto).
+* Registrazione dei pagamenti (bonifico) da parte del gestore: storico
+  che si aggiunge, non si sovrascrive mai — stesso principio già
+  collaudato in Gaming Sfogline per gli sponsor partner.
+* L'iscrizione passa automaticamente a "confermata" quando il versato
+  raggiunge l'acconto dovuto.
+* Percorso di certificazione a quattro livelli (Praticante, Addetto,
+  Specialista, Maestro), numero progressivo dell'attestato, validità di
+  tre anni, elenco pubblico (il livello 0 non vi compare, come da
+  documento di progetto).
+
+Cosa NON c'è ancora, deliberatamente:
+
+* L'abbonamento annuale alla piattaforma (ABB nel documento di progetto):
+  è un modello di dati diverso (ricorrente, non una sessione con posti),
+  da costruire a parte.
+* Emissione automatica del PDF dell'attestato da stampare.
+* Notifiche email automatiche (conferma iscrizione, coordinate bancarie,
+  promemoria scadenza).
+* Collegamento con l'elenco certificati di eventuali altri sistemi
+  (per esempio un domani con Sfoglia Lab — Aula, per la certificazione
+  condivisa tra i due prodotti).
+* Calendario visuale delle sessioni (oggi è un semplice elenco).
+
+== Installazione ==
+
+1. Copia l'intera cartella `sfoglia-lab-pro` dentro `wp-content/plugins/`
+   del sito WordPress.
+2. Attiva il plugin da Bacheca → Plugin.
+3. Crea le pagine con gli shortcode:
+   - `[slp_pannello_gestore]` — per chi gestisce i corsi (serve un account
+     Amministratore o Editor)
+   - `[slp_catalogo_corsi]` — pagina pubblica di iscrizione
+   - `[slp_elenco_certificati]` — pagina pubblica dell'elenco certificati
+4. Le sessioni (date dei corsi) si creano oggi solo da codice
+   (slp_crea_sessione()) o direttamente nel database: un modulo dedicato
+   nel pannello del gestore per crearle dall'interfaccia è uno dei
+   prossimi passi.
