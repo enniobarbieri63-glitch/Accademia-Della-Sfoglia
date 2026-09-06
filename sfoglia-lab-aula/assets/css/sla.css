@@ -26,6 +26,12 @@
 .sla-blocco { margin-top: 14px; border-top: 1px solid #e6dac6; padding-top: 12px; }
 .sla-blocco summary { cursor: pointer; font-weight: 600; }
 
+.sla-gruppo-anno { margin-bottom: 14px; }
+.sla-gruppo-anno summary {
+	cursor: pointer; font-size: 16px; font-weight: 600; padding: 8px 0; color: #6b5a4c;
+}
+.sla-gruppo-anno .sla-elenco-classi { margin-top: 10px; }
+
 .sla-form { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; max-width: 420px; }
 .sla-form label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .sla-form input, .sla-form select, .sla-form textarea {

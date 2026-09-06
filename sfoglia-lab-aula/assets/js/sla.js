@@ -173,5 +173,11 @@
 			chiamata('libera_posto', { studente_id: bottone.getAttribute('data-studente-id') }, slaDati.nonceDocente)
 				.then(function (r) { if (r.success) { location.reload(); } });
 		}
+
+		if ('duplica-classe' === azione) {
+			var classeDup = bottone.closest('[data-classe-id]');
+			chiamata('duplica_classe', { classe_id: classeDup.getAttribute('data-classe-id') }, slaDati.nonceDocente)
+				.then(function (r) { if (r.success) { location.reload(); } });
+		}
 	});
 })();

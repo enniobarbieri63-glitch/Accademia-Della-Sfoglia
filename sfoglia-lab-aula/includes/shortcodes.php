@@ -44,7 +44,8 @@ function sla_shortcode_pannello_docente() {
 	}
 
 	ob_start();
-	$classi = sla_classi_del_docente( get_current_user_id() );
+	$gruppi       = sla_classi_per_anno( get_current_user_id() );
+	$anno_corrente = sla_anno_corrente();
 	?>
 	<div class="sla-pannello" id="sla-pannello-docente">
 
@@ -62,7 +63,7 @@ function sla_shortcode_pannello_docente() {
 					</select>
 				</label>
 				<label>Anno scolastico
-					<input type="text" name="anno" placeholder="es. 2026/2027">
+					<input type="text" name="anno" placeholder="es. <?php echo esc_attr( $anno_corrente ); ?>" value="<?php echo esc_attr( $anno_corrente ); ?>">
 				</label>
 				<button type="submit">Crea classe</button>
 				<span class="sla-esito"></span>
@@ -71,14 +72,24 @@ function sla_shortcode_pannello_docente() {
 
 		<section class="sla-riquadro">
 			<h3>Le tue classi</h3>
-			<?php if ( empty( $classi ) ) : ?>
+			<?php if ( empty( $gruppi ) ) : ?>
 				<p class="sla-vuoto">Non hai ancora nessuna classe. Creane una qui sopra.</p>
 			<?php else : ?>
-				<div class="sla-elenco-classi">
-					<?php foreach ( $classi as $classe ) : ?>
-						<?php sla_render_riquadro_classe( $classe ); ?>
-					<?php endforeach; ?>
-				</div>
+				<?php foreach ( $gruppi as $anno => $classi_anno ) : ?>
+					<?php $e_corrente = ( $anno === $anno_corrente ); ?>
+					<details class="sla-gruppo-anno" <?php echo $e_corrente ? 'open' : ''; ?>>
+						<summary>
+							<?php echo esc_html( $anno ); ?>
+							<?php echo $e_corrente ? ' (anno corrente)' : ''; ?>
+							· <?php echo count( $classi_anno ); ?> <?php echo 1 === count( $classi_anno ) ? 'classe' : 'classi'; ?>
+						</summary>
+						<div class="sla-elenco-classi">
+							<?php foreach ( $classi_anno as $classe ) : ?>
+								<?php sla_render_riquadro_classe( $classe, $anno_corrente ); ?>
+							<?php endforeach; ?>
+						</div>
+					</details>
+				<?php endforeach; ?>
 			<?php endif; ?>
 		</section>
 
@@ -87,7 +98,7 @@ function sla_shortcode_pannello_docente() {
 	return ob_get_clean();
 }
 
-function sla_render_riquadro_classe( $classe ) {
+function sla_render_riquadro_classe( $classe, $anno_corrente ) {
 	$classe_id     = $classe->ID;
 	$codice        = get_post_meta( $classe_id, 'sla_codice', true );
 	$materia       = get_post_meta( $classe_id, 'sla_materia', true );
@@ -96,6 +107,7 @@ function sla_render_riquadro_classe( $classe ) {
 	$assegnazioni  = sla_assegnazioni_della_classe( $classe_id );
 	$assegnazione  = $assegnazioni ? $assegnazioni[0] : null;
 	$catalogo      = sla_catalogo_esercizi();
+	$e_anno_passato = ( '' !== $anno && $anno !== $anno_corrente );
 	?>
 	<div class="sla-classe" data-classe-id="<?php echo esc_attr( $classe_id ); ?>">
 		<header class="sla-classe-testa">
@@ -108,6 +120,9 @@ function sla_render_riquadro_classe( $classe ) {
 			<p class="sla-codice">
 				Codice: <code class="sla-codice-valore"><?php echo esc_html( $codice ); ?></code>
 				<button type="button" class="sla-link" data-sla-azione="rigenera-codice">Rigenera</button>
+				<?php if ( $e_anno_passato ) : ?>
+					<button type="button" class="sla-link" data-sla-azione="duplica-classe">Duplica per <?php echo esc_html( $anno_corrente ); ?></button>
+				<?php endif; ?>
 			</p>
 		</header>
 

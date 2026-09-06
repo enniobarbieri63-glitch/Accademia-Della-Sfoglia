@@ -35,6 +35,7 @@ $sla_modules = array(
 	'esercizi.php',      // catalogo degli esercizi (dati di esempio, in attesa dei maestri)
 	'quiz.php',          // motore dei quiz a scelta singola/multipla
 	'classi.php',        // pannello docente: crea classe, gestisce l'elenco, assegna
+	'anno-scolastico.php', // raggruppamento per anno + duplicazione classe (C9)
 	'ingresso.php',      // ingresso studente: codice classe + nickname, sessione
 	'svolgimento.php',   // lo studente svolge l'esercizio o il quiz assegnato
 	'cruscotto.php',     // Vista 1 (chi ha consegnato) e Vista 3 + esportazione CSV
