@@ -37,6 +37,7 @@ $slp_modules = array(
 	'iscrizioni.php',     // iscrizione pubblica + storico pagamenti
 	'pannello.php',       // pannello del gestore corsi
 	'shortcodes.php',     // pagine pubbliche
+	'privacy.php',        // esportazione e cancellazione dei dati su richiesta
 );
 
 foreach ( $slp_modules as $slp_module ) {
@@ -50,11 +51,23 @@ function slp_activate() {
 	slp_register_cpt();
 	flush_rewrite_rules();
 
-	foreach ( array( 'administrator', 'editor' ) as $slp_ruolo ) {
-		$slp_role = get_role( $slp_ruolo );
-		if ( $slp_role && ! $slp_role->has_cap( 'slp_gestisci_corsi' ) ) {
-			$slp_role->add_cap( 'slp_gestisci_corsi' );
-		}
+	// Solo agli amministratori. Il pannello mostra nome, email e telefono di
+	// ogni iscritto e permette di registrare incassi: è un livello di
+	// accesso che va dato a una persona precisa, non a un intero ruolo
+	// redazionale, dove di solito finisce chi scrive gli articoli del sito.
+	$slp_role = get_role( 'administrator' );
+	if ( $slp_role && ! $slp_role->has_cap( 'slp_gestisci_corsi' ) ) {
+		$slp_role->add_cap( 'slp_gestisci_corsi' );
+	}
+
+	// Le versioni precedenti la concedevano anche agli Editor: qui viene
+	// tolta, altrimenti su un sito già attivato resterebbe per sempre.
+	// Per dare il pannello a un collaboratore che non è amministratore,
+	// assegnare la capacità slp_gestisci_corsi al singolo utente (per
+	// esempio con un plugin di gestione ruoli), non all'intero ruolo.
+	$slp_editor = get_role( 'editor' );
+	if ( $slp_editor && $slp_editor->has_cap( 'slp_gestisci_corsi' ) ) {
+		$slp_editor->remove_cap( 'slp_gestisci_corsi' );
 	}
 }
 register_activation_hook( __FILE__, 'slp_activate' );

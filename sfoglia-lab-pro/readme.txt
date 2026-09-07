@@ -33,7 +33,30 @@ Cosa c'è in questa versione:
 * Percorso di certificazione a quattro livelli (Praticante, Addetto,
   Specialista, Maestro), numero progressivo dell'attestato, validità di
   tre anni, elenco pubblico (il livello 0 non vi compare, come da
-  documento di progetto).
+  documento di progetto). Un attestato finisce nell'elenco pubblico solo
+  se lo si chiede esplicitamente: il nome di una persona non si pubblica
+  per impostazione predefinita.
+
+Dati personali e accessi:
+
+* Il modulo di iscrizione chiede un consenso esplicito e lo registra con
+  la data; se nel sito è impostata una pagina di informativa privacy, il
+  modulo la collega.
+* Il plugin si presenta agli strumenti di WordPress in Bacheca →
+  Strumenti → Esporta/Cancella dati personali: una richiesta di accesso o
+  di cancellazione comprende anche le iscrizioni ai corsi. La
+  cancellazione toglie nome, email e telefono; se sull'iscrizione risulta
+  un incasso, la riga contabile resta (anonima) per gli obblighi fiscali.
+* Il pannello del gestore — dove si leggono i contatti degli iscritti e
+  si registrano i bonifici — è riservato agli amministratori. Le versioni
+  precedenti lo aprivano a tutto il ruolo Editor: dalla riattivazione del
+  plugin quel permesso viene tolto. Per darlo a un collaboratore che non
+  è amministratore, assegnare la capacità `slp_gestisci_corsi` a quel
+  singolo utente.
+* Il modulo pubblico ha un limite di cinque invii all'ora per collegamento
+  e un campo esca contro i programmi automatici, per non ritrovarsi il
+  database pieno di iscrizioni finte con dati inventati.
+* Ogni pagamento registrato porta con sé chi lo ha inserito e quando.
 
 Cosa NON c'è ancora, deliberatamente:
 

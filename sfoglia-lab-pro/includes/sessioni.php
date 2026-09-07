@@ -15,8 +15,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  * fisso — vedi catalogo.php) non ha un limite: ritorna sempre disponibile.
  */
 function slp_posti_liberi( $sessione_id ) {
-	$corso_codice = get_post_meta( $sessione_id, 'slp_corso_codice', true );
-	$corso        = slp_get_corso( $corso_codice );
+	$posti_max = slp_posti_max_effettivi( $sessione_id );
+	if ( null === $posti_max ) {
+		return null; // nessun limite (es. formazione in azienda sulla brigata)
+	}
+	if ( 0 === $posti_max ) {
+		return 0; // corso non riconosciuto: nessun posto, per sicurezza
+	}
+
+	return max( 0, $posti_max - slp_conta_iscritti( $sessione_id ) );
+}
+
+/**
+ * I posti massimi che valgono davvero per questa sessione: quelli scritti
+ * sulla sessione, o in mancanza quelli del catalogo. Ritorna null quando
+ * non c'è nessun limite, 0 quando il corso non è riconosciuto.
+ */
+function slp_posti_max_effettivi( $sessione_id ) {
+	$corso = slp_get_corso( get_post_meta( $sessione_id, 'slp_corso_codice', true ) );
 	if ( ! $corso ) {
 		return 0;
 	}
@@ -25,14 +41,18 @@ function slp_posti_liberi( $sessione_id ) {
 	if ( 0 === $posti_max ) {
 		$posti_max = (int) $corso['posti_max'];
 	}
-	if ( 0 === $posti_max ) {
-		return null; // nessun limite (es. formazione in azienda sulla brigata)
-	}
 
+	return 0 === $posti_max ? null : $posti_max;
+}
+
+/**
+ * Quante iscrizioni non annullate ha questa sessione.
+ */
+function slp_conta_iscritti( $sessione_id ) {
 	$iscritti = get_posts( array(
 		'post_type'      => 'slp_iscrizione',
 		'post_status'    => 'publish',
-		'post_parent'    => $sessione_id,
+		'post_parent'    => (int) $sessione_id,
 		'posts_per_page' => -1,
 		'fields'         => 'ids',
 		'meta_query'     => array(
@@ -40,7 +60,7 @@ function slp_posti_liberi( $sessione_id ) {
 		),
 	) );
 
-	return max( 0, $posti_max - count( $iscritti ) );
+	return count( $iscritti );
 }
 
 /**

@@ -52,7 +52,13 @@ if ( defined( 'SLP_TEST' ) ) {
  * è affidabile e non ha bisogno di un contatore separato da mantenere
  * sincronizzato.
  */
-function slp_crea_certificato( $persona_nome, $livello, $anno, $pubblico = true ) {
+/**
+ * Il valore predefinito di $pubblico è false apposta: pubblicare nome e
+ * cognome di una persona su una pagina aperta a chiunque è una scelta che
+ * deve fare lei, non il programma per distrazione di chi lo usa. Chi
+ * rilascia l'attestato passa true solo dopo che la persona ha detto di sì.
+ */
+function slp_crea_certificato( $persona_nome, $livello, $anno, $pubblico = false ) {
 	$livelli = slp_livelli();
 	if ( ! isset( $livelli[ $livello ] ) ) {
 		return new WP_Error( 'slp_livello_sconosciuto', 'Livello non riconosciuto.' );

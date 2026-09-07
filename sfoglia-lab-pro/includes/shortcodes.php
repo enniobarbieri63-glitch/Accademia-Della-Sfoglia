@@ -75,6 +75,26 @@ function slp_shortcode_catalogo_corsi() {
 						<label>Telefono
 							<input type="tel" name="telefono">
 						</label>
+
+						<?php // Campo esca per i programmi che compilano tutto: nascosto alla vista e alla lettura assistita, mai da compilare. ?>
+						<div class="slp-esca" aria-hidden="true">
+							<label>Sito web (non compilare)
+								<input type="text" name="sito_web" tabindex="-1" autocomplete="off">
+							</label>
+						</div>
+
+						<label class="slp-consenso">
+							<input type="checkbox" name="consenso" value="1" required>
+							<span>
+								Acconsento al trattamento di nome, email e telefono per gestire
+								questa iscrizione e comunicarmi le informazioni sul corso.
+								<?php $slp_informativa = get_privacy_policy_url(); ?>
+								<?php if ( $slp_informativa ) : ?>
+									<a href="<?php echo esc_url( $slp_informativa ); ?>" target="_blank" rel="noopener">Informativa privacy</a>.
+								<?php endif; ?>
+							</span>
+						</label>
+
 						<button type="submit">Iscriviti</button>
 						<span class="slp-esito" role="status" aria-live="polite"></span>
 					</form>

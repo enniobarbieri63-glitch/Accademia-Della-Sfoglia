@@ -44,6 +44,21 @@
 .slp-tabella th, .slp-tabella td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #e6dac6; }
 .slp-tabella th { color: #6b5a4c; font-weight: 600; font-size: 12px; text-transform: uppercase; }
 
+/* Il campo esca: fuori dalla vista senza display:none, che alcuni
+   programmi automatici riconoscono e saltano. */
+.slp-esca {
+	position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;
+}
+
+/* Più specifico di ".slp-form label", che mette i campi in colonna: qui
+   la casella e il testo devono stare affiancati. */
+.slp-form label.slp-consenso {
+	flex-direction: row; align-items: flex-start; gap: 8px;
+	font-size: 13px; line-height: 1.45; color: #5a4a3c;
+}
+.slp-form label.slp-consenso input { margin-top: 2px; width: auto; }
+.slp-consenso a { color: #a93b27; }
+
 .slp-avviso { color: #8a2f1f; font-size: 14px; }
 .slp-successo { color: #3f7a3f; }
 .slp-vuoto { color: #6b5a4c; font-style: italic; }
