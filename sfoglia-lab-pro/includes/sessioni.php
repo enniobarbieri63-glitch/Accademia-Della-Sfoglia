@@ -145,6 +145,54 @@ function slp_sessioni_diagnostica() {
 }
 
 /**
+ * Gli stati che una sessione può avere. "chiusa" serve quando le
+ * iscrizioni si fermano ma il corso si fa lo stesso (per esempio si è al
+ * completo, o si è vicini alla data); "annullata" quando il corso non si
+ * fa. In entrambi i casi sparisce dal catalogo pubblico e non accetta
+ * nuove iscrizioni, ma resta nel pannello con i suoi iscritti.
+ */
+function slp_stati_sessione() {
+	return array(
+		'aperta'    => 'Iscrizioni aperte',
+		'chiusa'    => 'Iscrizioni chiuse',
+		'annullata' => 'Sessione annullata',
+	);
+}
+
+function slp_cambia_stato_sessione( $sessione_id, $stato ) {
+	$sessione = get_post( $sessione_id );
+	if ( ! $sessione || 'slp_sessione' !== $sessione->post_type ) {
+		return new WP_Error( 'slp_sessione_sconosciuta', 'Sessione non trovata.' );
+	}
+
+	if ( ! isset( slp_stati_sessione()[ $stato ] ) ) {
+		return new WP_Error( 'slp_stato_sconosciuto', 'Stato non riconosciuto.' );
+	}
+
+	update_post_meta( $sessione_id, 'slp_stato', $stato );
+	return true;
+}
+
+/**
+ * Le sessioni che il gestore deve vedere nel pannello: tutte quelle non
+ * cestinate, aperte o no. Nel catalogo pubblico compaiono solo le aperte
+ * (slp_sessioni_aperte()), ma chi gestisce deve continuare a vedere anche
+ * quelle chiuse, altrimenti perde di vista gli iscritti di un corso che
+ * ha appena chiuso le iscrizioni.
+ */
+function slp_sessioni_del_gestore() {
+	return get_posts( array(
+		'post_type'      => 'slp_sessione',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => array( 'per_data' => 'ASC' ),
+		'meta_query'     => array(
+			'per_data' => array( 'key' => 'slp_data', 'type' => 'DATE' ),
+		),
+	) );
+}
+
+/**
  * Elimina (cestina) una sessione solo se non ha nessun iscritto: serve a
  * ripulire dalla Diagnostica le sessioni "orfane" salvate col vecchio bug
  * del codice minuscolo (mai visibili nell'elenco normale, e quindi mai
@@ -194,6 +242,25 @@ function slp_ajax_crea_sessione() {
 	}
 
 	wp_send_json_success( array( 'sessione_id' => $sessione_id ) );
+}
+
+add_action( 'wp_ajax_slp_cambia_stato_sessione', 'slp_ajax_cambia_stato_sessione' );
+function slp_ajax_cambia_stato_sessione() {
+	check_ajax_referer( 'slp_ajax', 'nonce' );
+	if ( ! slp_can_manage() ) {
+		wp_send_json_error( array( 'message' => 'Non hai i permessi per modificare una sessione.' ) );
+	}
+
+	$esito = slp_cambia_stato_sessione(
+		(int) ( $_POST['sessione_id'] ?? 0 ),
+		sanitize_key( $_POST['stato'] ?? '' )
+	);
+
+	if ( is_wp_error( $esito ) ) {
+		wp_send_json_error( array( 'message' => $esito->get_error_message() ) );
+	}
+
+	wp_send_json_success();
 }
 
 add_action( 'wp_ajax_slp_elimina_sessione_diagnostica', 'slp_ajax_elimina_sessione_diagnostica' );

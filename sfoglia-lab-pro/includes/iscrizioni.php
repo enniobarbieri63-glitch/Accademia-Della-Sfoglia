@@ -89,7 +89,26 @@ function slp_iscrivi( $sessione_id, $nome, $email, $telefono, $consenso = false 
 		return new WP_Error( 'slp_posti_esauriti', 'Non ci sono più posti disponibili per questa data.' );
 	}
 
+	slp_email_conferma_iscrizione( $iscrizione_id );
+	slp_email_avviso_gestore( $iscrizione_id );
+
 	return $iscrizione_id;
+}
+
+/**
+ * Annulla un'iscrizione: chi si è ritirato non deve continuare a occupare
+ * un posto. L'iscrizione resta (con il suo storico dei pagamenti, che è
+ * una scrittura di cassa e non si cancella), ma smette di contare tra gli
+ * iscritti e il posto torna disponibile.
+ */
+function slp_annulla_iscrizione( $iscrizione_id ) {
+	$iscrizione = get_post( $iscrizione_id );
+	if ( ! $iscrizione || 'slp_iscrizione' !== $iscrizione->post_type ) {
+		return new WP_Error( 'slp_iscrizione_non_trovata', 'Iscrizione non trovata.' );
+	}
+
+	update_post_meta( $iscrizione_id, 'slp_stato', 'annullata' );
+	return true;
 }
 
 /**
@@ -149,11 +168,20 @@ function slp_registra_pagamento( $iscrizione_id, $importo_centesimi, $nota = '' 
 	$corso_codice = get_post_meta( $iscrizione->post_parent, 'slp_corso_codice', true );
 	$corso        = slp_get_corso( $corso_codice );
 	if ( $corso ) {
-		$acconto = slp_calcola_acconto( $corso['quota'] );
-		$totale  = slp_totale_pagato( $pagamenti );
-		$stato   = slp_stato_pagamento( $corso['quota'], $acconto, $totale );
+		$acconto    = slp_calcola_acconto( $corso['quota'] );
+		$totale     = slp_totale_pagato( $pagamenti );
+		$stato      = slp_stato_pagamento( $corso['quota'], $acconto, $totale );
+		$era_confermata = 'confermata' === get_post_meta( $iscrizione_id, 'slp_stato', true );
+
 		if ( in_array( $stato, array( 'acconto_versato', 'saldo_versato' ), true ) ) {
 			update_post_meta( $iscrizione_id, 'slp_stato', 'confermata' );
+
+			// La conferma si manda una volta sola, quando l'iscrizione passa
+			// da "in attesa" a "confermata": un secondo bonifico a saldo non
+			// deve far ripartire lo stesso messaggio.
+			if ( ! $era_confermata ) {
+				slp_email_conferma_pagamento( $iscrizione_id, $totale, $corso['quota'] );
+			}
 		}
 	}
 
@@ -257,6 +285,21 @@ function slp_ajax_registra_pagamento() {
 
 	if ( is_wp_error( $risultato ) ) {
 		wp_send_json_error( array( 'message' => $risultato->get_error_message() ) );
+	}
+
+	wp_send_json_success();
+}
+
+add_action( 'wp_ajax_slp_annulla_iscrizione', 'slp_ajax_annulla_iscrizione' );
+function slp_ajax_annulla_iscrizione() {
+	check_ajax_referer( 'slp_ajax', 'nonce' );
+	if ( ! slp_can_manage() ) {
+		wp_send_json_error( array( 'message' => 'Non hai i permessi per annullare un\'iscrizione.' ) );
+	}
+
+	$esito = slp_annulla_iscrizione( (int) ( $_POST['iscrizione_id'] ?? 0 ) );
+	if ( is_wp_error( $esito ) ) {
+		wp_send_json_error( array( 'message' => $esito->get_error_message() ) );
 	}
 
 	wp_send_json_success();

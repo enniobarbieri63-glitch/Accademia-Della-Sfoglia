@@ -30,6 +30,19 @@ Cosa c'è in questa versione:
   collaudato in Gaming Sfogline per gli sponsor partner.
 * L'iscrizione passa automaticamente a "confermata" quando il versato
   raggiunge l'acconto dovuto.
+* Email automatiche (da accendere in Impostazioni, dopo aver messo
+  l'IBAN): conferma con le coordinate a chi si iscrive, avviso al gestore
+  di ogni nuova iscrizione, conferma quando il bonifico è registrato.
+* Sessioni che si possono chiudere o annullare: spariscono dal catalogo
+  pubblico e non accettano più iscrizioni, ma restano nel pannello con i
+  loro iscritti.
+* Iscrizioni annullabili quando qualcuno si ritira: il posto torna
+  libero, lo storico dei pagamenti resta.
+* Elenco dei partecipanti di una sessione in CSV (con BOM e punto e
+  virgola, per aprirsi bene in Excel italiano), da stampare il giorno del
+  corso: chi ha versato quanto e chi deve ancora saldare.
+* Rilascio degli attestati dal pannello, con la spunta che dice se la
+  persona autorizza la pubblicazione del proprio nome.
 * Percorso di certificazione a quattro livelli (Praticante, Addetto,
   Specialista, Maestro), numero progressivo dell'attestato, validità di
   tre anni, elenco pubblico (il livello 0 non vi compare, come da
@@ -63,9 +76,12 @@ Cosa NON c'è ancora, deliberatamente:
 * L'abbonamento annuale alla piattaforma (ABB nel documento di progetto):
   è un modello di dati diverso (ricorrente, non una sessione con posti),
   da costruire a parte.
-* Emissione automatica del PDF dell'attestato da stampare.
-* Notifiche email automatiche (conferma iscrizione, coordinate bancarie,
-  promemoria scadenza).
+* Emissione automatica del PDF dell'attestato da stampare (oggi
+  l'attestato è un numero progressivo registrato, non un file).
+* Promemoria automatici (scadenza dell'attestato, saldo non versato):
+  ci sono le email di conferma, non quelle a tempo.
+* Pagamento online con carta: si lavora a bonifico, come da documento di
+  progetto.
 * Collegamento con l'elenco certificati di eventuali altri sistemi
   (per esempio un domani con Sfoglia Lab — Aula, per la certificazione
   condivisa tra i due prodotti).

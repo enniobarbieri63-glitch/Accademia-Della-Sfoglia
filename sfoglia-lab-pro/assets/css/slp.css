@@ -59,6 +59,36 @@
 .slp-form label.slp-consenso input { margin-top: 2px; width: auto; }
 .slp-consenso a { color: #a93b27; }
 
+.slp-sezione {
+	border: 1px solid #dcccb6; border-radius: 4px;
+	padding: 18px 20px; margin-bottom: 18px; background: #faf6ef;
+}
+.slp-sezione h3 { margin: 0 0 12px; }
+
+.slp-nota-email {
+	background: #fdf3e3; border: 1px solid #e0b878; border-radius: 4px;
+	padding: 10px 14px; margin-bottom: 18px;
+}
+
+.slp-azioni-sessione {
+	display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 0;
+}
+
+/* Pulsanti secondari: contorno pieno e testo bianco al passaggio, come i
+   pulsanti di servizio di Sfoglia Lab — Aula. */
+.slp-secondario {
+	display: inline-block; background: #fff; color: #a93b27; border: 1px solid #a93b27;
+	padding: 5px 12px; border-radius: 3px; cursor: pointer; font-size: 12.5px;
+	text-decoration: none; line-height: 1.4;
+}
+.slp-secondario:hover { background: #a93b27; color: #fff; }
+.slp-annulla-iscrizione { margin-top: 6px; }
+
+/* Una sessione chiusa o annullata resta visibile al gestore, ma si vede
+   a colpo d'occhio che non è più in vendita. */
+.slp-sessione.slp-stato-chiusa, .slp-sessione.slp-stato-annullata { background: #f2eee7; }
+.slp-sessione.slp-stato-annullata .slp-sessione-testa h4 { text-decoration: line-through; }
+
 .slp-avviso { color: #8a2f1f; font-size: 14px; }
 .slp-successo { color: #3f7a3f; }
 .slp-vuoto { color: #6b5a4c; font-style: italic; }

@@ -94,6 +94,50 @@ function slp_crea_certificato( $persona_nome, $livello, $anno, $pubblico = false
 }
 
 /**
+ * Tutti gli attestati rilasciati, dal più recente: è quello che vede chi
+ * gestisce (l'elenco pubblico qui sotto ne mostra solo una parte).
+ */
+function slp_tutti_i_certificati() {
+	return get_posts( array(
+		'post_type'      => 'slp_certificato',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+	) );
+}
+
+// -----------------------------------------------------------------------------
+// AJAX
+// -----------------------------------------------------------------------------
+
+add_action( 'wp_ajax_slp_rilascia_certificato', 'slp_ajax_rilascia_certificato' );
+function slp_ajax_rilascia_certificato() {
+	check_ajax_referer( 'slp_ajax', 'nonce' );
+	if ( ! slp_can_manage() ) {
+		wp_send_json_error( array( 'message' => 'Non hai i permessi per rilasciare un attestato.' ) );
+	}
+
+	$nome = slp_clean( $_POST['persona_nome'] ?? '' );
+	if ( '' === $nome ) {
+		wp_send_json_error( array( 'message' => 'Serve il nome della persona.' ) );
+	}
+
+	$certificato_id = slp_crea_certificato(
+		$nome,
+		(int) ( $_POST['livello'] ?? 0 ),
+		(int) current_time( 'Y' ),
+		'1' === (string) ( $_POST['pubblico'] ?? '' )
+	);
+
+	if ( is_wp_error( $certificato_id ) ) {
+		wp_send_json_error( array( 'message' => $certificato_id->get_error_message() ) );
+	}
+
+	wp_send_json_success( array( 'numero' => get_post_meta( $certificato_id, 'slp_numero', true ) ) );
+}
+
+/**
  * L'elenco pubblico: solo i certificati marcati pubblici, di livello 1 o
  * superiore (il livello 0, Praticante, non ci va — vedi doc 01 § 1.6: "non
  * appare nell'elenco pubblico"), non ancora scaduti.

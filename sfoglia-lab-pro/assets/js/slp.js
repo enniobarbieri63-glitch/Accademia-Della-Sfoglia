@@ -89,13 +89,31 @@
 			chiamata('iscrivi', dati, slpDati.noncePubblico)
 				.then(function (r) {
 					if (!r.success) { mostraEsito(form, r.data.message, false); return; }
-					form.outerHTML = '<p class="slp-avviso slp-successo">Iscrizione ricevuta. Riceverai le coordinate per il bonifico dell\'acconto via email.</p>';
+					form.outerHTML = '<p class="slp-avviso slp-successo">Iscrizione ricevuta. Ti mandiamo le coordinate per il bonifico dell\'acconto: il posto è tenuto quando arriva.</p>';
 				})
 				.catch(function (errore) { mostraEsito(form, errore.message, false); });
 		}
 
 		if ('crea-sessione' === azione) {
 			chiamata('crea_sessione', dati, slpDati.nonceGestore)
+				.then(function (r) {
+					if (r.success) { location.reload(); }
+					else { mostraEsito(form, r.data.message, false); }
+				})
+				.catch(function (errore) { mostraEsito(form, errore.message, false); });
+		}
+
+		if ('rilascia-certificato' === azione) {
+			chiamata('rilascia_certificato', dati, slpDati.nonceGestore)
+				.then(function (r) {
+					if (r.success) { location.reload(); }
+					else { mostraEsito(form, r.data.message, false); }
+				})
+				.catch(function (errore) { mostraEsito(form, errore.message, false); });
+		}
+
+		if ('salva-impostazioni' === azione) {
+			chiamata('salva_impostazioni', dati, slpDati.nonceGestore)
 				.then(function (r) {
 					if (r.success) { location.reload(); }
 					else { mostraEsito(form, r.data.message, false); }
@@ -114,7 +132,38 @@
 		}
 	});
 
-	// ---- Diagnostica: elimina una sessione di prova ------------------------
+	// ---- Azioni sui pulsanti (non moduli) ----------------------------------
+
+	document.addEventListener('click', function (evento) {
+		var bottone = evento.target.closest('[data-sla-azione="cambia-stato-sessione"]');
+		if (!bottone) return;
+
+		chiamata('cambia_stato_sessione', {
+			sessione_id: bottone.getAttribute('data-sessione-id'),
+			stato: bottone.getAttribute('data-stato')
+		}, slpDati.nonceGestore)
+			.then(function (r) {
+				if (r.success) { location.reload(); }
+				else { alert(r.data.message); }
+			})
+			.catch(function (errore) { alert(errore.message); });
+	});
+
+	document.addEventListener('click', function (evento) {
+		var bottone = evento.target.closest('[data-sla-azione="annulla-iscrizione"]');
+		if (!bottone) return;
+
+		if (!window.confirm('Annullare questa iscrizione? Il posto torna libero. Lo storico dei pagamenti resta registrato.')) {
+			return;
+		}
+
+		chiamata('annulla_iscrizione', { iscrizione_id: bottone.getAttribute('data-iscrizione-id') }, slpDati.nonceGestore)
+			.then(function (r) {
+				if (r.success) { location.reload(); }
+				else { alert(r.data.message); }
+			})
+			.catch(function (errore) { alert(errore.message); });
+	});
 
 	document.addEventListener('click', function (evento) {
 		var bottone = evento.target.closest('[data-sla-azione="elimina-sessione-diagnostica"]');

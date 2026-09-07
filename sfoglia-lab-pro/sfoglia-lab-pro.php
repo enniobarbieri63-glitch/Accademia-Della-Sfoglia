@@ -35,7 +35,10 @@ $slp_modules = array(
 	'certificazione.php', // numerazione, scadenza, elenco pubblico
 	'sessioni.php',       // date dei corsi, posti disponibili
 	'iscrizioni.php',     // iscrizione pubblica + storico pagamenti
+	'impostazioni.php',   // coordinate del bonifico, interruttore delle email
+	'email.php',          // conferme automatiche a iscritto e gestore
 	'pannello.php',       // pannello del gestore corsi
+	'esportazione.php',   // elenco partecipanti in CSV
 	'shortcodes.php',     // pagine pubbliche
 	'privacy.php',        // esportazione e cancellazione dei dati su richiesta
 );
