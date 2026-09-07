@@ -113,4 +113,22 @@
 				.catch(function (errore) { mostraEsito(form, errore.message, false); });
 		}
 	});
+
+	// ---- Diagnostica: elimina una sessione di prova ------------------------
+
+	document.addEventListener('click', function (evento) {
+		var bottone = evento.target.closest('[data-sla-azione="elimina-sessione-diagnostica"]');
+		if (!bottone) return;
+
+		if (!window.confirm('Eliminare questa sessione? L\'azione non si può annullare (funziona solo se non ha iscritti).')) {
+			return;
+		}
+
+		chiamata('elimina_sessione_diagnostica', { sessione_id: bottone.getAttribute('data-sessione-id') }, slpDati.nonceGestore)
+			.then(function (r) {
+				if (r.success) { location.reload(); }
+				else { alert(r.data.message); }
+			})
+			.catch(function (errore) { alert(errore.message); });
+	});
 })();

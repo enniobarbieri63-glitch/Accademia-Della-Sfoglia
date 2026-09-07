@@ -124,6 +124,34 @@ function slp_sessioni_diagnostica() {
 	}, $sessioni );
 }
 
+/**
+ * Elimina (cestina) una sessione solo se non ha nessun iscritto: serve a
+ * ripulire dalla Diagnostica le sessioni "orfane" salvate col vecchio bug
+ * del codice minuscolo (mai visibili nell'elenco normale, e quindi mai
+ * raggiungibili da nessuno per iscriversi). Non tocca mai una sessione
+ * con anche un solo iscritto, per non perdere dati veri per errore.
+ */
+function slp_elimina_sessione_diagnostica( $sessione_id ) {
+	$sessione = get_post( $sessione_id );
+	if ( ! $sessione || 'slp_sessione' !== $sessione->post_type ) {
+		return new WP_Error( 'slp_sessione_sconosciuta', 'Sessione non trovata.' );
+	}
+
+	$iscritti = get_posts( array(
+		'post_type'      => 'slp_iscrizione',
+		'post_status'    => 'any',
+		'post_parent'    => $sessione_id,
+		'posts_per_page' => 1,
+		'fields'         => 'ids',
+	) );
+	if ( ! empty( $iscritti ) ) {
+		return new WP_Error( 'slp_sessione_con_iscritti', 'Questa sessione ha almeno un iscritto: non viene eliminata automaticamente.' );
+	}
+
+	wp_trash_post( $sessione_id );
+	return true;
+}
+
 // -----------------------------------------------------------------------------
 // AJAX
 // -----------------------------------------------------------------------------
@@ -146,4 +174,20 @@ function slp_ajax_crea_sessione() {
 	}
 
 	wp_send_json_success( array( 'sessione_id' => $sessione_id ) );
+}
+
+add_action( 'wp_ajax_slp_elimina_sessione_diagnostica', 'slp_ajax_elimina_sessione_diagnostica' );
+function slp_ajax_elimina_sessione_diagnostica() {
+	check_ajax_referer( 'slp_ajax', 'nonce' );
+	if ( ! slp_can_manage() ) {
+		wp_send_json_error( array( 'message' => 'Non hai i permessi per eliminare una sessione.' ) );
+	}
+
+	$esito = slp_elimina_sessione_diagnostica( (int) ( $_POST['sessione_id'] ?? 0 ) );
+
+	if ( is_wp_error( $esito ) ) {
+		wp_send_json_error( array( 'message' => $esito->get_error_message() ) );
+	}
+
+	wp_send_json_success();
 }

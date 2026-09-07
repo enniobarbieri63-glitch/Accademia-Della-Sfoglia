@@ -54,6 +54,11 @@
 }
 .slp-diagnostica summary { cursor: pointer; font-weight: 600; color: #6b5a4c; }
 .slp-diagnostica .slp-tabella { margin-top: 10px; }
+.slp-elimina-diagnostica {
+	background: #fff; color: #a93b27; border: 1px solid #a93b27;
+	padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;
+}
+.slp-elimina-diagnostica:hover { background: #a93b27; color: #fff; }
 
 .slp-pannello button:focus-visible, .slp-catalogo button:focus-visible,
 .slp-pannello input:focus-visible, .slp-catalogo input:focus-visible,

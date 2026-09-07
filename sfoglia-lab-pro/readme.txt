@@ -55,10 +55,13 @@ Cosa NON c'è ancora, deliberatamente:
 2. Attiva il plugin da Bacheca → Plugin.
 3. Crea le pagine con gli shortcode:
    - `[slp_pannello_gestore]` — per chi gestisce i corsi (serve un account
-     Amministratore o Editor)
+     Amministratore o Editor). Da qui si programmano le sessioni (date) di
+     un corso del catalogo, si vedono gli iscritti e si registrano i
+     pagamenti.
    - `[slp_catalogo_corsi]` — pagina pubblica di iscrizione
    - `[slp_elenco_certificati]` — pagina pubblica dell'elenco certificati
-4. Le sessioni (date dei corsi) si creano oggi solo da codice
-   (slp_crea_sessione()) o direttamente nel database: un modulo dedicato
-   nel pannello del gestore per crearle dall'interfaccia è uno dei
-   prossimi passi.
+4. Il pannello del gestore include in fondo un riquadro "Diagnostica"
+   (ripiegato di default): mostra tutte le sessioni salvate nel database,
+   utile solo per verificare che una sessione sia stata registrata
+   correttamente, con un pulsante per eliminare le eventuali sessioni di
+   prova senza iscritti.

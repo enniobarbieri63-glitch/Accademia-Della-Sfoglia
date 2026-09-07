@@ -64,20 +64,26 @@ function slp_render_pannello() {
 }
 
 /**
- * Un riquadro diagnostico, sempre visibile in questa versione di lavoro:
- * mostra TUTTE le sessioni presenti nel database, qualunque sia il loro
- * stato, per distinguere due problemi molto diversi — "il modulo non sta
- * salvando nulla" da "sta salvando, ma qualcosa nasconde il risultato
- * dall'elenco normale qui sopra". Se il modulo "Programma una nuova
- * sessione" non sembra funzionare, guarda qui prima di tutto: se dopo un
- * clic su "Crea sessione" questa tabella cresce di una riga, il salvataggio
- * funziona e il problema è nel filtro sopra; se resta invariata, il
- * problema è nel salvataggio stesso o nella chiamata che non arriva.
+ * Un riquadro diagnostico, ripiegato di default: mostra TUTTE le sessioni
+ * presenti nel database, qualunque sia il loro stato, per distinguere due
+ * problemi molto diversi — "il modulo non sta salvando nulla" da "sta
+ * salvando, ma qualcosa nasconde il risultato dall'elenco normale qui
+ * sopra". Se il modulo "Programma una nuova sessione" dovesse mai smettere
+ * di funzionare, guarda qui prima di tutto: se dopo un clic su "Crea
+ * sessione" questa tabella cresce di una riga, il salvataggio funziona e il
+ * problema è nel filtro sopra; se resta invariata, il problema è nel
+ * salvataggio stesso o nella chiamata che non arriva.
+ *
+ * Il pulsante Elimina serve solo a ripulire righe di prova (per esempio le
+ * sessioni salvate col vecchio codice minuscolo, mai raggiungibili
+ * dall'elenco normale): rifiuta di agire se la sessione ha già un
+ * iscritto, per non perdere dati veri per errore (vedi
+ * slp_elimina_sessione_diagnostica() in sessioni.php).
  */
 function slp_render_diagnostica() {
 	$sessioni = slp_sessioni_diagnostica();
 	?>
-	<details class="slp-diagnostica" open>
+	<details class="slp-diagnostica">
 		<summary>Diagnostica — tutte le sessioni nel database (<?php echo count( $sessioni ); ?>)</summary>
 		<?php if ( empty( $sessioni ) ) : ?>
 			<p class="slp-vuoto">Nessuna riga trovata: nessuna sessione è mai stata salvata, per nessun corso, con nessuno stato.</p>
@@ -87,6 +93,7 @@ function slp_render_diagnostica() {
 					<tr>
 						<th scope="col">ID</th><th scope="col">Titolo</th><th scope="col">Stato del post</th>
 						<th scope="col">Corso</th><th scope="col">Data</th><th scope="col">Stato sessione</th>
+						<th scope="col">Elimina</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -98,6 +105,11 @@ function slp_render_diagnostica() {
 							<td><?php echo esc_html( $riga['corso_codice'] ); ?></td>
 							<td><?php echo esc_html( $riga['data'] ); ?></td>
 							<td><?php echo esc_html( $riga['stato_sessione'] ); ?></td>
+							<td>
+								<?php if ( 'trash' !== $riga['stato_post'] ) : ?>
+									<button type="button" class="slp-elimina-diagnostica" data-sla-azione="elimina-sessione-diagnostica" data-sessione-id="<?php echo esc_attr( $riga['id'] ); ?>">Elimina</button>
+								<?php endif; ?>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
