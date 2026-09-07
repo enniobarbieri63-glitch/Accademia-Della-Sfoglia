@@ -52,12 +52,20 @@ function slp_crea_sessione( $corso_codice, $data, $posti_max = 0 ) {
 		return new WP_Error( 'slp_corso_sconosciuto', 'Corso non riconosciuto.' );
 	}
 
+	// $corso['codice'] (non il parametro grezzo passato dal modulo) è il
+	// codice canonico così come appare nel catalogo, es. "PRO-1": va
+	// salvato esattamente in quella forma, perché ogni lettura successiva
+	// (slp_get_corso() qui sopra) cerca la chiave nel catalogo in modo
+	// sensibile alle maiuscole. sanitize_key() lo forzava in minuscolo
+	// ("pro-1"), rompendo la corrispondenza — le sessioni si salvavano lo
+	// stesso, ma sparivano dall'elenco perché $corso risultava sempre
+	// vuoto in fase di visualizzazione (trovato con la diagnostica).
 	$sessione_id = wp_insert_post( array(
 		'post_type'   => 'slp_sessione',
-		'post_title'  => $corso_codice . ' — ' . slp_clean( $data ),
+		'post_title'  => $corso['codice'] . ' — ' . slp_clean( $data ),
 		'post_status' => 'publish',
 		'meta_input'  => array(
-			'slp_corso_codice' => sanitize_key( $corso_codice ),
+			'slp_corso_codice' => $corso['codice'],
 			'slp_data'         => slp_clean( $data ),
 			'slp_posti_max'    => max( 0, (int) $posti_max ),
 			'slp_stato'        => 'aperta',
