@@ -56,9 +56,55 @@ function slp_render_pannello() {
 				<?php slp_render_riquadro_sessione( $sessione ); ?>
 			<?php endforeach; ?>
 		<?php endif; ?>
+
+		<?php slp_render_diagnostica(); ?>
 	</div>
 	<?php
 	return ob_get_clean();
+}
+
+/**
+ * Un riquadro diagnostico, sempre visibile in questa versione di lavoro:
+ * mostra TUTTE le sessioni presenti nel database, qualunque sia il loro
+ * stato, per distinguere due problemi molto diversi — "il modulo non sta
+ * salvando nulla" da "sta salvando, ma qualcosa nasconde il risultato
+ * dall'elenco normale qui sopra". Se il modulo "Programma una nuova
+ * sessione" non sembra funzionare, guarda qui prima di tutto: se dopo un
+ * clic su "Crea sessione" questa tabella cresce di una riga, il salvataggio
+ * funziona e il problema è nel filtro sopra; se resta invariata, il
+ * problema è nel salvataggio stesso o nella chiamata che non arriva.
+ */
+function slp_render_diagnostica() {
+	$sessioni = slp_sessioni_diagnostica();
+	?>
+	<details class="slp-diagnostica" open>
+		<summary>Diagnostica — tutte le sessioni nel database (<?php echo count( $sessioni ); ?>)</summary>
+		<?php if ( empty( $sessioni ) ) : ?>
+			<p class="slp-vuoto">Nessuna riga trovata: nessuna sessione è mai stata salvata, per nessun corso, con nessuno stato.</p>
+		<?php else : ?>
+			<table class="slp-tabella">
+				<thead>
+					<tr>
+						<th scope="col">ID</th><th scope="col">Titolo</th><th scope="col">Stato del post</th>
+						<th scope="col">Corso</th><th scope="col">Data</th><th scope="col">Stato sessione</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ( $sessioni as $riga ) : ?>
+						<tr>
+							<td><?php echo esc_html( $riga['id'] ); ?></td>
+							<td><?php echo esc_html( $riga['titolo'] ); ?></td>
+							<td><?php echo esc_html( $riga['stato_post'] ); ?></td>
+							<td><?php echo esc_html( $riga['corso_codice'] ); ?></td>
+							<td><?php echo esc_html( $riga['data'] ); ?></td>
+							<td><?php echo esc_html( $riga['stato_sessione'] ); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+	</details>
+	<?php
 }
 
 function slp_render_riquadro_sessione( $sessione ) {

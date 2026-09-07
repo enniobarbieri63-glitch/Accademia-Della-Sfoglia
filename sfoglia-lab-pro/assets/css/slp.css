@@ -48,6 +48,13 @@
 .slp-successo { color: #3f7a3f; }
 .slp-vuoto { color: #6b5a4c; font-style: italic; }
 
+.slp-diagnostica {
+	margin-top: 24px; padding: 14px 18px; background: #f3ede2;
+	border: 1px dashed #c9b79c; border-radius: 4px;
+}
+.slp-diagnostica summary { cursor: pointer; font-weight: 600; color: #6b5a4c; }
+.slp-diagnostica .slp-tabella { margin-top: 10px; }
+
 .slp-pannello button:focus-visible, .slp-catalogo button:focus-visible,
 .slp-pannello input:focus-visible, .slp-catalogo input:focus-visible,
 .slp-pannello a:focus-visible, .slp-catalogo a:focus-visible {

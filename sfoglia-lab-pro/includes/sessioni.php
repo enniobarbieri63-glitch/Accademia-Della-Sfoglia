@@ -69,19 +69,51 @@ function slp_crea_sessione( $corso_codice, $data, $posti_max = 0 ) {
 
 /**
  * Le sessioni aperte, dalla più vicina alla più lontana nel tempo.
+ *
+ * L'ordinamento per data fa riferimento esplicitamente alla clausola
+ * "per_data" del meta_query (invece di mescolare il vecchio stile
+ * meta_key/orderby=meta_value con un meta_query separato): è il modo che
+ * WordPress documenta come affidabile per filtrare su un meta e ordinare
+ * su un altro nella stessa interrogazione.
  */
 function slp_sessioni_aperte() {
 	return get_posts( array(
 		'post_type'      => 'slp_sessione',
 		'post_status'    => 'publish',
 		'posts_per_page' => -1,
-		'meta_key'       => 'slp_data',
-		'orderby'        => 'meta_value',
-		'order'          => 'ASC',
+		'orderby'        => array( 'per_data' => 'ASC' ),
 		'meta_query'     => array(
+			'per_data' => array( 'key' => 'slp_data', 'type' => 'DATE' ),
 			array( 'key' => 'slp_stato', 'value' => 'aperta' ),
 		),
 	) );
+}
+
+/**
+ * TUTTE le sessioni esistenti, qualunque sia il loro stato — a differenza
+ * di slp_sessioni_aperte() non filtra nulla. Serve solo al pannello
+ * diagnostico qui sotto, per distinguere "non è stata salvata nel
+ * database" da "è stata salvata ma non supera il filtro sullo stato".
+ */
+function slp_sessioni_diagnostica() {
+	$sessioni = get_posts( array(
+		'post_type'      => 'slp_sessione',
+		'post_status'    => 'any',
+		'posts_per_page' => -1,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+	) );
+
+	return array_map( function ( $sessione ) {
+		return array(
+			'id'     => $sessione->ID,
+			'titolo' => $sessione->post_title,
+			'stato_post'  => $sessione->post_status,
+			'corso_codice' => get_post_meta( $sessione->ID, 'slp_corso_codice', true ),
+			'data'         => get_post_meta( $sessione->ID, 'slp_data', true ),
+			'stato_sessione' => get_post_meta( $sessione->ID, 'slp_stato', true ),
+		);
+	}, $sessioni );
 }
 
 // -----------------------------------------------------------------------------
