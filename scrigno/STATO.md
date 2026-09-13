@@ -4,35 +4,62 @@ Aggiornato: 13 settembre 2026
 
 ## In breve
 
-Il progetto grafico è approvato e l'anteprima navigabile è stata riparata e provata.
-**L'app per Mac non è ancora iniziata.** La Fase 1 parte da zero.
+Il progetto grafico è approvato, l'anteprima è stata riparata e provata, e **l'app
+per Mac è scritta per intero**: circa 8.400 righe di Swift in 45 file, con tutte e
+quattro le fasi coperte.
+
+**Non è mai stata compilata.** Il lavoro è avvenuto su una macchina Linux, dove
+Swift e Xcode non esistono: nessuna riga è stata provata da un compilatore, figurarsi
+su dati veri. Il primo passo sul Mac è aprire il progetto e sistemare gli errori che
+salteranno fuori. Sono attesi, e sono la parte normale del lavoro che resta.
 
 ## Fatto
 
-- **Anteprima** (`anteprima/index.html`) — riparata, migliorata e verificata con 31
-  controlli automatici in un browser vero. Vedi `anteprima/NOTE-RIPARAZIONI.md`.
-- **Istruzioni** (`ISTRUZIONI.md`) — completate con le decisioni che mancavano: dove
-  finiscono i file importati, cosa fare quando qualcosa va storto, le scorciatoie da
-  tastiera, gli obiettivi di velocità, l'accessibilità.
+**Anteprima** (`anteprima/index.html`) — riparata, migliorata, verificata con 31
+controlli automatici in un browser vero. Vedi `anteprima/NOTE-RIPARAZIONI.md`.
 
-## Non ancora iniziato
+**Istruzioni** (`ISTRUZIONI.md`) — completate con le decisioni che mancavano: dove
+finiscono i file importati, cosa fare quando qualcosa va storto, le scorciatoie,
+gli obiettivi di velocità, l'accessibilità.
 
-- **Fase 1 — Base.** Nessuna riga di codice Swift scritta. La cartella `app/` non esiste.
-- Fasi 2, 3 e 4.
+**App** (`app/`) — scritta tutta. Vedi `app/COME-APRIRLA.md` per aprirla.
 
-## Da sapere prima di ripartire
+| Fase | Cosa c'è |
+|---|---|
+| 1 — Base | Finestra, barra laterale, importazione con doppioni saltati, miniature, griglia per giorno, filtri, pannello Informazioni con i dati di scatto, etichette, album, preferiti, ricerca, cestino 30 giorni, primo avvio, scorciatoie |
+| 2 — Video e modifica | Lettore, taglio, velocità, salva fotogramma, esportazione 1080p. Modifica con luce, colore, geometria, dettaglio, sfocatura, vignettatura, ritaglio, otto stili, prima/dopo, annulla e ripeti, Ripristina originale |
+| 3 — Funzioni intelligenti | Testo dentro PDF e scansioni, scadenze pescate dai documenti, ricerca dentro i documenti, mappa dei luoghi, doppioni identici e somiglianti con la proposta di quale tenere, schede SD |
+| 4 — Persone | Volti trovati e raggruppati, nomi messi a mano, correzioni |
 
-- L'app va costruita **su un Mac con Xcode installato**. Non è stato possibile farlo
-  finora: il lavoro su questo progetto è avvenuto su una macchina Linux, dove Swift e
-  Xcode non esistono e nulla di macOS si può compilare o provare.
-- Le decisioni già prese e da non rimettere in discussione senza parlarne: la libreria
-  **copia** i file in `~/Immagini/Scrigno/`, l'identificativo è `it.scrigno.app`, la
-  lingua è l'italiano, il tema è solo scuro.
+**In più, chiesto in corsa:**
+- **Arrivo da Android** (e da qualsiasi telefono) via pagina Wi-Fi con codice QR.
+- **Geometria**: raddrizza, linee cadenti, prospettiva laterale, ruota, ribalta.
+- **Sfocatura** con profondità di campo, in quattro modi: banda, cerchio (sul punto),
+  dalle distanze del telefono, pennello a mano libera.
 
-## Primo passo della prossima sessione
+## Da fare, nell'ordine
 
-1. Verificare che Xcode sia installato e aperto almeno una volta.
-2. Creare il progetto in `scrigno/app/`, app macOS, SwiftUI, minimo macOS 15.
-3. Montare finestra e barra laterale come nell'anteprima, con le voci giuste ma ancora
-   senza dati.
-4. Aggiornare questo file prima di chiudere.
+1. **Aprire il progetto in Xcode e farlo compilare.** È il lavoro vero che resta.
+2. **Provarlo su file veri**: una cartella con 500 file mescolati, come dice la
+   prova di fine Fase 1 nelle istruzioni.
+3. Sistemare quello che non funziona come previsto.
+
+## Decisioni prese, da non rimettere in discussione senza parlarne
+
+- La libreria **copia** i file in `~/Immagini/Scrigno/`. Gli originali restano dove sono.
+- Identificativo `it.scrigno.app`, lingua italiana, tema solo scuro.
+- L'originale non viene mai riscritto: ogni modifica è un'istruzione a parte.
+- Quello che si elimina resta 30 giorni in *Eliminati di recente*.
+- La scatola di sicurezza (sandbox) è spenta: è un'app personale. Vedi
+  `app/Scrigno.entitlements`, il perché è scritto lì dentro.
+
+## Differenze note rispetto all'anteprima
+
+- **La griglia è regolare, non a mosaico.** Nell'anteprima i riquadri hanno misure
+  diverse. Con 15.000 elementi una griglia regolare scorre fluida, un mosaico no.
+  Si può rifare, ma va chiesto.
+- **Il carattere Fraunces non è dentro l'app**: il file non era scaricabile da qui.
+  Finché non c'è, il nome "Scrigno" usa il serif corsivo di sistema, che somiglia.
+  Per metterlo: scarica Fraunces da Google Fonts, trascina il `.ttf` in
+  `app/Scrigno/Risorse/` e aggiungilo a `Info.plist` sotto `ATSApplicationFontsPath`.
+- **iPhone e Android col cavo** non ci sono: solo Wi-Fi, schede SD e cartelle.

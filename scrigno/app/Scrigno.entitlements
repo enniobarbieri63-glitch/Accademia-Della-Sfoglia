@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Scatola di sicurezza (sandbox) SPENTA.
+
+	  Perché: questa è un'app personale, costruita e usata sullo stesso Mac.
+	  Con la scatola accesa servono permessi espliciti per ogni cartella e i
+	  file vanno riaperti con dei "segnalibri" a ogni avvio: più pezzi che si
+	  rompono, senza nessun vantaggio per chi la usa da solo.
+
+	  Va RIACCESA (true) se un giorno l'app va data ad altri o messa sul Mac
+	  App Store. In quel caso servono anche le tre righe qui sotto, che restano
+	  pronte.
+	-->
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
+
+	<!-- Aprire la pagina che riceve i file dal telefono. -->
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+
+	<!-- Leggere le cartelle che l'utente sceglie e scrivere la libreria. -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>com.apple.security.assets.pictures.read-write</key>
+	<true/>
+</dict>
+</plist>

@@ -1,2 +1,8 @@
 # file generato dal canvas (assemblato dai sorgenti in design/)
 design/volantino-corso-di-sfoglia.html
+
+# roba che Xcode genera, non va nel deposito
+**/xcuserdata/
+**/DerivedData/
+**/*.xcworkspace/xcuserdata/
+.DS_Store
