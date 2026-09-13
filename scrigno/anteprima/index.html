@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scrigno per Mac</title>
+<meta name="description" content="Progetto grafico di Scrigno: un unico posto sul Mac per foto, video, documenti e ogni altro file.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,600&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --page:#0f1014; --page2:#1b1a24;
+  --win:#1b1c22; --side:#16171c; --panel:#202128; --raised:#282a32;
+  --line:#2c2e37; --line2:#393b46;
+  --text:#ece9e3; --muted:#8e8c96; --faint:#5d5c66;
+  --accent:#e9ae4f; --accent-soft:rgba(233,174,79,.16); --accent-ink:#1d1506;
+  --t-fam:#e06d5c; --t-lav:#6f8cf0; --t-via:#58b39c; --t-sta:#d6a23f; --t-rin:#b77fd6;
+  --ui:"Onest",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --disp:"Fraunces",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#2b2536 0%,transparent 60%),radial-gradient(900px 500px at 0% 100%,#1d2a2a 0%,transparent 60%),var(--page);color:var(--text);font-family:var(--ui);font-size:14px;line-height:1.45;min-height:100vh}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* ——— intestazione della presentazione ——— */
+.intro{max-width:1340px;margin:0 auto;padding:40px 28px 22px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:16px}
+.icon{width:58px;height:58px;border-radius:14px;background:linear-gradient(155deg,#f3c46e,#c9812c 55%,#8a4f1c);box-shadow:0 10px 30px rgba(233,174,79,.25),inset 0 1px 0 rgba(255,255,255,.4);display:grid;place-items:center;position:relative;overflow:hidden}
+.icon::before{content:"";position:absolute;inset:14px 10px 18px;border-radius:5px;background:#1b1c22;box-shadow:0 -6px 0 -2px rgba(27,28,34,.55)}
+.icon::after{content:"";position:absolute;left:24px;top:28px;width:10px;height:6px;border-radius:2px;background:var(--accent)}
+.brand h1{margin:0;font-family:var(--disp);font-style:italic;font-weight:600;font-size:44px;line-height:1;letter-spacing:-.01em}
+.brand p{margin:6px 0 0;color:var(--muted);font-size:15px;max-width:52ch}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.tabs button{padding:9px 16px;border-radius:9px;color:var(--muted);font-weight:500;white-space:normal}
+.tabs button[aria-selected="true"]{background:var(--raised);color:var(--text);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 2px 8px rgba(0,0,0,.3)}
+.tabs button span{font-family:var(--mono);font-size:11px;color:var(--faint);margin-left:6px}
+
+/* ——— finestra macOS ——— */
+.stage{max-width:1340px;margin:0 auto;padding:0 28px 30px;overflow-x:auto}
+.window{min-width:1120px;height:760px;border-radius:14px;background:var(--win);border:1px solid #33343d;box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 0 .5px #000;display:grid;grid-template-columns:232px 1fr;overflow:hidden}
+.side{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.lights{display:flex;gap:8px;padding:16px 16px 10px}
+.lights i{width:12px;height:12px;border-radius:50%;background:#ff5f57}
+.lights i:nth-child(2){background:#febc2e}.lights i:nth-child(3){background:#28c840}
+.side nav{overflow:auto;padding:6px 10px 16px;flex:1}
+.grp{font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.07em;text-transform:uppercase;padding:14px 8px 6px}
+.it{display:flex;align-items:center;gap:10px;width:100%;padding:6px 8px;border-radius:7px;color:#cfccd4;text-align:left}
+.it:hover{background:rgba(255,255,255,.04)}
+.it.on{background:var(--accent-soft);color:var(--text)}
+.it.on svg{color:var(--accent)}
+.it svg{width:16px;height:16px;flex:none;color:var(--muted)}
+.it .n{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;margin:0 3px}
+.storage{border-top:1px solid var(--line);padding:14px 18px 16px;font-size:12px;color:var(--muted)}
+.bar{height:6px;border-radius:4px;background:var(--raised);display:flex;overflow:hidden;margin:8px 0 6px}
+.bar b{display:block;height:100%}
+
+.main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.toolbar{height:56px;flex:none;display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid var(--line)}
+.crumb{font-weight:600;font-size:15px;white-space:nowrap}
+.crumb small{color:var(--muted);font-weight:400;margin-left:8px;font-size:13px}
+.seg{display:flex;background:var(--side);border:1px solid var(--line);border-radius:8px;padding:2px}
+.seg button{padding:4px 11px;border-radius:6px;font-size:12.5px;color:var(--muted)}
+.seg button.on{background:var(--raised);color:var(--text)}
+.search{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--side);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:290px;color:var(--muted);font-size:13px}
+.search svg{width:14px;height:14px;flex:none}
+.search input{flex:1;min-width:0;background:none;border:0;padding:0;color:var(--text);font:inherit;font-size:13px;outline:none}
+.search input::placeholder{color:var(--muted)}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.search kbd{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--faint);border:1px solid var(--line2);border-radius:4px;padding:0 5px}
+.tbtn{width:32px;height:32px;display:grid;place-items:center;border-radius:7px;color:var(--muted)}
+.tbtn:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.tbtn svg{width:17px;height:17px}
+.btn-acc{background:var(--accent);color:var(--accent-ink);font-weight:600;padding:7px 14px;border-radius:8px;font-size:13px;white-space:normal}
+
+.screen{display:none;flex:1;min-height:0}
+.screen.on{display:flex}
+
+/* ——— Libreria ——— */
+.lib{flex:1;display:grid;grid-template-columns:1fr 290px;min-height:0}
+.content{overflow:auto;padding:0 20px 30px;min-width:0}
+.filters{position:sticky;top:0;z-index:2;background:linear-gradient(var(--win) 80%,transparent);display:flex;gap:8px;padding:14px 0 12px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line2);font-size:12.5px;color:#cfccd4;white-space:nowrap}
+.chip.on{background:var(--text);color:#17171c;border-color:var(--text)}
+.chip em{font-style:normal;font-family:var(--mono);font-size:11px;opacity:.6}
+.day{display:flex;align-items:baseline;gap:12px;margin:14px 0 10px}
+.day h2{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.day span{color:var(--muted);font-size:13px}
+.day .pin{display:inline-flex;align-items:center;gap:4px}
+.day .pin svg{width:12px;height:12px}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:118px;gap:6px}
+.tile{position:relative;border-radius:6px;overflow:hidden;background:var(--panel)}
+.tile canvas{width:100%;height:100%;display:block}
+.tile.w2{grid-column:span 2}.tile.h2{grid-row:span 2}
+.tile.sel{box-shadow:0 0 0 2px var(--win),0 0 0 4px var(--accent)}
+.tile.sel::after{content:"";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.3l2.6 2.5L12 5.4' fill='none' stroke='%231d1506' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat}
+.badge{position:absolute;left:7px;bottom:7px;display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:rgba(10,10,14,.62);backdrop-filter:blur(6px);color:#fff}
+.badge svg{width:9px;height:9px}
+.tagdot{position:absolute;right:7px;bottom:8px;display:flex;gap:3px}
+.tagdot i{width:7px;height:7px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(0,0,0,.4)}
+.tile{cursor:pointer}
+.tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.empty{margin:40px auto;max-width:38ch;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:15px;margin-bottom:4px}
+.empty p{margin:0 0 14px;font-size:13px}
+.empty button{padding:7px 14px;border-radius:8px;font-size:12.5px}
+.doc{display:flex;flex-direction:column;justify-content:space-between;padding:10px;background:linear-gradient(160deg,#2a2c35,#22232a)}
+.doc .ext{align-self:flex-start;font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;letter-spacing:.04em}
+.doc b{font-weight:500;font-size:12px;line-height:1.3}
+.doc small{color:var(--muted);font-size:11px}
+.doc .lines{flex:1;margin:8px 0;background:repeating-linear-gradient(transparent 0 7px,rgba(255,255,255,.07) 7px 9px);border-radius:3px;mask:linear-gradient(90deg,#000 70%,transparent)}
+.wave{display:flex;align-items:center;gap:2px;height:38px;margin:6px 0}
+.wave i{flex:1;background:var(--t-rin);border-radius:2px;opacity:.85}
+
+.insp{border-left:1px solid var(--line);background:var(--side);overflow:auto;padding:16px}
+.insp .pv{height:180px;border-radius:8px;overflow:hidden;margin-bottom:14px}
+.insp .pv canvas{width:100%;height:100%;display:block}
+.insp h3{margin:0;font-size:15px;font-weight:600;word-break:break-word}
+.insp .sub{color:var(--muted);font-size:12px;margin-top:2px}
+.exif{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-radius:8px;overflow:hidden;margin:14px 0}
+.exif div{background:var(--panel);padding:8px 4px;text-align:center;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+.exif div small{display:block;font-family:var(--ui);font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12.5px;margin:0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;text-align:right}
+.sec{font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.07em;text-transform:uppercase;margin:18px 0 8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 9px 3px 7px;border-radius:999px;background:var(--raised)}
+.tag i{width:8px;height:8px;border-radius:50%}
+.tag.add{background:none;border:1px dashed var(--line2);color:var(--muted)}
+.map{height:96px;border-radius:8px;position:relative;overflow:hidden;background:
+ radial-gradient(circle at 62% 48%,rgba(233,174,79,.25) 0 14px,transparent 15px),
+ linear-gradient(115deg,transparent 52%,#27404a 52% 100%),
+ repeating-linear-gradient(35deg,#23252c 0 16px,#26282f 16px 32px)}
+.map::after{content:"";position:absolute;left:62%;top:48%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px var(--win)}
+.map span{position:absolute;left:10px;bottom:8px;font-size:11px;color:#cfccd4}
+
+/* ——— Video ——— */
+.vid{flex:1;display:grid;grid-template-columns:1fr 300px;min-height:0}
+.vmain{display:flex;flex-direction:column;padding:18px 20px;gap:14px;min-width:0;min-height:0}
+.player{flex:1;min-height:0;border-radius:10px;overflow:hidden;position:relative;background:#000}
+.player canvas{width:100%;height:100%;display:block}
+.player .hud{position:absolute;inset:auto 0 0 0;padding:40px 18px 14px;background:linear-gradient(transparent,rgba(0,0,0,.7));display:flex;align-items:center;gap:14px}
+.play{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.92);color:#111;display:grid;place-items:center}
+.play svg{width:16px;height:16px;margin-left:2px}
+.hud .tc{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.hud .tc b{font-weight:500;color:#fff}.hud .tc{color:rgba(255,255,255,.6)}
+.hud .spc{margin-left:auto;display:flex;gap:8px}
+.hud .pill{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.14)}
+.vtitle{position:absolute;left:18px;top:14px;font-size:13px;color:rgba(255,255,255,.85);display:flex;gap:8px;align-items:center}
+.vtitle .rec{font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.45)}
+.vtools{display:flex;gap:8px;flex-wrap:wrap}
+.vtool{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;background:var(--panel);border:1px solid var(--line);font-size:12.5px;white-space:normal}
+.vtool svg{width:15px;height:15px;color:var(--muted)}
+.vtool.on{border-color:var(--accent);background:var(--accent-soft)}
+.vtool.on svg{color:var(--accent)}
+.vtools .btn-acc{margin-left:auto}
+.timeline{background:var(--side);border:1px solid var(--line);border-radius:10px;padding:10px 12px 12px}
+.ruler{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--faint);padding:0 2px 6px;font-variant-numeric:tabular-nums}
+.strip{position:relative;height:58px;border-radius:6px;overflow:hidden;display:flex}
+.strip canvas{flex:1;height:100%;min-width:0;display:block;border-right:1px solid #000}
+.shade{position:absolute;top:0;bottom:0;background:rgba(10,10,14,.68)}
+.trim{position:absolute;top:0;bottom:0;border:2px solid var(--accent);border-left-width:9px;border-right-width:9px;border-radius:6px;pointer-events:none}
+.head{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,.6)}
+.head::before{content:"";position:absolute;top:-2px;left:-5px;border:6px solid transparent;border-top:8px solid #fff}
+.chapters{position:relative;height:22px;margin-top:8px}
+.chapters span{position:absolute;top:0;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.chapters span::before{content:"";width:6px;height:6px;transform:rotate(45deg);background:var(--t-via)}
+.audio{display:flex;align-items:center;gap:2px;height:22px;margin-top:4px;padding:0 1px}
+.audio i{flex:1;background:#4f7f74;border-radius:1px}
+.vside{border-left:1px solid var(--line);background:var(--side);overflow:auto;padding:14px}
+.clip{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:7px;border-radius:8px;align-items:center;width:100%;text-align:left}
+.clip:hover{background:rgba(255,255,255,.04)}
+.clip.on{background:var(--accent-soft)}
+.clip .th{height:56px;border-radius:5px;overflow:hidden;position:relative}
+.clip .th canvas{width:100%;height:100%;display:block}
+.clip .th em{position:absolute;right:4px;bottom:3px;font-style:normal;font-family:var(--mono);font-size:9.5px;background:rgba(0,0,0,.6);padding:0 4px;border-radius:3px}
+.clip b{font-weight:500;font-size:12.5px;display:block}
+.clip small{color:var(--muted);font-size:11px;font-family:var(--mono)}
+
+/* ——— Modifica ——— */
+.edit{flex:1;display:grid;grid-template-columns:1fr 300px;min-height:0}
+.emain{display:flex;flex-direction:column;padding:18px 20px 14px;gap:12px;min-width:0;min-height:0;background:#141519}
+/* la foto sta dentro lo spazio disponibile senza invadere il pannello a destra:
+   la larghezza è la minore fra quella del riquadro e quella che pareggia l'altezza */
+.canvasWrap{flex:1;min-width:0;min-height:0;display:grid;place-items:center;position:relative;container-type:size}
+.photo{position:relative;aspect-ratio:3/2;width:min(100cqw,150cqh);max-width:100%;height:auto}
+.photo canvas{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:2px}
+#after{clip-path:inset(0 0 0 var(--split,50%))}
+.vigOv{position:absolute;inset:0;border-radius:2px;pointer-events:none;opacity:0;clip-path:inset(0 0 0 var(--split,50%));background:radial-gradient(ellipse 72% 72% at 50% 50%,transparent 38%,#000 118%)}
+.split{position:absolute;top:0;bottom:0;left:var(--split,50%);width:2px;background:#fff;transform:translateX(-1px)}
+.split::after{content:"";position:absolute;top:50%;left:50%;width:30px;height:30px;margin:-15px;border-radius:50%;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M7 5l-4 5 4 5M13 5l4 5-4 5' fill='none' stroke='%23111' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.lbl{position:absolute;top:10px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(0,0,0,.5)}
+.lbl.l{left:10px}.lbl.r{right:10px}
+.thirds{position:absolute;inset:0;pointer-events:none;background:
+ linear-gradient(90deg,transparent calc(33.33% - .5px),rgba(255,255,255,.22) calc(33.33% - .5px) calc(33.33% + .5px),transparent calc(33.33% + .5px) calc(66.66% - .5px),rgba(255,255,255,.22) calc(66.66% - .5px) calc(66.66% + .5px),transparent 0),
+ linear-gradient(transparent calc(33.33% - .5px),rgba(255,255,255,.22) calc(33.33% - .5px) calc(33.33% + .5px),transparent calc(33.33% + .5px) calc(66.66% - .5px),rgba(255,255,255,.22) calc(66.66% - .5px) calc(66.66% + .5px),transparent 0)}
+.corner{position:absolute;width:18px;height:18px;border:3px solid #fff}
+.corner.a{left:-3px;top:-3px;border-right:0;border-bottom:0}.corner.b{right:-3px;top:-3px;border-left:0;border-bottom:0}
+.corner.c{left:-3px;bottom:-3px;border-right:0;border-top:0}.corner.d{right:-3px;bottom:-3px;border-left:0;border-top:0}
+#splitRange{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.presets{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.preset{flex:none;width:92px;text-align:center;font-size:11.5px;color:var(--muted)}
+.preset canvas{width:92px;height:62px;border-radius:6px;display:block;margin-bottom:5px;border:2px solid transparent}
+.preset.on{color:var(--text)}
+.preset.on canvas{border-color:var(--accent)}
+.eside{border-left:1px solid var(--line);background:var(--side);overflow:auto;padding:14px 16px}
+.histo{height:78px;border-radius:8px;background:var(--panel);overflow:hidden}
+.histo canvas{width:100%;height:100%;display:block}
+.histo-meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:6px}
+.etools{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 4px}
+.etools button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;border-radius:8px;font-size:11px;color:var(--muted);background:var(--panel);border:1px solid var(--line);white-space:normal}
+.etools button svg{width:17px;height:17px}
+.etools button.on{color:var(--text);border-color:var(--accent);background:var(--accent-soft)}
+.etools button.on svg{color:var(--accent)}
+details.adj{border-top:1px solid var(--line);padding:4px 0}
+details.adj summary{list-style:none;display:flex;align-items:center;justify-content:space-between;padding:10px 0 8px;font-weight:600;font-size:13px;cursor:pointer}
+details.adj summary::-webkit-details-marker{display:none}
+details.adj summary::after{content:"";width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin-right:4px}
+details.adj[open] summary::after{transform:rotate(-135deg)}
+.sl{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin-bottom:10px;font-size:12.5px}
+.sl output{font-family:var(--mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;min-width:34px}
+.sl input{grid-column:1/-1;width:100%;appearance:none;-webkit-appearance:none;height:18px;background:transparent;margin:0}
+.sl input::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:var(--track,var(--line2))}
+.sl input::-moz-range-track{height:3px;border-radius:2px;background:var(--track,var(--line2))}
+.sl input::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#f4f1ea;margin-top:-5.5px;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.sl input::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;background:#f4f1ea}
+.sl.temp input{--track:linear-gradient(90deg,#5d8fe6,#ddd3c0,#e9a13f)}
+.sl.sat input{--track:linear-gradient(90deg,#777,#e0707c 50%,#e9ae4f)}
+.efoot{display:flex;gap:8px;margin-top:10px}
+.efoot button{flex:1;padding:8px;border-radius:8px;font-size:12.5px;white-space:normal}
+.ghost{border:1px solid var(--line2);color:#cfccd4}
+
+/* ——— Documenti ——— */
+.docs{flex:1;display:grid;grid-template-columns:1fr 380px;min-height:0}
+.dlist{overflow:auto;padding:0 20px 24px;min-width:0}
+.found{display:flex;align-items:center;gap:10px;margin:16px 0 10px;font-size:13px;color:var(--muted)}
+.found b{color:var(--text);font-weight:600}
+table.ft{width:100%;border-collapse:collapse;font-size:13px}
+.ft th{position:sticky;top:0;background:var(--win);text-align:left;font-weight:500;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--line)}
+.ft td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.ft td.num{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ft tr.on td{background:var(--accent-soft)}
+.ft tr.on td:first-child{border-radius:8px 0 0 8px}.ft tr.on td:last-child{border-radius:0 8px 8px 0}
+.fname{display:flex;gap:10px;align-items:flex-start}
+.fname .ext{flex:none;font-family:var(--mono);font-size:9.5px;font-weight:500;width:38px;text-align:center;padding:3px 0;border-radius:4px;margin-top:1px}
+.fname b{font-weight:500;display:block}
+.snip{display:block;color:var(--muted);font-size:12px;margin-top:3px;max-width:60ch}
+mark{background:rgba(233,174,79,.3);color:var(--text);border-radius:3px;padding:0 2px}
+.ft .tag{font-size:11px;padding:2px 8px 2px 6px}
+.dprev{border-left:1px solid var(--line);background:var(--side);display:flex;flex-direction:column;min-height:0}
+.paperWrap{flex:1;overflow:auto;padding:20px 26px;display:flex;flex-direction:column;align-items:center;gap:14px;background:#121317}
+.paper{width:100%;aspect-ratio:1/1.414;background:#f7f5f0;border-radius:3px;box-shadow:0 12px 30px rgba(0,0,0,.5);padding:26px 24px;color:#2a2a2e;font-size:8px;line-height:1.5;position:relative;flex:none}
+.paper h5{margin:0 0 2px;font-size:13px;font-weight:700;color:#1a1a1e}
+.paper .ph{display:flex;justify-content:space-between;border-bottom:1.5px solid #1a1a1e;padding-bottom:8px;margin-bottom:12px}
+.paper .logo{width:34px;height:34px;border-radius:50%;background:conic-gradient(#3c6fd8 0 40%,#86a8ea 0 70%,#c9d7f4 0)}
+.paper p{margin:0 0 8px}
+.paper .ln{height:5px;border-radius:2px;background:#d9d5cc;margin:0 0 6px}
+.paper mark{background:#ffd98a;color:#1a1a1e}
+.paper .stamp{position:absolute;right:26px;bottom:34px;border:2px solid #b8433a;color:#b8433a;font-weight:700;font-size:9px;padding:4px 8px;border-radius:4px;transform:rotate(-8deg);letter-spacing:.08em}
+.pages{display:flex;gap:8px}
+.pages i{width:44px;height:62px;background:#e8e5de;border-radius:2px;opacity:.55;border:2px solid transparent}
+.pages i.on{opacity:1;border-color:var(--accent)}
+.dmeta{padding:14px 18px;border-top:1px solid var(--line)}
+.dmeta .acts{display:flex;gap:8px;margin-top:12px}
+.dmeta .acts button{flex:1;padding:7px;border-radius:8px;font-size:12.5px;white-space:normal}
+
+/* ——— Persone e luoghi ——— */
+.people{flex:1;min-height:0;overflow:auto;padding:18px 22px 26px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.faces{display:grid;grid-template-columns:repeat(8,1fr);gap:14px}
+.face{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:12.5px}
+.face small{color:var(--muted);font-family:var(--mono);font-size:10.5px}
+.av{width:78px;height:78px;border-radius:50%;position:relative;overflow:hidden;box-shadow:0 0 0 2px var(--win),0 0 0 3px var(--line2)}
+.av::before{content:"";position:absolute;left:50%;top:22%;width:34%;height:34%;margin-left:-17%;border-radius:50%;background:rgba(20,16,22,.55)}
+.av::after{content:"";position:absolute;left:50%;top:60%;width:72%;height:60%;margin-left:-36%;border-radius:50% 50% 0 0;background:rgba(20,16,22,.55)}
+.face.new .av{background:var(--panel);box-shadow:0 0 0 2px var(--win),0 0 0 3px var(--line2);border:2px dashed var(--line2)}
+.face.new .av::before,.face.new .av::after{background:var(--line2)}
+.places{display:grid;grid-template-columns:1fr 290px;gap:18px;min-height:380px}
+.bigmap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:
+ linear-gradient(118deg,transparent 71%,#223a44 71.2%,#1f3540 100%),
+ radial-gradient(600px 300px at 30% 70%,#262b24 0%,transparent 70%),
+ repeating-linear-gradient(0deg,transparent 0 39px,rgba(255,255,255,.025) 39px 40px),
+ repeating-linear-gradient(90deg,transparent 0 39px,rgba(255,255,255,.025) 39px 40px),
+ #1e2026}
+.bigmap svg.roads{position:absolute;inset:0;width:100%;height:100%}
+.bigmap .sea{position:absolute;right:18px;top:40%;font-family:var(--disp);font-style:italic;color:#5b8797;font-size:15px}
+.cl{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:4px}
+.cl .ph{width:var(--s,54px);height:var(--s,54px);border-radius:10px;overflow:hidden;border:2px solid #f4f1ea;box-shadow:0 6px 16px rgba(0,0,0,.5);position:relative}
+.cl .ph canvas{width:100%;height:100%;display:block}
+.cl .ph em{position:absolute;right:-1px;top:-1px;font-style:normal;font-family:var(--mono);font-size:10px;background:var(--accent);color:var(--accent-ink);padding:1px 5px;border-radius:0 7px 0 6px;font-weight:500}
+.cl span{font-size:11.5px;background:rgba(15,16,20,.8);padding:1px 7px;border-radius:5px;white-space:nowrap}
+.plist{background:var(--side);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.prow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:12.5px;margin-bottom:11px}
+.prow span.num{font-family:var(--mono);font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prow i{grid-column:1/-1;height:4px;border-radius:3px;background:var(--raised);position:relative;overflow:hidden}
+.prow i b{position:absolute;inset:0 auto 0 0;background:var(--t-via);border-radius:3px}
+
+/* ——— Doppioni ——— */
+.dups{flex:1;display:grid;grid-template-columns:1fr 280px;min-height:0}
+.dcont{overflow:auto;padding:16px 20px 26px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.dgroup{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px}
+.dhead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.dhead b{font-weight:600}
+.dhead .why{font-size:12px;color:var(--muted)}
+.dhead .acts{margin-left:auto;display:flex;gap:6px}
+.dhead .acts button{padding:5px 11px;border-radius:7px;font-size:12px;white-space:normal}
+.dpics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dpic{border-radius:8px;overflow:hidden;background:var(--side);border:2px solid transparent;position:relative;text-align:left;padding:0}
+.dpic .img{height:128px;position:relative}
+.dpic canvas{width:100%;height:100%;display:block}
+.dpic .m{padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.dpic .st{position:absolute;left:8px;top:8px;font-family:var(--ui);font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px}
+.dpic.keep{border-color:var(--accent)}
+.dpic.keep .st{background:var(--accent);color:var(--accent-ink)}
+.dpic.away .img{opacity:.42}
+.dpic.away .st{background:rgba(10,10,14,.7);color:#e0e0e0}
+.dside{border-left:1px solid var(--line);background:var(--side);padding:18px;overflow:auto}
+.big{font-family:var(--disp);font-style:italic;font-weight:600;font-size:44px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.dside p{color:var(--muted);font-size:12.5px;margin:8px 0 0}
+.stack{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:16px 0 8px}
+.stack b{display:block;height:100%}
+.legend{display:grid;grid-template-columns:auto 1fr auto;gap:6px 8px;font-size:12px;align-items:center}
+.legend .num{font-family:var(--mono);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.safe{margin-top:18px;padding:12px;border-radius:10px;background:rgba(88,179,156,.1);border:1px solid rgba(88,179,156,.3);font-size:12.5px;color:#cfe6de}
+
+/* ——— Importa (foglio) ——— */
+.window{position:relative}
+.sheetBg{position:absolute;inset:0;z-index:20;background:rgba(8,8,12,.55);backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:flex-start;padding-top:56px}
+.sheet{width:820px;max-width:92%;background:var(--panel);border:1px solid var(--line2);border-radius:0 0 14px 14px;box-shadow:0 30px 70px rgba(0,0,0,.6);display:grid;grid-template-columns:220px 1fr;overflow:hidden}
+.src{background:var(--side);padding:14px 10px;border-right:1px solid var(--line)}
+.src .it small{display:block;font-size:11px;color:var(--faint)}
+.drop{margin:14px 6px 0;border:1.5px dashed var(--line2);border-radius:10px;padding:16px 10px;text-align:center;font-size:12px;color:var(--muted)}
+.drop svg{width:22px;height:22px;display:block;margin:0 auto 6px;color:var(--accent)}
+.sbody{padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.shead{display:flex;align-items:center;gap:10px}
+.shead h3{margin:0;font-size:16px;font-weight:600}
+.shead .x{margin-left:auto;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--muted);font-size:14px}
+.shead .x:hover{background:var(--raised);color:var(--text)}
+.igrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.igrid div{height:62px;border-radius:5px;overflow:hidden;position:relative}
+.igrid canvas{width:100%;height:100%;display:block}
+.igrid .dup{opacity:.35}
+.igrid .dup::after{content:"doppione";position:absolute;inset:auto 0 3px;text-align:center;font-size:9.5px;color:#fff}
+.sort{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-radius:10px;overflow:hidden}
+.sort div{background:var(--side);padding:10px 12px;font-size:12px;color:var(--muted)}
+.sort div b{display:block;font-family:var(--mono);font-size:17px;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;font-size:12.5px}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer}
+.sw input{appearance:none;-webkit-appearance:none;width:30px;height:18px;border-radius:9px;background:var(--line2);position:relative;margin:0;flex:none;cursor:pointer;transition:background .15s}
+.sw input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f4f1ea;transition:left .15s}
+.sw input:checked{background:var(--accent)}
+.sw input:checked::after{left:14px}
+.sfoot{display:flex;align-items:center;gap:10px;padding-top:4px}
+.sfoot .prog{flex:1;font-size:11.5px;color:var(--muted)}
+.sfoot .prog i{display:block;height:4px;border-radius:3px;background:var(--raised);margin-top:5px;overflow:hidden}
+.sfoot .prog i b{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.sfoot button{padding:8px 14px;border-radius:8px;font-size:13px;white-space:normal}
+
+/* ——— note di progetto ——— */
+.notes{max-width:1340px;margin:0 auto;padding:6px 28px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.notes h4{margin:0 0 6px;font-family:var(--disp);font-style:italic;font-weight:500;font-size:21px;color:var(--accent)}
+.notes p{margin:0;color:#b7b4bd;font-size:13.5px;max-width:48ch}
+@media (max-width:900px){.notes{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.screen.on{animation:fade .28s ease}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-all" viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="2" width="5" height="5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="9" width="5" height="5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="5" height="5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 16 16"><rect x="1.8" y="3" width="12.4" height="10" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 11.5l3.5-3.5 2.7 2.7 1.8-1.8 3 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="10.6" cy="6" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-video" viewBox="0 0 16 16"><rect x="1.8" y="3.5" width="9" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.8 7l3.4-2v6l-3.4-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 16 16"><path d="M4 1.8h5l3.2 3.2v9.2H4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 1.8V5h3.2M6 8.5h4M6 11h4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-audio" viewBox="0 0 16 16"><path d="M3 6v4M5.5 4v8M8 2.5v11M10.5 5v6M13 7v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-box" viewBox="0 0 16 16"><path d="M2 5l6-3 6 3v6.5l-6 3-6-3z M2 5l6 3 6-3M8 8v6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></symbol>
+  <symbol id="i-smart" viewBox="0 0 16 16"><path d="M3 2.5h10v11H3z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.6 4.6L6 8.6h2.3l-.8 3 2.7-4.1H8z" fill="currentColor"/></symbol>
+  <symbol id="i-album" viewBox="0 0 16 16"><rect x="2.5" y="4" width="11" height="9.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 2.3h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-people" viewBox="0 0 16 16"><circle cx="6" cy="5.5" r="2.3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.8 13.5c.4-2.4 2.1-3.6 4.2-3.6s3.8 1.2 4.2 3.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.6 3.4a2.2 2.2 0 010 4.3M12 9.9c1.2.4 2 1.6 2.2 3.6" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 16 16"><path d="M8 14.5s4.8-4.4 4.8-8.1A4.8 4.8 0 003.2 6.4c0 3.7 4.8 8.1 4.8 8.1z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="6.4" r="1.7" fill="currentColor"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 16 16"><path d="M2.8 4.5h10.4M6 4.5V2.8h4v1.7M4.2 4.5l.7 9h6.2l.7-9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.5 10.5l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-import" viewBox="0 0 16 16"><path d="M8 2v8M4.8 6.8L8 10l3.2-3.2M2.5 11v2.5h11V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 16 16"><path d="M8 10V2M5 5l3-3 3 3M3.5 8v5.5h9V8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 16 16"><path d="M8 13.5S2 10 2 6.1A3 3 0 018 4.6a3 3 0 016 1.5C14 10 8 13.5 8 13.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 16 16"><path d="M4 2.5l9.5 5.5L4 13.5z" fill="currentColor"/></symbol>
+  <symbol id="i-cut" viewBox="0 0 16 16"><circle cx="4.2" cy="11.8" r="2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="11.8" cy="11.8" r="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.6 10.4L12.5 2M10.4 10.4L3.5 2" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-speed" viewBox="0 0 16 16"><path d="M2.5 11.5a5.5 5.5 0 1111 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M8 11.5l3-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-stab" viewBox="0 0 16 16"><rect x="4" y="4" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 6v4M14.5 6v4M6 1.5h4M6 14.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-frame" viewBox="0 0 16 16"><path d="M2 5V2.5h2.5M11.5 2.5H14V5M14 11v2.5h-2.5M4.5 13.5H2V11" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-text" viewBox="0 0 16 16"><path d="M3 3.5h10M8 3.5v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-crop" viewBox="0 0 16 16"><path d="M4 1.5V12h10.5M1.5 4H12v10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-adjust" viewBox="0 0 16 16"><path d="M2 4.5h7M12 4.5h2M2 11.5h2M7 11.5h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="10.5" cy="4.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="5.5" cy="11.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 16 16"><path d="M2.5 13.5l8-8M9 3l.5-1.5M12.5 6.5L14 6M12 3.5l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9.5 4.5l2 2" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-retouch" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/></symbol>
+  <filter id="fxDetail" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feGaussianBlur id="fxBlur" stdDeviation="0" result="b"/>
+    <feConvolveMatrix id="fxSharp" in="b" order="3" preserveAlpha="true" edgeMode="duplicate" kernelMatrix="0 0 0 0 1 0 0 0 0"/>
+  </filter>
+</svg>
+
+<header class="intro">
+  <div class="brand">
+    <div class="icon" aria-hidden="true"></div>
+    <div>
+      <h1>Scrigno</h1>
+      <p>Un unico posto sul Mac per foto, video e ogni altro file che vuoi custodire. Ogni cosa trova il suo cassetto da sola.</p>
+    </div>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Schermate">
+    <button role="tab" id="tab-lib" aria-controls="s-lib" aria-selected="true" data-go="lib">Libreria<span>⌘1</span></button>
+    <button role="tab" id="tab-vid" aria-controls="s-vid" aria-selected="false" tabindex="-1" data-go="vid">Video<span>⌘2</span></button>
+    <button role="tab" id="tab-edit" aria-controls="s-edit" aria-selected="false" tabindex="-1" data-go="edit">Modifica<span>⌘3</span></button>
+    <button role="tab" id="tab-doc" aria-controls="s-doc" aria-selected="false" tabindex="-1" data-go="doc">Documenti<span>⌘4</span></button>
+    <button role="tab" id="tab-people" aria-controls="s-people" aria-selected="false" tabindex="-1" data-go="people">Persone e luoghi<span>⌘5</span></button>
+    <button role="tab" id="tab-dup" aria-controls="s-dup" aria-selected="false" tabindex="-1" data-go="dup">Doppioni<span>⌘6</span></button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="window">
+    <aside class="side">
+      <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+      <nav aria-label="Libreria">
+        <div class="grp">Libreria</div>
+        <button class="it on" data-go="lib" data-filter="all"><svg><use href="#i-all"/></svg>Tutto<span class="n">16.642</span></button>
+        <button class="it" data-go="lib" data-filter="type:foto"><svg><use href="#i-photo"/></svg>Foto<span class="n">12.480</span></button>
+        <button class="it" data-go="vid"><svg><use href="#i-video"/></svg>Video<span class="n">842</span></button>
+        <button class="it" data-go="doc"><svg><use href="#i-doc"/></svg>Documenti<span class="n">3.106</span></button>
+        <button class="it" data-go="lib" data-filter="type:audio"><svg><use href="#i-audio"/></svg>Audio<span class="n">214</span></button>
+        <button class="it" data-go="lib" data-filter="type:altri"><svg><use href="#i-box"/></svg>Altri file<span class="n">0</span></button>
+
+        <div class="grp">Cassetti</div>
+        <button class="it" data-go="people"><svg><use href="#i-people"/></svg>Persone<span class="n">38</span></button>
+        <button class="it" data-go="people"><svg><use href="#i-pin"/></svg>Luoghi<span class="n">112</span></button>
+        <button class="it" data-go="lib" data-filter="fav"><svg><use href="#i-heart"/></svg>Preferiti<span class="n">406</span></button>
+
+        <div class="grp">Raccolte intelligenti</div>
+        <button class="it" data-go="lib" data-filter="untagged"><svg><use href="#i-smart"/></svg>Senza etichetta<span class="n">318</span></button>
+        <button class="it" data-go="dup"><svg><use href="#i-smart"/></svg>Possibili doppioni<span class="n">46</span></button>
+        <button class="it" data-go="lib" data-filter="receipt"><svg><use href="#i-smart"/></svg>Scontrini e ricevute<span class="n">91</span></button>
+
+        <div class="grp">Album</div>
+        <button class="it" data-go="lib" data-filter="album:comacchio"><svg><use href="#i-album"/></svg>Estate a Comacchio</button>
+        <button class="it" data-go="lib" data-filter="album:giulia"><svg><use href="#i-album"/></svg>Matrimonio Giulia</button>
+        <button class="it" data-go="lib" data-filter="album:casa"><svg><use href="#i-album"/></svg>Casa · lavori 2026</button>
+
+        <div class="grp">Etichette</div>
+        <button class="it" data-go="lib" data-filter="tag:fam"><i class="dot" style="background:var(--t-fam)"></i>Famiglia<span class="n">2.841</span></button>
+        <button class="it" data-go="lib" data-filter="tag:lav"><i class="dot" style="background:var(--t-lav)"></i>Lavoro<span class="n">1.207</span></button>
+        <button class="it" data-go="lib" data-filter="tag:via"><i class="dot" style="background:var(--t-via)"></i>Viaggi<span class="n">3.560</span></button>
+        <button class="it" data-go="lib" data-filter="tag:sta"><i class="dot" style="background:var(--t-sta)"></i>Da stampare<span class="n">64</span></button>
+
+        <div class="grp">&nbsp;</div>
+        <button class="it" data-go="lib" data-filter="trash"><svg><use href="#i-trash"/></svg>Eliminati di recente<span class="n">27</span></button>
+      </nav>
+      <div class="storage">
+        <div style="display:flex;justify-content:space-between"><span>Disco del Mac</span><span style="font-family:var(--mono);font-size:11px">412 / 1.000 GB</span></div>
+        <div class="bar"><b style="width:19%;background:var(--accent)"></b><b style="width:14%;background:var(--t-via)"></b><b style="width:5%;background:var(--t-lav)"></b><b style="width:3%;background:var(--t-rin)"></b></div>
+        <span>Foto 190 GB · Video 140 GB · Doc 50 GB</span>
+      </div>
+    </aside>
+
+    <div class="main">
+      <!-- ——— LIBRERIA ——— -->
+      <section class="screen on" id="s-lib" role="tabpanel" aria-labelledby="tab-lib">
+        <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+          <div class="toolbar">
+            <div class="crumb">Settembre 2026<small>284 elementi</small></div>
+            <div class="seg" role="group" aria-label="Raggruppa"><button>Anni</button><button>Mesi</button><button class="on">Giorni</button><button>Tutti</button></div>
+            <div class="search"><svg><use href="#i-search"/></svg><input id="q" type="search" placeholder="Cerca per nome…" aria-label="Cerca nella libreria"><kbd>⌘F</kbd></div>
+            <button class="tbtn" aria-label="Condividi"><svg><use href="#i-share"/></svg></button>
+            <button class="btn-acc" data-import>Importa</button>
+          </div>
+          <div class="lib">
+            <div class="content">
+              <div class="filters" id="filters">
+                <button class="chip on" data-filter="all">Tutti i tipi</button>
+                <button class="chip" data-filter="type:foto"><svg width="13" height="13"><use href="#i-photo"/></svg>Foto <em>212</em></button>
+                <button class="chip" data-filter="type:video"><svg width="13" height="13"><use href="#i-video"/></svg>Video <em>31</em></button>
+                <button class="chip" data-filter="type:doc"><svg width="13" height="13"><use href="#i-doc"/></svg>Documenti <em>36</em></button>
+                <button class="chip" data-filter="type:audio"><svg width="13" height="13"><use href="#i-audio"/></svg>Audio <em>5</em></button>
+                <button class="chip" data-filter="tag:via"><i class="dot" style="background:var(--t-via);margin:0"></i>Viaggi</button>
+              </div>
+
+              <div class="dayblock">
+                <div class="day"><h2>Sabato 12 settembre</h2><span class="pin"><svg><use href="#i-pin"/></svg>Comacchio, Ferrara</span><span class="cnt">· 18 elementi</span></div>
+                <div class="grid">
+                  <div class="tile w2 h2 sel" tabindex="0" role="button" data-type="foto" data-name="IMG_4821.HEIC" data-tags="via fam" data-fav="1" data-album="comacchio" title="IMG_4821.HEIC — premi Invio per modificare"><canvas data-scene="sunset" data-seed="4"></canvas><div class="tagdot"><i style="background:var(--t-via)"></i><i style="background:var(--t-fam)"></i></div></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4802.HEIC" data-album="comacchio" title="IMG_4802.HEIC"><canvas data-scene="sea" data-seed="2"></canvas></div>
+                  <div class="tile" tabindex="0" role="button" data-type="video" data-name="IMG_4806.MOV" data-album="comacchio" title="IMG_4806.MOV"><canvas data-scene="sea" data-seed="7"></canvas><span class="badge"><svg><use href="#i-play"/></svg>0:42</span></div>
+                  <div class="tile w2" tabindex="0" role="button" data-type="foto" data-name="IMG_4810.HEIC" data-fav="1" data-album="comacchio" title="IMG_4810.HEIC"><canvas data-scene="hills" data-seed="3"></canvas><span class="badge">Panoramica</span></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4815.HEIC" data-album="comacchio" title="IMG_4815.HEIC"><canvas data-scene="bokeh" data-seed="5"></canvas></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4818.HEIC" data-tags="sta" data-album="comacchio" title="IMG_4818.HEIC"><canvas data-scene="food" data-seed="1"></canvas><div class="tagdot"><i style="background:var(--t-sta)"></i></div></div>
+                  <div class="tile doc" tabindex="0" role="button" data-type="doc" data-name="Biglietti traghetto.pdf" data-tags="via" data-album="comacchio" title="Biglietti traghetto.pdf"><span class="ext" style="background:#5a2a2a;color:#ffb3a6">PDF</span><div class="lines"></div><div><b>Biglietti traghetto.pdf</b><br><small>2 pagine · 184 KB</small></div></div>
+                  <div class="tile" tabindex="0" role="button" data-type="video" data-name="IMG_4829.MOV" data-fav="1" data-album="comacchio" title="IMG_4829.MOV"><canvas data-scene="sunset" data-seed="9"></canvas><span class="badge"><svg><use href="#i-play"/></svg>3:18</span></div>
+                </div>
+              </div>
+
+              <div class="dayblock">
+                <div class="day" style="margin-top:26px"><h2>Venerdì 11 settembre</h2><span class="pin"><svg><use href="#i-pin"/></svg>Bologna</span><span class="cnt">· 9 elementi</span></div>
+                <div class="grid">
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4770.HEIC" title="IMG_4770.HEIC"><canvas data-scene="city" data-seed="6"></canvas></div>
+                  <div class="tile" tabindex="0" role="button" data-type="video" data-name="IMG_4772.MOV" title="IMG_4772.MOV"><canvas data-scene="city" data-seed="11"></canvas><span class="badge"><svg><use href="#i-play"/></svg>1:05</span></div>
+                  <div class="tile doc" tabindex="0" role="button" data-type="doc" data-name="Preventivo cucina.docx" data-tags="lav" data-album="casa" title="Preventivo cucina.docx"><span class="ext" style="background:#23364f;color:#9ec3ff">DOCX</span><div class="lines"></div><div><b>Preventivo cucina.docx</b><br><small>48 KB · Lavoro</small></div></div>
+                  <div class="tile doc" tabindex="0" role="button" data-type="audio" data-name="Nota vocale 14.m4a" title="Nota vocale 14.m4a"><span class="ext" style="background:#3b2a4a;color:#dcb6f2">M4A</span><div class="wave" data-wave></div><div><b>Nota vocale 14</b><br><small>2:41 · trascritta</small></div></div>
+                  <div class="tile w2" tabindex="0" role="button" data-type="foto" data-name="IMG_4778.HEIC" data-tags="fam" title="IMG_4778.HEIC"><canvas data-scene="bokeh" data-seed="12"></canvas><div class="tagdot"><i style="background:var(--t-fam)"></i></div></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4781.HEIC" title="IMG_4781.HEIC"><canvas data-scene="food" data-seed="8"></canvas></div>
+                  <div class="tile doc" tabindex="0" role="button" data-type="doc" data-name="Scansioni garanzia.zip" data-tags="sta" data-album="casa" data-receipt="1" title="Scansioni garanzia.zip"><span class="ext" style="background:#2c3a33;color:#9fd6bf">ZIP</span><div class="lines" style="opacity:.4"></div><div><b>Scansioni garanzia</b><br><small>12 file · 36 MB</small></div></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4784.HEIC" title="IMG_4784.HEIC"><canvas data-scene="hills" data-seed="10"></canvas></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4787.HEIC" title="IMG_4787.HEIC"><canvas data-scene="sea" data-seed="13"></canvas></div>
+                  <div class="tile doc" tabindex="0" role="button" data-type="doc" data-name="Presentazione.key" data-tags="lav" title="Presentazione.key"><span class="ext" style="background:#4a3d1f;color:#f4d38c">KEY</span><div class="lines"></div><div><b>Presentazione.key</b><br><small>14 MB · Lavoro</small></div></div>
+                  <div class="tile" tabindex="0" role="button" data-type="foto" data-name="IMG_4790.HEIC" title="IMG_4790.HEIC"><canvas data-scene="sunset" data-seed="14"></canvas></div>
+                </div>
+              </div>
+
+              <div class="empty" id="empty" hidden>
+                <b>Nessun elemento qui</b>
+                <p id="emptyTxt">Questo cassetto è vuoto in questa anteprima.</p>
+                <button class="ghost" data-filter="all">Mostra tutto</button>
+              </div>
+            </div>
+
+            <aside class="insp" aria-label="Informazioni">
+              <div class="pv"><canvas data-scene="sunset" data-seed="4"></canvas></div>
+              <h3>IMG_4821.HEIC</h3>
+              <div class="sub">Sabato 12 settembre 2026 · 19:34</div>
+              <div class="exif">
+                <div>f/1.8<small>Diafr.</small></div>
+                <div>1/250<small>Tempo</small></div>
+                <div>50<small>ISO</small></div>
+                <div>26mm<small>Focale</small></div>
+              </div>
+              <dl class="kv">
+                <dt>Fotocamera</dt><dd>iPhone 16 Pro</dd>
+                <dt>Dimensioni</dt><dd>4032 × 3024</dd>
+                <dt>Peso</dt><dd>3,2 MB</dd>
+                <dt>Modificata</dt><dd>Sì · originale conservato</dd>
+              </dl>
+              <div class="sec">Etichette</div>
+              <div class="tags">
+                <span class="tag"><i style="background:var(--t-via)"></i>Viaggi</span>
+                <span class="tag"><i style="background:var(--t-fam)"></i>Famiglia</span>
+                <span class="tag add">+ Aggiungi</span>
+              </div>
+              <div class="sec">Riconosciuto automaticamente</div>
+              <div class="tags">
+                <span class="tag">tramonto</span><span class="tag">laguna</span><span class="tag">2 persone</span>
+              </div>
+              <div class="sec">Album</div>
+              <div class="tags"><span class="tag">Estate a Comacchio</span></div>
+              <div class="sec">Luogo</div>
+              <div class="map"><span>Valli di Comacchio · 44.69° N, 12.18° E</span></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ——— VIDEO ——— -->
+      <section class="screen" id="s-vid" role="tabpanel" aria-labelledby="tab-vid">
+        <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+          <div class="toolbar">
+            <div class="crumb">Video<small>842 filmati · 140 GB</small></div>
+            <div class="seg" role="group" aria-label="Filtra"><button class="on">Tutti</button><button>Rallenty</button><button>Registrazioni schermo</button><button>Lunghi</button></div>
+            <div class="search"><svg><use href="#i-search"/></svg><input id="qvid" type="search" placeholder="Cerca nei video…" aria-label="Cerca nei video"><kbd>⌘F</kbd></div>
+            <button class="tbtn" aria-label="Condividi"><svg><use href="#i-share"/></svg></button>
+          </div>
+          <div class="vid">
+            <div class="vmain">
+              <div class="player">
+                <canvas data-scene="sunset" data-seed="9"></canvas>
+                <div class="vtitle"><span class="rec">4K · 60 fps · HDR</span>Tramonto sul ponte dei Trepponti</div>
+                <div class="hud">
+                  <button class="play" aria-label="Riproduci"><svg><use href="#i-play"/></svg></button>
+                  <div class="tc"><b>01:12</b> / 03:18</div>
+                  <div class="spc"><span class="pill">1×</span><span class="pill">Volume 80%</span><span class="pill">Sottotitoli</span></div>
+                </div>
+              </div>
+              <div class="vtools">
+                <button class="vtool on"><svg><use href="#i-cut"/></svg>Taglia</button>
+                <button class="vtool"><svg><use href="#i-speed"/></svg>Velocità</button>
+                <button class="vtool"><svg><use href="#i-stab"/></svg>Stabilizza</button>
+                <button class="vtool"><svg><use href="#i-frame"/></svg>Salva fotogramma</button>
+                <button class="vtool"><svg><use href="#i-text"/></svg>Titolo</button>
+                <button class="vtool"><svg><use href="#i-adjust"/></svg>Colore</button>
+                <button class="btn-acc">Esporta 1080p</button>
+              </div>
+              <div class="timeline">
+                <div class="ruler"><span>00:00</span><span>00:30</span><span>01:00</span><span>01:30</span><span>02:00</span><span>02:30</span><span>03:18</span></div>
+                <div class="strip" id="strip">
+                  <div class="shade" style="left:0;width:12%"></div>
+                  <div class="shade" style="left:81%;right:0"></div>
+                  <div class="trim" style="left:12%;right:19%"></div>
+                  <div class="head" style="left:36%"></div>
+                </div>
+                <div class="audio" data-audio></div>
+                <div class="chapters">
+                  <span style="left:12%">Arrivo in barca</span>
+                  <span style="left:44%">Il ponte</span>
+                  <span style="left:68%">Luci della sera</span>
+                </div>
+              </div>
+            </div>
+            <aside class="vside" aria-label="Video recenti">
+              <div class="sec" style="margin-top:4px">Oggi a Comacchio</div>
+              <button class="clip on"><div class="th"><canvas data-scene="sunset" data-seed="9"></canvas><em>3:18</em></div><div><b>Tramonto sul ponte</b><small>612 MB · 4K</small></div></button>
+              <button class="clip"><div class="th"><canvas data-scene="sea" data-seed="7"></canvas><em>0:42</em></div><div><b>Gabbiani sulla laguna</b><small>98 MB · rallenty</small></div></button>
+              <div class="sec">Ieri a Bologna</div>
+              <button class="clip"><div class="th"><canvas data-scene="city" data-seed="11"></canvas><em>1:05</em></div><div><b>Via dell'Indipendenza</b><small>204 MB · 1080p</small></div></button>
+              <button class="clip"><div class="th"><canvas data-scene="bokeh" data-seed="12"></canvas><em>0:18</em></div><div><b>Compleanno nonna</b><small>41 MB · Famiglia</small></div></button>
+              <div class="sec">Agosto</div>
+              <button class="clip"><div class="th"><canvas data-scene="hills" data-seed="3"></canvas><em>8:02</em></div><div><b>Salita al Cimone</b><small>1,4 GB · drone</small></div></button>
+              <button class="clip"><div class="th"><canvas data-scene="food" data-seed="8"></canvas><em>2:30</em></div><div><b>Tagliatelle a mano</b><small>310 MB · ricette</small></div></button>
+              <button class="clip"><div class="th"><canvas data-scene="sea" data-seed="13"></canvas><em>0:57</em></div><div><b>Tuffo a Lido Estensi</b><small>120 MB · 1080p</small></div></button>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ——— MODIFICA ——— -->
+      <section class="screen" id="s-edit" role="tabpanel" aria-labelledby="tab-edit">
+        <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+          <div class="toolbar">
+            <div class="crumb">IMG_4821.HEIC<small>Modifica · l'originale resta intatto</small></div>
+            <div class="seg" role="group" aria-label="Confronto"><button>Solo modifica</button><button class="on">Prima / dopo</button></div>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <button class="tbtn" aria-label="Annulla">↶</button>
+              <button class="tbtn" aria-label="Ripeti">↷</button>
+              <button class="ghost" style="padding:7px 12px;border-radius:8px;font-size:13px" id="reset">Ripristina originale</button>
+              <button class="btn-acc">Fatto</button>
+            </div>
+          </div>
+          <div class="edit">
+            <div class="emain">
+              <div class="canvasWrap">
+                <div class="photo" id="photo">
+                  <canvas id="before" data-scene="sunset" data-seed="4"></canvas>
+                  <canvas id="after" data-scene="sunset" data-seed="4"></canvas>
+                  <div class="vigOv" id="vigOv"></div>
+                  <div class="thirds"></div>
+                  <span class="corner a"></span><span class="corner b"></span><span class="corner c"></span><span class="corner d"></span>
+                  <span class="lbl l">Prima</span><span class="lbl r">Dopo</span>
+                  <div class="split"></div>
+                  <input type="range" id="splitRange" min="0" max="100" value="50" aria-label="Sposta il confronto prima/dopo">
+                </div>
+              </div>
+              <div class="presets" id="presets"></div>
+            </div>
+            <aside class="eside" aria-label="Regolazioni">
+              <div class="histo"><canvas id="histo"></canvas></div>
+              <div class="histo-meta"><span>f/1.8</span><span>1/250 s</span><span>ISO 50</span><span>26 mm</span></div>
+              <div class="etools">
+                <button class="on"><svg><use href="#i-adjust"/></svg>Regola</button>
+                <button><svg><use href="#i-crop"/></svg>Ritaglia</button>
+                <button><svg><use href="#i-retouch"/></svg>Ritocco</button>
+                <button><svg><use href="#i-wand"/></svg>Auto</button>
+              </div>
+              <details class="adj" open>
+                <summary>Luce</summary>
+                <label class="sl"><span>Esposizione</span><output>+0,30</output><input type="range" min="-100" max="100" value="30" data-k="exp"></label>
+                <label class="sl"><span>Contrasto</span><output>+12</output><input type="range" min="-100" max="100" value="12" data-k="con"></label>
+                <label class="sl"><span>Alte luci</span><output>−24</output><input type="range" min="-100" max="100" value="-24" data-k="hi"></label>
+                <label class="sl"><span>Ombre</span><output>+18</output><input type="range" min="-100" max="100" value="18" data-k="sh"></label>
+              </details>
+              <details class="adj" open>
+                <summary>Colore</summary>
+                <label class="sl temp"><span>Temperatura</span><output>+15</output><input type="range" min="-100" max="100" value="15" data-k="tem"></label>
+                <label class="sl sat"><span>Saturazione</span><output>+20</output><input type="range" min="-100" max="100" value="20" data-k="sat"></label>
+              </details>
+              <details class="adj">
+                <summary>Dettaglio</summary>
+                <label class="sl"><span>Nitidezza</span><output>+10</output><input type="range" min="0" max="100" value="10" data-k="sha"></label>
+                <label class="sl"><span>Riduzione rumore</span><output>0</output><input type="range" min="0" max="100" value="0" data-k="nr"></label>
+              </details>
+              <details class="adj">
+                <summary>Vignettatura</summary>
+                <label class="sl"><span>Intensità</span><output>0</output><input type="range" min="0" max="100" value="0" data-k="vig"></label>
+              </details>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ——— DOCUMENTI ——— -->
+      <section class="screen" id="s-doc" role="tabpanel" aria-labelledby="tab-doc">
+        <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+          <div class="toolbar">
+            <div class="crumb">Documenti<small>3.106 file · 50 GB</small></div>
+            <div class="seg" role="group" aria-label="Tipo"><button class="on">Tutti</button><button>PDF</button><button>Scansioni</button><button>Fogli</button><button>Presentazioni</button></div>
+            <div class="search"><svg><use href="#i-search"/></svg><input id="qdoc" type="search" value="garanzia" aria-label="Cerca nei documenti"><kbd>⌘F</kbd></div>
+            <button class="btn-acc" data-import>Importa</button>
+          </div>
+          <div class="docs">
+            <div class="dlist">
+              <div class="found"><svg width="14" height="14"><use href="#i-search"/></svg><span><b>5 documenti</b> contengono «garanzia» — la ricerca legge anche dentro PDF e scansioni</span></div>
+              <table class="ft">
+                <thead><tr><th>Nome</th><th>Data</th><th>Peso</th><th>Etichetta</th></tr></thead>
+                <tbody>
+                  <tr class="on"><td><div class="fname"><span class="ext" style="background:#5a2a2a;color:#ffb3a6">PDF</span><div><b>Garanzia lavatrice.pdf</b><span class="snip">… la <mark>garanzia</mark> convenzionale ha durata di 24 mesi dalla data di consegna …</span></div></div></td><td class="num">03/03/2025</td><td class="num">412 KB</td><td><span class="tag"><i style="background:var(--t-sta)"></i>Casa</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#2c3a33;color:#9fd6bf">SCAN</span><div><b>Scontrino MediaWorld.jpg</b><span class="snip">Testo riconosciuto: … conservare per la <mark>garanzia</mark> …</span></div></div></td><td class="num">03/03/2025</td><td class="num">1,1 MB</td><td><span class="tag"><i style="background:var(--t-sta)"></i>Casa</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#23364f;color:#9ec3ff">DOCX</span><div><b>Preventivo cucina.docx</b><span class="snip">… lavori coperti da <mark>garanzia</mark> decennale sugli impianti …</span></div></div></td><td class="num">11/09/2026</td><td class="num">48 KB</td><td><span class="tag"><i style="background:var(--t-lav)"></i>Lavoro</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#2c3a33;color:#9fd6bf">ZIP</span><div><b>Scansioni garanzia</b><span class="snip">12 file · contiene 9 immagini e 3 PDF</span></div></div></td><td class="num">11/09/2026</td><td class="num">36 MB</td><td><span class="tag"><i style="background:var(--t-sta)"></i>Casa</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#5a2a2a;color:#ffb3a6">PDF</span><div><b>Contratto noleggio auto.pdf</b><span class="snip">… deposito a <mark>garanzia</mark> di € 300 restituito alla riconsegna …</span></div></div></td><td class="num">02/08/2026</td><td class="num">260 KB</td><td><span class="tag"><i style="background:var(--t-via)"></i>Viaggi</span></td></tr>
+                </tbody>
+              </table>
+              <div class="found" style="margin-top:26px"><b>Aggiunti di recente</b></div>
+              <table class="ft">
+                <tbody>
+                  <tr><td><div class="fname"><span class="ext" style="background:#5a2a2a;color:#ffb3a6">PDF</span><div><b>Biglietti traghetto.pdf</b></div></div></td><td class="num">12/09/2026</td><td class="num">184 KB</td><td><span class="tag"><i style="background:var(--t-via)"></i>Viaggi</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#4a3d1f;color:#f4d38c">KEY</span><div><b>Presentazione.key</b></div></div></td><td class="num">11/09/2026</td><td class="num">14 MB</td><td><span class="tag"><i style="background:var(--t-lav)"></i>Lavoro</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#2d4a2a;color:#b6e3a5">XLSX</span><div><b>Spese casa 2026.xlsx</b></div></div></td><td class="num">09/09/2026</td><td class="num">92 KB</td><td><span class="tag"><i style="background:var(--t-sta)"></i>Casa</span></td></tr>
+                  <tr><td><div class="fname"><span class="ext" style="background:#3b2a4a;color:#dcb6f2">M4A</span><div><b>Nota vocale 14</b></div></div></td><td class="num">11/09/2026</td><td class="num">2,4 MB</td><td><span class="tag">senza etichetta</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <aside class="dprev" aria-label="Anteprima documento">
+              <div class="paperWrap">
+                <div class="paper">
+                  <div class="ph"><div><h5>Certificato di garanzia</h5>Lavatrice · modello WX 8 kg · matricola 00482-A</div><div class="logo"></div></div>
+                  <p><b>Data di consegna:</b> 3 marzo 2025 &nbsp; <b>Rivenditore:</b> punto vendita di Bologna</p>
+                  <div class="ln" style="width:96%"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:92%"></div>
+                  <p>La <mark>garanzia</mark> convenzionale ha durata di 24 mesi dalla data di consegna e copre i difetti di fabbricazione.</p>
+                  <div class="ln" style="width:90%"></div><div class="ln" style="width:70%"></div>
+                  <p style="margin-top:12px"><b>Esclusioni</b></p>
+                  <div class="ln" style="width:94%"></div><div class="ln" style="width:85%"></div><div class="ln" style="width:91%"></div><div class="ln" style="width:60%"></div>
+                  <p style="margin-top:12px"><b>Assistenza</b></p>
+                  <div class="ln" style="width:80%"></div><div class="ln" style="width:88%"></div>
+                  <span class="stamp">SCADE 03/03/2027</span>
+                </div>
+                <div class="pages" aria-label="Pagine"><i class="on"></i><i></i><i></i></div>
+              </div>
+              <div class="dmeta">
+                <dl class="kv">
+                  <dt>Pagine</dt><dd>3</dd>
+                  <dt>Promemoria</dt><dd style="color:var(--accent)">Scadenza garanzia · 3 mar 2027</dd>
+                  <dt>Collegato a</dt><dd>Scontrino MediaWorld.jpg</dd>
+                </dl>
+                <div class="acts">
+                  <button class="ghost">Apri con Anteprima</button>
+                  <button class="ghost">Firma</button>
+                  <button class="btn-acc">Condividi</button>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ——— PERSONE E LUOGHI ——— -->
+      <section class="screen" id="s-people" role="tabpanel" aria-labelledby="tab-people">
+        <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+          <div class="toolbar">
+            <div class="crumb">Persone e luoghi<small>38 volti · 112 luoghi</small></div>
+            <div class="seg" role="group" aria-label="Periodo"><button>Quest'anno</button><button class="on">Sempre</button></div>
+            <div class="search"><svg><use href="#i-search"/></svg><input id="qppl" type="search" placeholder="Cerca una persona…" aria-label="Cerca una persona"><kbd>⌘F</kbd></div>
+          </div>
+          <div class="people">
+            <div>
+              <div class="day" style="margin-top:0"><h2>Persone</h2><span>i volti vengono riconosciuti sul Mac, nulla va su internet</span></div>
+              <div class="faces">
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#f0b77a,#c46a4f)"></div>Luca<small>1.842</small></div>
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#9cc3d9,#4f6fa8)"></div>Giulia<small>1.310</small></div>
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#e7c98a,#9b7a3c)"></div>Nonna Franca<small>624</small></div>
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#a6d5c3,#3f8a76)"></div>Marco<small>588</small></div>
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#d7a6d9,#7b4f96)"></div>Sara<small>402</small></div>
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#f2a5a0,#b0514b)"></div>Papà<small>377</small></div>
+                <div class="face"><div class="av" style="background:linear-gradient(150deg,#c7c9d6,#6b6f85)"></div>Tommaso<small>96</small></div>
+                <div class="face new"><div class="av"></div>Da riconoscere<small>12 volti</small></div>
+              </div>
+            </div>
+            <div>
+              <div class="day" style="margin-top:0"><h2>Luoghi</h2><span>raggruppati sulla mappa dai dati GPS degli scatti</span></div>
+              <div class="places">
+                <div class="bigmap">
+                  <svg class="roads" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M0 250 C120 240 200 230 300 215 S470 190 560 185 700 150 800 120" fill="none" stroke="#3a3d47" stroke-width="3"/>
+                    <path d="M300 215 C330 150 380 110 470 70" fill="none" stroke="#33363f" stroke-width="2"/>
+                    <path d="M420 200 C430 260 420 320 380 400" fill="none" stroke="#33363f" stroke-width="2"/>
+                    <path d="M60 330 C160 320 260 350 360 380" fill="none" stroke="#2a3a2c" stroke-width="18" opacity=".5"/>
+                  </svg>
+                  <span class="sea">Mare Adriatico</span>
+                  <div class="cl" style="left:24%;top:62%"><div class="ph" style="--s:48px"><canvas data-scene="food" data-seed="8"></canvas><em>512</em></div><span>Modena</span></div>
+                  <div class="cl" style="left:40%;top:56%"><div class="ph" style="--s:66px"><canvas data-scene="city" data-seed="6"></canvas><em>1.204</em></div><span>Bologna</span></div>
+                  <div class="cl" style="left:50%;top:26%"><div class="ph" style="--s:44px"><canvas data-scene="bokeh" data-seed="12"></canvas><em>240</em></div><span>Ferrara</span></div>
+                  <div class="cl" style="left:66%;top:30%"><div class="ph" style="--s:56px"><canvas data-scene="sunset" data-seed="4"></canvas><em>386</em></div><span>Comacchio</span></div>
+                  <div class="cl" style="left:80%;top:66%"><div class="ph" style="--s:58px"><canvas data-scene="sea" data-seed="13"></canvas><em>610</em></div><span>Rimini</span></div>
+                  <div class="cl" style="left:17%;top:92%"><div class="ph" style="--s:40px"><canvas data-scene="hills" data-seed="3"></canvas><em>88</em></div><span>Monte Cimone</span></div>
+                </div>
+                <div class="plist">
+                  <div class="sec" style="margin-top:0">I più fotografati</div>
+                  <div class="prow"><span>Bologna</span><span class="num">1.204</span><i><b style="width:100%"></b></i></div>
+                  <div class="prow"><span>Rimini</span><span class="num">610</span><i><b style="width:51%"></b></i></div>
+                  <div class="prow"><span>Modena</span><span class="num">512</span><i><b style="width:43%"></b></i></div>
+                  <div class="prow"><span>Comacchio</span><span class="num">386</span><i><b style="width:32%"></b></i></div>
+                  <div class="prow"><span>Ferrara</span><span class="num">240</span><i><b style="width:20%"></b></i></div>
+                  <div class="prow"><span>Monte Cimone</span><span class="num">88</span><i><b style="width:7%"></b></i></div>
+                  <div class="sec">Senza posizione</div>
+                  <div class="prow"><span>Scansioni e screenshot</span><span class="num">2.418</span></div>
+                  <button class="ghost" style="width:100%;padding:7px;border-radius:8px;font-size:12.5px;margin-top:4px;white-space:normal">Assegna un luogo a mano</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ——— DOPPIONI ——— -->
+      <section class="screen" id="s-dup" role="tabpanel" aria-labelledby="tab-dup">
+        <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+          <div class="toolbar">
+            <div class="crumb">Possibili doppioni<small>46 gruppi</small></div>
+            <div class="seg" role="group" aria-label="Tipo di doppione"><button class="on">Tutti</button><button>Identici</button><button>Raffiche</button><button>Formati diversi</button></div>
+            <button class="btn-acc" style="margin-left:auto">Applica i suggerimenti</button>
+          </div>
+          <div class="dups">
+            <div class="dcont">
+              <div class="dgroup">
+                <div class="dhead"><b>Scatti a raffica</b><span class="why">3 foto in 2 secondi · Comacchio, 12 settembre</span><div class="acts"><button class="ghost">Tienile tutte</button></div></div>
+                <div class="dpics">
+                  <button class="dpic away"><div class="img"><canvas data-scene="sunset" data-seed="24"></canvas></div><span class="st">Nel cestino</span><div class="m"><span>4032×3024</span><span>3,1 MB</span><span>mossa</span></div></button>
+                  <button class="dpic keep"><div class="img"><canvas data-scene="sunset" data-seed="4"></canvas></div><span class="st">Da tenere</span><div class="m"><span>4032×3024</span><span>3,2 MB</span><span>la più nitida</span></div></button>
+                  <button class="dpic away"><div class="img"><canvas data-scene="sunset" data-seed="34"></canvas></div><span class="st">Nel cestino</span><div class="m"><span>4032×3024</span><span>3,0 MB</span><span>occhi chiusi</span></div></button>
+                </div>
+              </div>
+              <div class="dgroup">
+                <div class="dhead"><b>Stessa foto, due formati</b><span class="why">HEIC dall'iPhone e JPG ricevuto su WhatsApp</span><div class="acts"><button class="ghost">Tienile tutte</button></div></div>
+                <div class="dpics">
+                  <button class="dpic keep"><div class="img"><canvas data-scene="bokeh" data-seed="12"></canvas></div><span class="st">Da tenere</span><div class="m"><span>HEIC</span><span>4032×3024</span><span>2,8 MB</span></div></button>
+                  <button class="dpic away"><div class="img"><canvas data-scene="bokeh" data-seed="12"></canvas></div><span class="st">Nel cestino</span><div class="m"><span>JPG</span><span>1600×1200</span><span>240 KB</span></div></button>
+                </div>
+              </div>
+              <div class="dgroup">
+                <div class="dhead"><b>Video esportato due volte</b><span class="why">stessa durata 8:02 · Salita al Cimone</span><div class="acts"><button class="ghost">Tienile tutte</button></div></div>
+                <div class="dpics">
+                  <button class="dpic keep"><div class="img"><canvas data-scene="hills" data-seed="3"></canvas><span class="badge"><svg><use href="#i-play"/></svg>8:02</span></div><span class="st">Da tenere</span><div class="m"><span>4K</span><span>1,4 GB</span><span>originale</span></div></button>
+                  <button class="dpic away"><div class="img"><canvas data-scene="hills" data-seed="3"></canvas><span class="badge"><svg><use href="#i-play"/></svg>8:02</span></div><span class="st">Nel cestino</span><div class="m"><span>1080p</span><span>420 MB</span><span>copia</span></div></button>
+                </div>
+              </div>
+            </div>
+            <aside class="dside" aria-label="Riepilogo">
+              <div class="sec" style="margin-top:0">Spazio che puoi liberare</div>
+              <div class="big">1,8 GB</div>
+              <p>applicando i suggerimenti su tutti i 46 gruppi. Clicca una miniatura per scegliere tu quale tenere.</p>
+              <div class="stack"><b style="width:62%;background:var(--t-via)"></b><b style="width:28%;background:var(--accent)"></b><b style="width:10%;background:var(--t-lav)"></b></div>
+              <div class="legend">
+                <i class="dot" style="background:var(--t-via)"></i><span>Video duplicati</span><span class="num">1,1 GB</span>
+                <i class="dot" style="background:var(--accent)"></i><span>Raffiche</span><span class="num">510 MB</span>
+                <i class="dot" style="background:var(--t-lav)"></i><span>Formati diversi</span><span class="num">190 MB</span>
+              </div>
+              <div class="safe">Niente viene cancellato subito: quello che scarti resta per 30 giorni in <b>Eliminati di recente</b>.</div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ——— FOGLIO IMPORTA ——— -->
+    <div class="sheetBg" id="sheet" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <div class="src">
+          <div class="grp" style="padding-top:2px">Da dove</div>
+          <button class="it on"><svg><use href="#i-photo"/></svg><span>iPhone<small>234 nuovi elementi</small></span></button>
+          <button class="it"><svg><use href="#i-box"/></svg><span>Scheda SD<small>Fotocamera · 1.020</small></span></button>
+          <button class="it"><svg><use href="#i-import"/></svg><span>Cartella Download<small>18 file</small></span></button>
+          <div class="drop"><svg><use href="#i-import"/></svg>Oppure trascina qui qualsiasi file o cartella</div>
+        </div>
+        <div class="sbody">
+          <div class="shead"><h3 id="sheetTitle">Importa da iPhone</h3><span class="chip" style="font-size:11.5px">ultima importazione: 28 agosto</span><button class="x" data-close aria-label="Chiudi">✕</button></div>
+          <div class="igrid" id="igrid"></div>
+          <div class="sort">
+            <div><b>198</b>Foto</div>
+            <div><b>12</b>Video</div>
+            <div><b>8</b>Documenti</div>
+            <div><b>16</b>Doppioni saltati</div>
+          </div>
+          <div class="opts">
+            <label class="sw"><input type="checkbox" checked>Crea un album per ogni giorno di viaggio</label>
+            <label class="sw"><input type="checkbox" checked>Riconosci testo nelle scansioni</label>
+            <label class="sw"><input type="checkbox">Elimina dall'iPhone dopo l'importazione</label>
+            <label class="sw"><input type="checkbox" checked>Aggiungi etichetta <span class="tag" style="margin-left:2px"><i style="background:var(--t-via)"></i>Viaggi</span></label>
+          </div>
+          <div class="sfoot">
+            <div class="prog"><span id="progTxt">Pronto a importare 218 elementi (4,6 GB)</span><i><b id="progBar"></b></i></div>
+            <button class="ghost" data-close>Annulla</button>
+            <button class="btn-acc" id="goImport">Importa 218 elementi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="notes" aria-label="Idee di progetto">
+  <div>
+    <h4>Qualsiasi file</h4>
+    <p>Foto e video convivono con PDF, documenti, note vocali e archivi. Tutto viene messo in fila per giorno e luogo, come in un diario: i filtri in alto separano i tipi con un clic.</p>
+  </div>
+  <div>
+    <h4>Cassetti che si riempiono da soli</h4>
+    <p>Persone, luoghi, scontrini, doppioni: le raccolte intelligenti lavorano in sottofondo. Tu aggiungi solo le etichette colorate che contano per te.</p>
+  </div>
+  <div>
+    <h4>Modifiche reversibili</h4>
+    <p>Luce, colore, ritaglio e tagli dei video non toccano mai l'originale. Nella schermata Modifica trascina la linea bianca e muovi i cursori per vedere l'effetto.</p>
+  </div>
+  <div>
+    <h4>Cercare dentro i documenti</h4>
+    <p>La ricerca legge il testo di PDF, documenti e scansioni. Una garanzia trovata così diventa anche un promemoria di scadenza.</p>
+  </div>
+  <div>
+    <h4>Doppioni senza paura</h4>
+    <p>Raffiche, stessi scatti in due formati, video esportati due volte: l'app propone quale tenere, tu confermi con un clic. Gli scarti restano recuperabili 30 giorni.</p>
+  </div>
+  <div>
+    <h4>Importazione che smista</h4>
+    <p>Dall'iPhone, da una scheda SD o trascinando una cartella: ogni file va nel suo cassetto, i doppioni vengono saltati prima ancora di entrare.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  /* ——— generatore di immagini d'esempio (niente foto esterne) ——— */
+  function rng(seed){let s=seed*9301+49297;return()=>{s=(s*9301+49297)%233280;return s/233280}}
+  const skies=[["#1f2a52","#c65f4a","#f4b25c"],["#233a63","#7a5a8c","#f0a36a"],["#3d2f5c","#d9785a","#ffd08a"],["#15304a","#4f7fa0","#e8c9a0"],["#2a1f3d","#a14c5c","#f59e5b"]];
+  function paint(cv){
+    const r=cv.getBoundingClientRect(); if(!r.width) return false;
+    const dpr=Math.min(2,window.devicePixelRatio||1), W=cv.width=Math.round(r.width*dpr), H=cv.height=Math.round(r.height*dpr);
+    const c=cv.getContext('2d'), seed=+cv.dataset.seed||1, R=rng(seed), sc=cv.dataset.scene;
+    const sky=skies[seed%skies.length];
+    const lin=(y0,y1,stops)=>{const g=c.createLinearGradient(0,y0,0,y1);stops.forEach((s,i)=>g.addColorStop(i/(stops.length-1),s));return g};
+    const ridge=(base,amp,col,freq)=>{c.fillStyle=col;c.beginPath();c.moveTo(0,H);const ph=R()*6;for(let x=0;x<=W;x+=W/60){const y=base+Math.sin(x/W*freq+ph)*amp+Math.sin(x/W*freq*2.7+ph*2)*amp*.35;c.lineTo(x,y)}c.lineTo(W,H);c.fill()};
+    if(sc==='sunset'||sc==='sea'||sc==='hills'){
+      const hz=H*(sc==='hills'?.55:.58);
+      c.fillStyle=sc==='sea'?lin(0,hz,["#4f86b5","#9cc3d9","#e6e1cf"]):lin(0,hz,sky);c.fillRect(0,0,W,hz);
+      const sx=W*(.3+R()*.4), sy=hz-(sc==='sea'?H*.35:H*.08);
+      const g=c.createRadialGradient(sx,sy,0,sx,sy,W*.35);g.addColorStop(0,"rgba(255,236,190,.95)");g.addColorStop(.08,"rgba(255,215,150,.8)");g.addColorStop(1,"rgba(255,180,120,0)");
+      c.fillStyle=g;c.fillRect(0,0,W,H);
+      if(sc==='hills'){ridge(hz-H*.12,H*.07,"rgba(70,60,90,.75)",5);ridge(hz,H*.06,"#3b3a4f",7);ridge(hz+H*.12,H*.05,"#2b3a33",4);ridge(hz+H*.28,H*.04,"#1f2b24",6);}
+      else{
+        c.fillStyle=sc==='sea'?lin(hz,H,["#5f8fae","#2e5670","#1d3a4d"]):lin(hz,H,[sky[2],sky[1],"#1b1f33"]);c.fillRect(0,hz,W,H-hz);
+        c.globalAlpha=.5;for(let i=0;i<40;i++){const y=hz+Math.pow(R(),1.6)*(H-hz), w=W*(.02+R()*.12);c.fillStyle="rgba(255,230,190,"+(.5-(y-hz)/(H-hz)*.45)+")";c.fillRect(sx-w/2+(R()-.5)*W*.2,y,w,Math.max(1,H*.004))}c.globalAlpha=1;
+        if(sc==='sunset'){c.fillStyle="rgba(20,18,30,.85)";c.fillRect(0,hz-H*.015,W,H*.02);for(let i=0;i<5;i++){const x=W*R(),h=H*(.03+R()*.05);c.fillRect(x,hz-h,W*.004,h)}
+          c.beginPath();c.ellipse(W*.72,hz+H*.12,W*.07,H*.018,0,0,Math.PI*2);c.fill();}
+      }
+    } else if(sc==='city'){
+      c.fillStyle=lin(0,H,["#0b1024","#1d2548","#4b3552"]);c.fillRect(0,0,W,H);
+      let x=0;while(x<W){const w=W*(.06+R()*.1),h=H*(.3+R()*.5);c.fillStyle="hsl("+(230+R()*30)+",20%,"+(9+R()*8)+"%)";c.fillRect(x,H-h,w,h);
+        for(let yy=H-h+H*.03;yy<H-H*.03;yy+=H*.05)for(let xx=x+w*.12;xx<x+w-w*.12;xx+=w*.2)if(R()>.55){c.fillStyle="rgba(255,"+(190+R()*50|0)+",120,"+(.5+R()*.5)+")";c.fillRect(xx,yy,w*.09,H*.022)}
+        x+=w+W*.005}
+      const g=c.createLinearGradient(0,H*.8,0,H);g.addColorStop(0,"rgba(233,174,79,0)");g.addColorStop(1,"rgba(233,174,79,.35)");c.fillStyle=g;c.fillRect(0,0,W,H);
+    } else if(sc==='bokeh'){
+      c.fillStyle=lin(0,H,["#2b1d24","#5a3a35","#1e1a22"]);c.fillRect(0,0,W,H);
+      for(let i=0;i<26;i++){const x=W*R(),y=H*R(),rad=Math.min(W,H)*(.05+R()*.18);const g=c.createRadialGradient(x,y,0,x,y,rad);const hue=20+R()*40;g.addColorStop(0,"hsla("+hue+",90%,70%,.55)");g.addColorStop(.7,"hsla("+hue+",90%,60%,.25)");g.addColorStop(1,"hsla("+hue+",90%,60%,0)");c.fillStyle=g;c.beginPath();c.arc(x,y,rad,0,Math.PI*2);c.fill()}
+      c.fillStyle="rgba(15,12,16,.85)";c.beginPath();c.ellipse(W*.45,H*1.05,W*.22,H*.5,0,0,Math.PI*2);c.fill();c.beginPath();c.arc(W*.45,H*.45,Math.min(W,H)*.16,0,Math.PI*2);c.fill();
+    } else if(sc==='food'){
+      c.fillStyle="#6b4a30";c.fillRect(0,0,W,H);
+      for(let i=0;i<H;i+=H*.07){c.fillStyle="rgba(0,0,0,"+(.05+R()*.08)+")";c.fillRect(0,i,W,H*.03)}
+      const cx=W*.5,cy=H*.52,rr=Math.min(W,H)*.4;
+      c.fillStyle="#efe9df";c.beginPath();c.arc(cx,cy,rr,0,Math.PI*2);c.fill();c.fillStyle="#e2dacd";c.beginPath();c.arc(cx,cy,rr*.78,0,Math.PI*2);c.fill();
+      c.lineCap="round";for(let i=0;i<70;i++){c.strokeStyle="hsl("+(40+R()*8)+",75%,"+(58+R()*12)+"%)";c.lineWidth=Math.max(1,rr*.035);c.beginPath();const a=R()*Math.PI*2,d=R()*rr*.5;c.arc(cx+Math.cos(a)*d*.4,cy+Math.sin(a)*d*.4,rr*(.12+R()*.35),a,a+1+R()*2);c.stroke()}
+      c.fillStyle="#3f7a3a";for(let i=0;i<6;i++){c.beginPath();c.ellipse(cx+(R()-.5)*rr*.6,cy+(R()-.5)*rr*.6,rr*.05,rr*.025,R()*3,0,Math.PI*2);c.fill()}
+    }
+    const v=c.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.75);v.addColorStop(0,"rgba(0,0,0,0)");v.addColorStop(1,"rgba(0,0,0,.28)");c.fillStyle=v;c.fillRect(0,0,W,H);
+    return true;
+  }
+  function paintAll(scope){(scope||document).querySelectorAll('canvas[data-scene]').forEach(cv=>{if(!cv.dataset.done&&paint(cv))cv.dataset.done=1})}
+
+  /* striscia di fotogrammi e forme d'onda */
+  const strip=document.getElementById('strip');
+  for(let i=0;i<10;i++){const cv=document.createElement('canvas');cv.dataset.scene='sunset';cv.dataset.seed=9+ (i%3===0?5:0);strip.insertBefore(cv,strip.querySelector('.shade'))}
+  const au=document.querySelector('[data-audio]');for(let i=0;i<120;i++){const b=document.createElement('i');b.style.height=(20+Math.abs(Math.sin(i*.37)*Math.cos(i*.11))*80)+'%';au.appendChild(b)}
+  document.querySelectorAll('[data-wave]').forEach(w=>{for(let i=0;i<26;i++){const b=document.createElement('i');b.style.height=(18+Math.abs(Math.sin(i*1.3)*Math.cos(i*.4))*82)+'%';w.appendChild(b)}});
+
+  /* preset in Modifica */
+  const presets=[["Originale",""],["Vivido","saturate(1.35) contrast(1.08)"],["Caldo","sepia(.25) saturate(1.2)"],["Freddo","hue-rotate(-12deg) saturate(.9) brightness(1.03)"],["Pellicola","contrast(.9) sepia(.18) brightness(1.05)"],["Drammatico","contrast(1.3) brightness(.9)"],["Bianco e nero","grayscale(1) contrast(1.1)"],["Argento","grayscale(1) brightness(1.12) contrast(.9)"]];
+  const pw=document.getElementById('presets');
+  presets.forEach((p,i)=>{const b=document.createElement('button');b.className='preset'+(i===1?' on':'');b.innerHTML='<canvas data-scene="sunset" data-seed="4" style="filter:'+p[1]+'"></canvas>'+p[0];b.onclick=()=>{pw.querySelectorAll('.preset').forEach(x=>x.classList.remove('on'));b.classList.add('on');base=p[1];apply()};pw.appendChild(b)});
+
+  /* regolazioni vive */
+  let base=presets[1][1];
+  const after=document.getElementById('after');
+  const vigOv=document.getElementById('vigOv');
+  const fxBlur=document.getElementById('fxBlur'), fxSharp=document.getElementById('fxSharp');
+  const vals={};
+  const fmt=(k,v)=>{const s=v>0?'+':v<0?'−':'';const a=Math.abs(v);return k==='exp'?s+(a/100).toFixed(2).replace('.',','):s+a};
+  function apply(){
+    const e=vals.exp/100,co=vals.con/100,hi=vals.hi/100,sh=vals.sh/100,t=vals.tem/100,sa=vals.sat/100;
+    const f=[base,'brightness('+(1+e*.45+sh*.12+hi*.06).toFixed(3)+')','contrast('+(1+co*.5-sh*.1).toFixed(3)+')','saturate('+(1+sa*.8).toFixed(3)+')',t>0?'sepia('+(t*.45).toFixed(3)+')':'hue-rotate('+(t*20).toFixed(1)+'deg)'];
+    /* Dettaglio: le funzioni CSS non sanno nitidezza né riduzione rumore, serve un filtro SVG */
+    const sha=(vals.sha||0)/100, nr=(vals.nr||0)/100;
+    if(sha||nr){
+      fxBlur.setAttribute('stdDeviation',(nr*1.7).toFixed(2));
+      const a=sha*.75, c=(1+4*a).toFixed(3), n=(-a).toFixed(3);
+      fxSharp.setAttribute('kernelMatrix','0 '+n+' 0 '+n+' '+c+' '+n+' 0 '+n+' 0');
+      f.push('url(#fxDetail)');
+    }
+    after.style.filter=f.join(' ');
+    vigOv.style.opacity=((vals.vig||0)/100*.85).toFixed(3);
+    drawHisto();
+  }
+  const sliders=[...document.querySelectorAll('.sl input')];
+  sliders.forEach(inp=>{vals[inp.dataset.k]=+inp.value;inp.addEventListener('input',()=>{vals[inp.dataset.k]=+inp.value;inp.previousElementSibling.textContent=fmt(inp.dataset.k,+inp.value);apply()})});
+  document.getElementById('reset').onclick=()=>{sliders.forEach(inp=>{inp.value=0;vals[inp.dataset.k]=0;inp.previousElementSibling.textContent='0'});base='';pw.querySelectorAll('.preset').forEach((x,i)=>x.classList.toggle('on',i===0));apply()};
+  const photo=document.getElementById('photo');
+  document.getElementById('splitRange').addEventListener('input',e=>photo.style.setProperty('--split',e.target.value+'%'));
+
+  function drawHisto(){
+    const cv=document.getElementById('histo'),r=cv.getBoundingClientRect();if(!r.width)return;
+    const dpr=Math.min(2,window.devicePixelRatio||1),W=cv.width=r.width*dpr,H=cv.height=r.height*dpr,c=cv.getContext('2d');
+    const shift=(vals.exp||0)/100*.18, spread=1+(vals.con||0)/100*.35;
+    [["rgba(224,109,92,.55)",.62,.16],["rgba(88,179,156,.5)",.5,.2],["rgba(111,140,240,.5)",.36,.18]].forEach(([col,mu,sg])=>{
+      c.fillStyle=col;c.beginPath();c.moveTo(0,H);
+      for(let i=0;i<=100;i++){const x=i/100,m=.5+(mu-.5)*spread+shift,y=Math.exp(-Math.pow(x-m,2)/(2*sg*sg*spread))*.8+Math.exp(-Math.pow(x-.12,2)/.004)*.25;c.lineTo(x*W,H-y*H*.9)}
+      c.lineTo(W,H);c.fill()});
+  }
+
+  /* ——— navigazione tra schermate ——— */
+  const order=['lib','vid','edit','doc','people','dup'];
+  const tabBtns=[...document.querySelectorAll('.tabs button')];
+  const sideItems=[...document.querySelectorAll('.side nav .it')];
+  let current='lib', filter='all';
+
+  function syncSide(){
+    sideItems.forEach(b=>b.classList.remove('on'));
+    const hit=sideItems.find(b=>b.dataset.go===current&&(current!=='lib'||(b.dataset.filter||'')===filter));
+    if(hit)hit.classList.add('on');
+  }
+  function go(id){
+    current=id;
+    document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id==='s-'+id));
+    tabBtns.forEach(b=>{const on=b.dataset.go===id;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1});
+    syncSide();
+    requestAnimationFrame(()=>{paintAll(document.getElementById('s-'+id));if(id==='edit')apply()});
+  }
+  tabBtns.forEach((b,i)=>{
+    b.addEventListener('click',()=>go(b.dataset.go));
+    b.addEventListener('keydown',e=>{
+      const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
+      if(!d&&e.key!=='Home'&&e.key!=='End')return;
+      e.preventDefault();
+      const n=e.key==='Home'?0:e.key==='End'?tabBtns.length-1:(i+d+tabBtns.length)%tabBtns.length;
+      tabBtns[n].focus();tabBtns[n].click();
+    });
+  });
+
+  /* ——— filtri e ricerca della Libreria ——— */
+  const tiles=[...document.querySelectorAll('#s-lib .tile')];
+  const chips=[...document.querySelectorAll('#filters .chip')];
+  const dayBlocks=[...document.querySelectorAll('#s-lib .dayblock')];
+  const emptyBox=document.getElementById('empty'), emptyTxt=document.getElementById('emptyTxt');
+  const qInput=document.getElementById('q');
+  const crumbCount=document.querySelector('#s-lib .crumb small');
+  const nomi={all:'Tutti i tipi','type:foto':'Foto','type:video':'Video','type:doc':'Documenti','type:audio':'Audio','type:altri':'Altri file',fav:'Preferiti',untagged:'Senza etichetta',receipt:'Scontrini e ricevute',trash:'Eliminati di recente','album:comacchio':'Estate a Comacchio','album:giulia':'Matrimonio Giulia','album:casa':'Casa · lavori 2026','tag:fam':'Famiglia','tag:lav':'Lavoro','tag:via':'Viaggi','tag:sta':'Da stampare'};
+  const plur=(n,s,p)=>n+' '+(n===1?s:p);
+
+  function match(t){
+    const i=filter.indexOf(':'), k=i<0?filter:filter.slice(0,i), v=i<0?'':filter.slice(i+1);
+    if(k==='all')return true;
+    if(k==='trash')return false;
+    if(k==='type')return t.dataset.type===v;
+    if(k==='tag')return (t.dataset.tags||'').split(' ').includes(v);
+    if(k==='album')return t.dataset.album===v;
+    if(k==='fav')return t.dataset.fav==='1';
+    if(k==='untagged')return !t.dataset.tags;
+    if(k==='receipt')return t.dataset.receipt==='1';
+    return true;
+  }
+  function applyFilter(){
+    const q=(qInput.value||'').trim(), ql=q.toLowerCase();
+    let n=0;
+    tiles.forEach(t=>{
+      const ok=match(t)&&(!ql||(t.dataset.name||'').toLowerCase().includes(ql));
+      t.hidden=!ok; if(ok)n++;
+    });
+    dayBlocks.forEach(b=>{
+      const v=b.querySelectorAll('.tile:not([hidden])').length;
+      b.hidden=v===0;
+      const c=b.querySelector('.cnt'); if(c)c.textContent='· '+plur(v,'elemento','elementi');
+    });
+    emptyBox.hidden=n>0;
+    emptyTxt.textContent=filter==='trash'
+      ? 'Il cestino è vuoto in questa anteprima. Nell’app quello che elimini resta qui 30 giorni prima di sparire davvero.'
+      : q ? 'Nessun elemento con «'+q+'» nel nome.'
+          : 'Nessun elemento in «'+(nomi[filter]||filter)+'» in questa anteprima.';
+    crumbCount.textContent=(filter==='all'&&!q)?'284 elementi':plur(n,'elemento','elementi')+' · '+(q?'«'+q+'»':nomi[filter]||filter);
+  }
+  function setFilter(f){
+    filter=f;
+    chips.forEach(c=>c.classList.toggle('on',c.dataset.filter===f));
+    applyFilter(); syncSide();
+  }
+  chips.forEach(c=>c.addEventListener('click',()=>{qInput.value='';setFilter(c.dataset.filter)}));
+  emptyBox.querySelector('button').addEventListener('click',()=>{qInput.value='';setFilter('all')});
+  qInput.addEventListener('input',applyFilter);
+  sideItems.forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.filter){qInput.value='';filter=b.dataset.filter;chips.forEach(c=>c.classList.toggle('on',c.dataset.filter===filter));applyFilter()}
+    go(b.dataset.go||'lib');
+  }));
+
+  /* ——— selezione di un elemento, il pannello Informazioni segue ——— */
+  const pv=document.querySelector('.insp .pv'), insH=document.querySelector('.insp h3'),
+        insSub=document.querySelector('.insp .sub'), insExif=document.querySelector('.insp .exif');
+  function selectTile(t){
+    tiles.forEach(x=>x.classList.toggle('sel',x===t));
+    if(t.dataset.name)insH.textContent=t.dataset.name;
+    const giorno=t.closest('.dayblock').querySelector('.day h2').textContent;
+    insSub.textContent=giorno+' 2026';
+    insExif.hidden=t.dataset.type!=='foto';
+    const src=t.querySelector('canvas[data-scene]');
+    pv.hidden=!src;
+    if(src){
+      const cv=document.createElement('canvas');
+      cv.dataset.scene=src.dataset.scene; cv.dataset.seed=src.dataset.seed;
+      pv.replaceChildren(cv); paintAll(pv);
+    }
+  }
+  tiles.forEach(t=>{
+    t.addEventListener('click',()=>selectTile(t));
+    t.addEventListener('dblclick',()=>{if(t.dataset.type==='foto')go('edit')});
+    t.addEventListener('keydown',e=>{
+      if(e.key!=='Enter'&&e.key!==' ')return;
+      e.preventDefault(); selectTile(t);
+      if(e.key==='Enter'&&t.dataset.type==='foto')go('edit');
+    });
+  });
+
+  /* ——— ricerca nei Documenti ——— */
+  const qdoc=document.getElementById('qdoc');
+  const docRows=[...document.querySelectorAll('#s-doc .ft')[0].querySelectorAll('tbody tr')];
+  const foundLine=document.querySelector('#s-doc .found span');
+  function applyDocFilter(){
+    const q=(qdoc.value||'').trim(), ql=q.toLowerCase();
+    let n=0;
+    docRows.forEach(r=>{const ok=!ql||r.textContent.toLowerCase().includes(ql);r.hidden=!ok;if(ok)n++});
+    const b=document.createElement('b'); b.textContent=plur(n,'documento','documenti');
+    foundLine.replaceChildren(b,document.createTextNode(
+      (q?' contengono «'+q+'»':' in archivio')+' — la ricerca legge anche dentro PDF e scansioni'));
+  }
+  qdoc.addEventListener('input',applyDocFilter);
+
+  /* ——— ricerca nei Video e fra le Persone ——— */
+  const qvid=document.getElementById('qvid');
+  const vsideKids=[...document.querySelector('.vside').children];
+  function applyVidFilter(){
+    const ql=(qvid.value||'').trim().toLowerCase();
+    let sec=null, pieni=false;
+    vsideKids.forEach(el=>{
+      if(el.classList.contains('sec')){ if(sec)sec.hidden=!pieni; sec=el; pieni=false; return }
+      const ok=!ql||el.textContent.toLowerCase().includes(ql);
+      el.hidden=!ok; if(ok)pieni=true;
+    });
+    if(sec)sec.hidden=!pieni;
+  }
+  qvid.addEventListener('input',applyVidFilter);
+
+  const qppl=document.getElementById('qppl'), facce=[...document.querySelectorAll('#s-people .face')];
+  qppl.addEventListener('input',()=>{
+    const ql=qppl.value.trim().toLowerCase();
+    facce.forEach(f=>{f.hidden=!!ql&&!f.textContent.toLowerCase().includes(ql)});
+  });
+
+  /* ——— scorciatoie da tastiera dichiarate nell'interfaccia ——— */
+  document.addEventListener('keydown',e=>{
+    if(!(e.metaKey||e.ctrlKey)||e.altKey)return;
+    if(e.key>='1'&&e.key<='6'){e.preventDefault();go(order[+e.key-1]);return}
+    if(e.key==='f'||e.key==='F'){
+      const box=document.querySelector('#s-'+current+' .search input');
+      if(box){e.preventDefault();box.focus();box.select()}
+    }
+  });
+
+  /* foglio Importa: si chiude con ✕, clic fuori o Esc */
+  const sheet=document.getElementById('sheet'), ig=document.getElementById('igrid');
+  const sc=['sea','sunset','food','city','bokeh','hills'];
+  for(let i=0;i<21;i++){const d=document.createElement('div');if(i===5||i===13)d.className='dup';d.innerHTML='<canvas data-scene="'+sc[i%6]+'" data-seed="'+(i+40)+'"></canvas>';ig.appendChild(d)}
+  let lastFocus=null;
+  const openSheet=()=>{lastFocus=document.activeElement;sheet.hidden=false;paintAll(sheet);sheet.querySelector('[data-close]').focus()};
+  const closeSheet=()=>{sheet.hidden=true;lastFocus&&lastFocus.focus()};
+  document.querySelectorAll('[data-import]').forEach(b=>b.addEventListener('click',openSheet));
+  sheet.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeSheet));
+  sheet.addEventListener('click',e=>{if(e.target===sheet)closeSheet()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closeSheet()});
+  document.getElementById('goImport').addEventListener('click',function(){
+    const bar=document.getElementById('progBar'),txt=document.getElementById('progTxt'),btn=this;let n=0;btn.disabled=true;
+    const tick=setInterval(()=>{n=Math.min(218,n+11);bar.style.width=(n/218*100)+'%';txt.textContent=n<218?'Importazione in corso: '+n+' di 218':'Fatto: 218 elementi smistati nei loro cassetti';if(n>=218){clearInterval(tick);btn.textContent='Chiudi';btn.disabled=false;btn.onclick=()=>{closeSheet();btn.onclick=null}}},120);
+  });
+
+  /* doppioni: clic su una miniatura = la tieni */
+  document.querySelectorAll('.dgroup').forEach(g=>g.querySelectorAll('.dpic').forEach(p=>p.addEventListener('click',()=>{
+    g.querySelectorAll('.dpic').forEach(x=>{x.classList.toggle('keep',x===p);x.classList.toggle('away',x!==p);x.querySelector('.st').textContent=x===p?'Da tenere':'Nel cestino'});
+  })));
+  document.querySelectorAll('.dgroup .acts .ghost').forEach(b=>b.addEventListener('click',()=>{
+    b.closest('.dgroup').querySelectorAll('.dpic').forEach(x=>{x.classList.add('keep');x.classList.remove('away');x.querySelector('.st').textContent='Da tenere'});
+  }));
+
+  applyFilter();applyDocFilter();applyVidFilter();syncSide();
+  document.fonts&&document.fonts.ready.then(()=>paintAll());
+  paintAll();apply();
+  let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{document.querySelectorAll('canvas[data-done]').forEach(c=>delete c.dataset.done);paintAll();drawHisto()},150)});
+})();
+</script>
+</body>
+</html>
