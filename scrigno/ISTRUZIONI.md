@@ -8,6 +8,7 @@ Insieme a questo file trovi:
 
 | File | A cosa serve |
 |---|---|
+| `DIARIO.md` | **Da leggere per primo**: cosa è stato chiesto, deciso e fatto, e perché |
 | `anteprima/index.html` | Il progetto grafico approvato, navigabile |
 | `ISTRUZIONI.md` | Questo documento: cosa costruire e come |
 | `STATO.md` | Dove è arrivato il lavoro, aggiornato a fine di ogni sessione |

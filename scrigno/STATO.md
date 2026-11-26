@@ -2,6 +2,10 @@
 
 Aggiornato: 13 settembre 2026
 
+> La conversazione in cui è nato il progetto è stata cancellata. Tutto quello che
+> era stato detto a voce lì dentro — richieste, decisioni, motivi — è in
+> **`DIARIO.md`**, nella stessa cartella. Leggilo per primo.
+
 ## In breve
 
 Il progetto grafico è approvato, l'anteprima è stata riparata e provata, e **l'app
